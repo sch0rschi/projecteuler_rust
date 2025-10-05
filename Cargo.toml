@@ -4,19 +4,3 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-
-[[bin]]
-name = "problem_0"
-path = "src/problem_0.rs"
-
-[[bin]]
-name = "problem_1"
-path = "src/problem_1.rs"
-
-[[bin]]
-name = "problem_2"
-path = "src/problem_2.rs"
-
-[[bin]]
-name = "problem_3"
-path = "src/problem_3.rs"
