@@ -22,15 +22,15 @@ fn main() {
 
     let input = input
         .chars()
-        .filter(|c| c.is_digit(10))
+        .filter(|c| c.is_ascii_digit())
         .map(|c| c.to_digit(10).unwrap() as u64)
         .collect::<Vec<u64>>();
 
     let mut max_product :u64 = 0;
     for start in 0..input.len()-13 {
         let mut product: u64 = 1;
-        for i in start..start+13 {
-            product *= input[i];
+        for element in input.iter().skip(start).take(13) {
+            product *= element;
         }
         max_product = max_product.max(product);
     }

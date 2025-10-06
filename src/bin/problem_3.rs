@@ -34,5 +34,5 @@ fn divisors_or_prime(n: &i64) -> FactorResult {
             return FactorResult::Factors(potential_factor, n / potential_factor);
         }
     }
-    FactorResult::Prime(n.clone())
+    FactorResult::Prime(*n)
 }

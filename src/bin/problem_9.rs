@@ -18,7 +18,7 @@ fn main() {
 
 fn expansion_recursion(triplet: &Vector3<i32>) -> Option<Vector3<i32>> {
     match triplet.sum() {
-        sum  if 1000 % sum == 0 => Some(triplet.clone()),
+        sum  if 1000 % sum == 0 => Some(*triplet),
         (1001..) => None,
         _ => {
             let (expansion_1, expansion_2, expansion_3) = expand(triplet);
