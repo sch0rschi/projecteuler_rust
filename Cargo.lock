@@ -257,6 +257,7 @@ dependencies = [
  "chrono",
  "nalgebra",
  "num-bigint",
+ "num-traits",
 ]
 
 [[package]]
