@@ -7,3 +7,12 @@ pub fn get_digits(n: i64) -> Vec<i64> {
     }
     digits
 }
+
+pub fn get_number(digits: &[i64]) -> i64 {
+    let mut number = 0;
+    for digit in digits.iter().rev() {
+        number *= 10;
+        number += *digit;
+    }
+    number
+}
