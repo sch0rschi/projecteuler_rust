@@ -273,6 +273,7 @@ dependencies = [
  "itertools",
  "nalgebra",
  "num-bigint",
+ "num-integer",
  "num-traits",
 ]
 
