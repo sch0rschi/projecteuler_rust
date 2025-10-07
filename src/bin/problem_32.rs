@@ -1,0 +1,38 @@
+use std::collections::HashSet;
+use itertools::Itertools;
+
+fn main() {
+    let mut products: HashSet<i64> = HashSet::new();
+    let permutation = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for perm in permutation.iter().cloned().permutations(permutation.len()) {
+        for product_length in 1..9 {
+            for multiplier_1_length in 1..(9-product_length) {
+                let (product, multiplier_1, multiplier_2) = split_array(&perm, product_length, multiplier_1_length);
+                if product == multiplier_1 * multiplier_2 {
+                    products.insert(product);
+                }
+            }
+        }
+    }
+    println!("{}", products.iter().sum::<i64>());
+}
+
+fn split_array(permutation: &[i64], length_product: usize, length_multiplier_1: usize) -> (i64, i64, i64) {
+    let mut product: i64 = 0;
+    for digit in permutation.iter().take(length_product) {
+        product *= 10;
+        product += digit;
+    }
+    let mut multiplier_1: i64 = 0;
+    for digit in permutation.iter().skip(length_product).take(length_multiplier_1) {
+        multiplier_1 *= 10;
+        multiplier_1 += digit;
+    }
+    let mut multiplier_2: i64 = 0;
+    for digit in permutation.iter().skip(length_product + length_multiplier_1 ) {
+        multiplier_2 *= 10;
+        multiplier_2 += digit;
+    }
+
+    (product, multiplier_1, multiplier_2)
+}
