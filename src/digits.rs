@@ -16,3 +16,13 @@ pub fn get_number(digits: &[i64]) -> i64 {
     }
     number
 }
+
+pub fn get_digits_in_binary(n: i64) -> Vec<bool> {
+    let mut digits: Vec<bool> = Vec::new();
+    let mut number = n;
+    while number > 0 {
+        digits.push(number % 2 == 1);
+        number /= 2;
+    }
+    digits
+}
