@@ -8,12 +8,12 @@ pub fn find_first_n_primes(n: i64) -> Vec<i64> {
     primes
 }
 
-pub fn find_primes_up_to_exclusive(limit: i64) -> Vec<i64> {
+pub fn find_primes_up_to_inclusive(limit: i64) -> Vec<i64> {
     let mut primes: Vec<i64> = [2, 3].to_vec();
 
     loop {
         let next_prime = find_next_prime(&primes);
-        if next_prime >= limit {
+        if next_prime > limit {
             break;
         }
         primes.push(next_prime);
