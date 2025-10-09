@@ -36,3 +36,8 @@ fn find_next_prime(previous_primes: &[i64]) -> i64 {
     }
     unreachable!("The loop should always return a prime");
 }
+
+pub fn add_next_prime(previous_primes: &mut Vec<i64>) {
+    let next_prime = find_next_prime(previous_primes);
+    previous_primes.push(next_prime);
+}
