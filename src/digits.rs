@@ -5,7 +5,17 @@ pub fn get_digits(n: i64) -> Vec<i64> {
         digits.push(number % 10);
         number /= 10;
     }
+    digits.reverse();
     digits
+}
+
+pub fn is_pandigital(digits: &[i64]) -> bool {
+    for digit in 1 .. 9 {
+        if !digits.contains(&digit) {
+            return false;
+        }
+    }
+    true
 }
 
 pub fn get_number(digits: &[i64]) -> i64 {
