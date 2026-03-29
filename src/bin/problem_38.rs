@@ -11,8 +11,7 @@ fn main() {
 }
 
 fn get_pandigital(i: i64) -> Option<i64> {
-    let mut pandigital: Vec<i64> = Vec::new();
-    pandigital.reserve(15);
+    let mut pandigital: Vec<i64> = Vec::with_capacity(15);
     for multiplier in 1..=9 {
         let add = i * multiplier;
         let mut add_digits = get_digits(add);
