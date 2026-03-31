@@ -1,11 +1,11 @@
-use std::collections::HashSet;
 use projecteuler::digits::{get_digits, get_number};
-use projecteuler::primes::{add_next_prime, find_primes_up_to_inclusive};
+use projecteuler::primes::{add_next_prime, primes_inclusive};
+use std::collections::HashSet;
 
 fn main() {
     let mut count = 0;
     let mut sum = 0;
-    let mut primes = find_primes_up_to_inclusive(7);
+    let (_, mut primes) = primes_inclusive(7);
     let mut primes_set: HashSet<i64> = primes.iter().cloned().collect();
     let mut prime_index = 4;
     while count < 11 {

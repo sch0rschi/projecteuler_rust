@@ -8,17 +8,37 @@ pub fn find_first_n_primes(n: i64) -> Vec<i64> {
     primes
 }
 
-pub fn find_primes_up_to_inclusive(limit: i64) -> Vec<i64> {
-    let mut primes: Vec<i64> = [2, 3].to_vec();
+pub fn primes_inclusive(limit: i64) -> (Vec<bool>, Vec<i64>) {
+    let sieve = prime_sieve_up_to_inclusive(limit);
+    (sieve.clone(), sieve
+        .iter()
+        .enumerate()
+        .filter_map(|(i, &is_prime)| if is_prime { Some(i as i64) } else { None })
+        .collect())
+}
 
-    loop {
-        let next_prime = find_next_prime(&primes);
-        if next_prime > limit {
-            break;
-        }
-        primes.push(next_prime);
+pub fn prime_sieve_up_to_inclusive(limit: i64) -> Vec<bool> {
+    if limit < 2 {
+        return vec![false; (limit + 1) as usize];
     }
-    primes
+
+    let mut is_prime = vec![true; (limit + 1) as usize];
+    is_prime[0] = false;
+    is_prime[1] = false;
+
+    let sqrt_limit = (limit as f64).sqrt() as i64;
+
+    for num in 2..=sqrt_limit {
+        if is_prime[num as usize] {
+            let mut multiple = num * num;
+            while multiple <= limit {
+                is_prime[multiple as usize] = false;
+                multiple += num;
+            }
+        }
+    }
+
+    is_prime
 }
 
 fn find_next_prime(previous_primes: &[i64]) -> i64 {

@@ -1,10 +1,10 @@
 use projecteuler::pandigital::is_1_to_length_pandigital;
-use projecteuler::primes::find_primes_up_to_inclusive;
+use projecteuler::primes::primes_inclusive;
 use std::time::Instant;
 
 fn main() {
     let start = Instant::now();
-    let primes = find_primes_up_to_inclusive(7654321);
+    let (_, primes) = primes_inclusive(7654321);
 
     let max_pandigital_prime = primes
         .iter()

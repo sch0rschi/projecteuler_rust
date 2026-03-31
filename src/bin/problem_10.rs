@@ -1,6 +1,6 @@
-use projecteuler::primes::find_primes_up_to_inclusive;
+use projecteuler::primes::primes_inclusive;
 
 fn main() {
-    let primes = find_primes_up_to_inclusive(2_000_000);
+    let (_, primes) = primes_inclusive(2_000_000);
     println!("{}", primes.iter().sum::<i64>());
 }
