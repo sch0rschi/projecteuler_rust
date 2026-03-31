@@ -1,5 +1,6 @@
 use std::fs;
 use std::time::Instant;
+use projecteuler::word_score::score;
 
 fn main() {
     let start = Instant::now();
@@ -18,9 +19,4 @@ fn main() {
 
     println!("{}", score_sum);
     println!("Elapsed: {:?}", start.elapsed());
-}
-
-#[inline]
-fn score(name: &str) -> i32 {
-    name.bytes().map(|b| (b - b'A' + 1) as i32).sum()
 }

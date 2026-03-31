@@ -5,3 +5,4 @@ pub mod factorials;
 pub mod integer_pythagorean_triplets;
 pub mod triplet;
 pub mod pandigital;
+pub mod word_score;
