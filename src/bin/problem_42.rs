@@ -20,7 +20,7 @@ fn is_triangle_number(x: i32) -> bool {
     if x <= 0 { return false; }
     let discriminant = 1 + 8 * x as u64;
     let sqrt = integer_sqrt(discriminant);
-    sqrt * sqrt == discriminant && (sqrt - 1) % 2 == 0
+    sqrt * sqrt == discriminant && (sqrt - 1).is_multiple_of(2)
 }
 
 fn integer_sqrt(n: u64) -> u64 {

@@ -1,16 +1,16 @@
 use itertools::Itertools;
-use projecteuler::primes::primes_inclusive;
+use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
 
 fn main() {
     let start = Instant::now();
 
-    let (sieve, primes) = primes_inclusive(999_999);
+    let Primes { sieve, list: primes_list } = primes_inclusive(999_999);
 
-    let mut prefix_sums: Vec<i64> = Vec::with_capacity(primes.len());
+    let mut prefix_sums: Vec<i64> = Vec::with_capacity(primes_list.len());
 
     let mut prefix_sum: i64 = 0;
-    for prime in primes {
+    for prime in primes_list {
         prefix_sum += prime;
         prefix_sums.push(prefix_sum);
     }
@@ -28,11 +28,9 @@ fn main() {
             if end_sum - start_sum >= 1_000_000 {
                 break;
             }
-            if sieve[(end_sum - start_sum) as usize] {
-                if best_chain_count < end_index - start_index {
-                    best_chain_count = end_index - start_index;
-                    best_prime = end_sum - start_sum;
-                }
+            if sieve[(end_sum - start_sum) as usize] && best_chain_count < end_index - start_index {
+                best_chain_count = end_index - start_index;
+                best_prime = end_sum - start_sum;
             }
         }
     }

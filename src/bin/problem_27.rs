@@ -1,14 +1,14 @@
-use projecteuler::primes::primes_inclusive;
+use projecteuler::primes::{primes_inclusive, Primes};
 use std::collections::HashSet;
 
 fn main() {
     let max_value_polynomial: i64 = 999i64.pow(2) + 999i64.pow(2) + 1000;
-    let (_, primes) = primes_inclusive(max_value_polynomial);
-    let primes_set: HashSet<i64> = HashSet::from_iter(primes.iter().cloned());
+    let Primes {sieve: _, list: prime_list } = primes_inclusive(max_value_polynomial);
+    let primes_set: HashSet<i64> = HashSet::from_iter(prime_list.iter().cloned());
 
     let mut max_n = 0;
     let mut max_product = 0;
-    for &b in primes.iter().take_while(|&p| *p <= 1000) {
+    for &b in prime_list.iter().take_while(|&p| *p <= 1000) {
         if b <= max_n {
             break;
         }

@@ -15,12 +15,10 @@ fn main() {
 
             let candidate = p_k - d;
 
-            if is_scaled_pentagonal(candidate) {
-                if is_scaled_pentagonal(p_k + candidate) {
-                    println!("{}", d / 2);
-                    println!("Elapsed: {:?}", start.elapsed());
-                    return;
-                }
+            if is_scaled_pentagonal(candidate) && is_scaled_pentagonal(p_k + candidate) {
+                println!("{}", d / 2);
+                println!("Elapsed: {:?}", start.elapsed());
+                return;
             }
 
             if p_k - p(k - 1) > d {

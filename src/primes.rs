@@ -1,3 +1,8 @@
+pub struct Primes {
+    pub sieve: Vec<bool>,
+    pub list:  Vec<i64>,
+}
+
 pub fn find_first_n_primes(n: i64) -> Vec<i64> {
     let mut primes: Vec<i64> = [2, 3].to_vec();
 
@@ -8,13 +13,14 @@ pub fn find_first_n_primes(n: i64) -> Vec<i64> {
     primes
 }
 
-pub fn primes_inclusive(limit: i64) -> (Vec<bool>, Vec<i64>) {
+pub fn primes_inclusive(limit: i64) -> Primes {
     let sieve = prime_sieve_up_to_inclusive(limit);
-    (sieve.clone(), sieve
+    let list = sieve
         .iter()
         .enumerate()
         .filter_map(|(i, &is_prime)| if is_prime { Some(i as i64) } else { None })
-        .collect())
+        .collect();
+    Primes {sieve: sieve.clone(), list }
 }
 
 pub fn prime_sieve_up_to_inclusive(limit: i64) -> Vec<bool> {

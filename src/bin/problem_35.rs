@@ -1,8 +1,8 @@
 use projecteuler::digits::{get_digits, get_number};
-use projecteuler::primes::primes_inclusive;
+use projecteuler::primes::{primes_inclusive, Primes};
 
 fn main() {
-    let (_, primes) = primes_inclusive(1_000_000);
+    let Primes {sieve: _, list: primes } = primes_inclusive(1_000_000);
     let mut count = 1;
     for &prime in primes.iter().skip(1) {
         if is_rotating_prime(prime, &primes) {
