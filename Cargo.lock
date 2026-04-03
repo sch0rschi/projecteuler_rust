@@ -193,6 +193,7 @@ dependencies = [
  "bitvec",
  "chrono",
  "itertools",
+ "log",
  "num-bigint",
  "num-integer",
  "num-traits",

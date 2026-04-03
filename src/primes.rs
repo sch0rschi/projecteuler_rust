@@ -1,3 +1,5 @@
+use num_integer::Integer;
+
 pub struct Primes {
     pub sieve: Vec<bool>,
     pub list:  Vec<i64>,
@@ -66,4 +68,25 @@ fn find_next_prime(previous_primes: &[i64]) -> i64 {
 pub fn add_next_prime(previous_primes: &mut Vec<i64>) {
     let next_prime = find_next_prime(previous_primes);
     previous_primes.push(next_prime);
+}
+
+pub fn unique_prime_factors(n: i64, list: &Vec<i64>) -> Vec<i64> {
+    let mut factors: Vec<i64> = Vec::new();
+
+    let mut number = n;
+    for &prime in list.iter() {
+        if number.is_multiple_of(&prime) {
+            number /= prime;
+            factors.push(prime);
+            while number.is_multiple_of(&prime) {
+                number /= prime;
+            }
+        }
+
+         if number == 1 {
+            break;
+        }
+    }
+
+    factors
 }
