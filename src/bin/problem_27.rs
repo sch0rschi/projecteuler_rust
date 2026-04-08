@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 fn main() {
     let max_value_polynomial: i64 = 999i64.pow(2) + 999i64.pow(2) + 1000;
-    let Primes {sieve: _, list: prime_list } = primes_inclusive(max_value_polynomial);
+    let Primes { prime_sieve: _, prime_list } = primes_inclusive(max_value_polynomial);
     let primes_set: HashSet<i64> = HashSet::from_iter(prime_list.iter().cloned());
 
     let mut max_n = 0;

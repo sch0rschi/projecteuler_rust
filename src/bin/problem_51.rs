@@ -19,7 +19,7 @@ type PosArray = [usize; 7]; // pos[0] = len, pos[1..] = positions
 fn main() {
     let start = Instant::now();
 
-    let Primes { sieve, list: primes_list } = primes_inclusive(999_999);
+    let Primes { prime_sieve: sieve, prime_list: primes_list } = primes_inclusive(999_999);
 
     let mut positions: [PosArray; 3] = [[0; 7]; 3];
 
@@ -29,8 +29,7 @@ fn main() {
         }
         fill_relevant_digit_positions(prime, &mut positions);
 
-        for digit in 0..3 {
-            let pos_arr = positions[digit];
+        for (digit, pos_arr) in positions.iter().enumerate() {
             let len = pos_arr[0];
             if len < 3 {
                 continue;

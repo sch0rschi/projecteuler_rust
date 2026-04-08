@@ -17,7 +17,7 @@ static FACTORS: [i32; 10] = powers_of_4();
 fn main() {
     let start = Instant::now();
 
-    let Primes { sieve, list } = primes_inclusive(9999);
+    let Primes { prime_sieve: sieve, prime_list: list } = primes_inclusive(9999);
     let mut digit_count_to_primes: HashMap<u32, Vec<i64>> = HashMap::new();
     let mut prime_to_digit_counts: Vec<u32> = vec![0; 10000];
     for &prime in list.iter().filter(|&&p| p > 1000) {
@@ -38,8 +38,7 @@ fn main() {
         }
         for i in 0..primes.len() {
             let lower = primes[i];
-            for j in (i + 1)..primes.len() {
-                let middle = primes[j];
+            for &middle in primes.iter().skip(i + 1) {
                 let upper = ((middle << 1) - lower) as usize;
                 if upper > 10000 {
                     break;

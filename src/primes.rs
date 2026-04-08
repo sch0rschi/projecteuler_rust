@@ -1,8 +1,8 @@
 use num_integer::Integer;
 
 pub struct Primes {
-    pub sieve: Vec<bool>,
-    pub list:  Vec<i64>,
+    pub prime_sieve: Vec<bool>,
+    pub prime_list:  Vec<i64>,
 }
 
 pub fn find_first_n_primes(n: i64) -> Vec<i64> {
@@ -22,7 +22,7 @@ pub fn primes_inclusive(limit: i64) -> Primes {
         .enumerate()
         .filter_map(|(i, &is_prime)| if is_prime { Some(i as i64) } else { None })
         .collect();
-    Primes {sieve: sieve.clone(), list }
+    Primes { prime_sieve: sieve.clone(), prime_list: list }
 }
 
 pub fn prime_sieve_up_to_inclusive(limit: i64) -> Vec<bool> {
@@ -70,7 +70,7 @@ pub fn add_next_prime(previous_primes: &mut Vec<i64>) {
     previous_primes.push(next_prime);
 }
 
-pub fn unique_prime_factors(n: i64, list: &Vec<i64>) -> Vec<i64> {
+pub fn unique_prime_factors(n: i64, list: &[i64]) -> Vec<i64> {
     let mut factors: Vec<i64> = Vec::new();
 
     let mut number = n;

@@ -5,7 +5,7 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
 
-    let Primes { sieve, list: primes_list } = primes_inclusive(999_999);
+    let Primes { prime_sieve: sieve, prime_list: primes_list } = primes_inclusive(999_999);
 
     let mut prefix_sums: Vec<i64> = Vec::with_capacity(primes_list.len());
 

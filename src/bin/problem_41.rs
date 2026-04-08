@@ -4,7 +4,7 @@ use std::time::Instant;
 
 fn main() {
     let start = Instant::now();
-    let Primes {sieve: _, list: prime_list } = primes_inclusive(7654321);
+    let Primes { prime_sieve: _, prime_list } = primes_inclusive(7654321);
 
     let max_pandigital_prime = prime_list
         .iter()

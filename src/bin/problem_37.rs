@@ -5,7 +5,7 @@ use std::collections::HashSet;
 fn main() {
     let mut count = 0;
     let mut sum = 0;
-    let Primes {sieve: _, list: mut primes } = primes_inclusive(7);
+    let Primes { prime_sieve: _, prime_list: mut primes } = primes_inclusive(7);
     let mut primes_set: HashSet<i64> = primes.iter().cloned().collect();
     let mut prime_index = 4;
     while count < 11 {

@@ -9,7 +9,7 @@ fn main() {
     loop {
         upper *= 2;
 
-        let Primes { sieve, list } = primes_inclusive(upper);
+        let Primes { prime_sieve: sieve, prime_list: list } = primes_inclusive(upper);
 
         for consecutive_prime_pair in list.windows(2) {
             let [lower_prime, upper_prime] = consecutive_prime_pair else {
@@ -27,7 +27,7 @@ fn main() {
     }
 }
 
-fn check_composite(composite: i64, sieve: &Vec<bool>) -> bool {
+fn check_composite(composite: i64, sieve: &[bool]) -> bool {
     let mut n = 1;
     while 2 * n * n < composite {
         let remainder = composite - 2 * n * n;
