@@ -1,28 +1,40 @@
-use std::ops::Mul;
 use std::time::Instant;
 use num_bigint::BigUint;
+use num_traits::{FromPrimitive};
 
 fn main() {
     let start = Instant::now();
 
-    let mut numinator_n = BigUint::from(7u8);
-    let mut numinator_n_minus_1 = BigUint::from(3u8);
+    let mut n = BigUint::from_u8(7).unwrap();
+    let mut n_prev = BigUint::from_u8(3).unwrap();
 
-    let mut denominator_n = BigUint::from(5u8);
-    let mut denominator_n_minus_1 = BigUint::from(2u8);
+    let mut d = BigUint::from_u8(5).unwrap();
+    let mut d_prev = BigUint::from_u8(2).unwrap();
 
     let mut counter = 0;
-    for i in 2..=1000 {
-        if numinator_n.clone().to_string().len() > denominator_n.clone().to_string().len() {
+
+    let mut pow10_n = BigUint::from_u8(10).unwrap();
+    let mut pow10_d = BigUint::from_u8(10).unwrap();
+
+    for _ in 2..=1000 {
+        while n >= pow10_n { // pow10 is a quasi counter for length
+            pow10_n *= 10u8;
+        }
+        while d >= pow10_d {
+            pow10_d *= 10u8;
+        }
+
+        if pow10_n > pow10_d {
             counter += 1;
         }
-        let temp_numinator = numinator_n_minus_1.clone();
-        numinator_n_minus_1 = numinator_n;
-        numinator_n = numinator_n_minus_1.clone().mul(2u8) + temp_numinator;
 
-        let temp_denuminator = denominator_n_minus_1.clone();
-        denominator_n_minus_1 = denominator_n;
-        denominator_n = denominator_n_minus_1.clone().mul(2u8) + temp_denuminator;
+        let new_n = (&n << 1) + &n_prev;
+        n_prev = n;
+        n = new_n;
+
+        let new_d = (&d << 1) + &d_prev;
+        d_prev = d;
+        d = new_d;
     }
 
     println!("{}", counter);
