@@ -17,5 +17,5 @@ pub fn is_1_to_length_pandigital(n: u64) -> bool {
         count += 1;
     }
 
-    !digits[1..count+1].contains(&false)
+    !digits[1..count + 1].contains(&false)
 }

@@ -15,7 +15,7 @@ fn proper_divisors(n: u64) -> Vec<u64> {
     }
 
     for divisor_candidate in 2..n_sqrt {
-        if n % divisor_candidate == 0 {
+        if n.is_multiple_of(divisor_candidate) {
             proper_divisors.push(divisor_candidate);
             proper_divisors.push(n / divisor_candidate);
         }

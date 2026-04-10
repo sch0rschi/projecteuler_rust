@@ -9,7 +9,7 @@ pub fn get_digits(n: u64) -> Vec<u64> {
 }
 
 pub fn is_pandigital(digits: &[u64]) -> bool {
-    for digit in 1 .. 9 {
+    for digit in 1..9 {
         if !digits.contains(&digit) {
             return false;
         }
