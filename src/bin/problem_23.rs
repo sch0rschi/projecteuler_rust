@@ -2,7 +2,7 @@ use bitvec::bitvec;
 use projecteuler::divisors::proper_divisor_sum;
 
 fn main() {
-    let mut abundant_numbers : Vec<i64> = Vec::new();
+    let mut abundant_numbers : Vec<u64> = Vec::new();
     for i in 2..=28123 {
         let proper_divisor_sum = proper_divisor_sum(i);
         if proper_divisor_sum > i {

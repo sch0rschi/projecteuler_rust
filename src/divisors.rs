@@ -1,10 +1,10 @@
-pub fn proper_divisor_sum(n: i64) -> i64 {
+pub fn proper_divisor_sum(n: u64) -> u64 {
     proper_divisors(n).iter().sum()
 }
 
-fn proper_divisors(n: i64) -> Vec<i64> {
+fn proper_divisors(n: u64) -> Vec<u64> {
     let mut n_sqrt = n.isqrt();
-    let mut proper_divisors: Vec<i64> = Vec::new();
+    let mut proper_divisors: Vec<u64> = Vec::new();
     proper_divisors.push(1);
     if n == 1 {
         return proper_divisors;

@@ -1,7 +1,7 @@
 use projecteuler::divisors::proper_divisor_sum;
 
 fn main() {
-    let mut d: [i64; 10_000] = [0; 10_000];
+    let mut d: [u64; 10_000] = [0; 10_000];
     let mut amicable_numbers_sum = 0;
     for i in 1..10_000 {
         let proper_divisor_sum = proper_divisor_sum(i);
