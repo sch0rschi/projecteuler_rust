@@ -20,7 +20,7 @@ fn main() {
 }
 
 fn is_truncatable_prime(primes_set: &[bool], prime: u64) -> bool {
-    let prime_digits = get_digits(prime as i64);
+    let prime_digits = get_digits(prime);
     for i in 1..prime_digits.len() {
         let left_stripped = get_number(&prime_digits[i..prime_digits.len()]);
         if !primes_set[left_stripped as usize] {

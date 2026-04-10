@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn is_rotating_prime(n: u64, primes: &[bool]) -> bool {
-    let mut number_in_digits = get_digits(n as i64);
+    let mut number_in_digits = get_digits(n);
     if number_in_digits.contains(&0)
         || number_in_digits.contains(&2)
         || number_in_digits.contains(&4)

@@ -10,9 +10,9 @@ fn main() {
     }
 
     let mut sum = 0;
-    for i in 2..10i64.pow(max_digits as u32 + 1) {
+    for i in 2u64..10i64.pow(max_digits as u32 + 1) as u64 {
         let digits = get_digits(i);
-        let digit_sum = digits.iter().map(|x| {x.pow(5)}).sum::<i64>();
+        let digit_sum = digits.iter().map(|x| {x.pow(5)}).sum::<u64>();
         if digit_sum == i {
             sum += i;
         }

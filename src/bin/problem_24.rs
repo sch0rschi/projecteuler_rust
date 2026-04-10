@@ -3,7 +3,7 @@ use projecteuler::factorials::get_factorial_array;
 fn main() {
     let mut permutation = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     let permutation_len = permutation.len();
-    let number_of_possible_permutations: Vec<i64> = get_factorial_array(10)
+    let number_of_possible_permutations: Vec<u64> = get_factorial_array(10)
         .iter()
         .skip(1)
         .copied()
