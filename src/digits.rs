@@ -5,7 +5,6 @@ pub fn get_digits(n: i64) -> Vec<i64> {
         digits.push(number % 10);
         number /= 10;
     }
-    digits.reverse();
     digits
 }
 

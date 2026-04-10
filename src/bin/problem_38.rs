@@ -15,6 +15,7 @@ fn get_pandigital(i: i64) -> Option<i64> {
     for multiplier in 1..=9 {
         let add = i * multiplier;
         let mut add_digits = get_digits(add);
+        add_digits.reverse();
         pandigital.append(&mut add_digits);
         if pandigital.len() >= 9 {
             break;
