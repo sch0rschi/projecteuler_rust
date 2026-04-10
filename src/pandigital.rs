@@ -1,5 +1,5 @@
-pub fn is_1_to_length_pandigital(n: i64) -> bool {
-    if n <= 0 {
+pub fn is_1_to_length_pandigital(n: u64) -> bool {
+    if n == 0 {
         return false;
     }
 

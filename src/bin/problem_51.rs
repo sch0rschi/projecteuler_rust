@@ -1,7 +1,7 @@
 use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
 
-const POW10: [i64; 10] = [
+const POW10: [u64; 10] = [
     1,
     10,
     100,
@@ -39,7 +39,7 @@ fn main() {
                 for j in i+1..len-1 {
                     for k in j+1..len {
                         let mask = POW10[pos_arr[i+1]] + POW10[pos_arr[j+1]] + POW10[pos_arr[k+1]];
-                        let base = prime - digit as i64 * mask;
+                        let base = prime - digit as u64 * mask;
 
                         let mut count = 0;
                         let mut remaining = 10;
@@ -74,7 +74,7 @@ fn main() {
     }
 }
 
-fn fill_relevant_digit_positions(mut n: i64, positions: &mut [PosArray; 3]) {
+fn fill_relevant_digit_positions(mut n: u64, positions: &mut [PosArray; 3]) {
     positions[0][0] = 0;
     positions[1][0] = 0;
     positions[2][0] = 0;

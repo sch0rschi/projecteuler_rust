@@ -27,7 +27,7 @@ fn main() {
     }
 }
 
-fn check_composite(composite: i64, sieve: &[bool]) -> bool {
+fn check_composite(composite: u64, sieve: &[bool]) -> bool {
     let mut n = 1;
     while 2 * n * n < composite {
         let remainder = composite - 2 * n * n;

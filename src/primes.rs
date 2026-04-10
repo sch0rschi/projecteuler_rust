@@ -1,12 +1,10 @@
-use num_integer::Integer;
-
 pub struct Primes {
     pub prime_sieve: Vec<bool>,
-    pub prime_list: Vec<i64>,
+    pub prime_list: Vec<u64>,
 }
 
-pub fn find_first_n_primes(n: i64) -> Vec<i64> {
-    let mut primes: Vec<i64> = [2, 3].to_vec();
+pub fn find_first_n_primes(n: u64) -> Vec<u64> {
+    let mut primes: Vec<u64> = [2, 3].to_vec();
 
     for _ in 3..=n {
         let next_prime = find_next_prime(&primes);
@@ -15,12 +13,12 @@ pub fn find_first_n_primes(n: i64) -> Vec<i64> {
     primes
 }
 
-pub fn primes_inclusive(limit: i64) -> Primes {
+pub fn primes_inclusive(limit: u64) -> Primes {
     let sieve = prime_sieve_up_to_inclusive(limit as usize);
     let list = sieve
         .iter()
         .enumerate()
-        .filter_map(|(i, &is_prime)| if is_prime { Some(i as i64) } else { None })
+        .filter_map(|(i, &is_prime)| if is_prime { Some(i as u64) } else { None })
         .collect();
     Primes {
         prime_sieve: sieve.clone(),
@@ -34,7 +32,7 @@ pub fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
     }
 
     let size = (limit >> 1) + 1;
-    let mut bits = vec![u64::MAX; (size + 63) / 64];
+    let mut bits = vec![u64::MAX; size.div_ceil(64)];
 
     bits[0] &= !1u64;
 
@@ -73,7 +71,7 @@ pub fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
     out
 }
 
-fn find_next_prime(previous_primes: &[i64]) -> i64 {
+fn find_next_prime(previous_primes: &[u64]) -> u64 {
     let last_prime = *previous_primes.last().unwrap();
     for candidate_prime in ((last_prime + 2)..).step_by(2) {
         let candidate_prime_sqrt = candidate_prime.isqrt();
@@ -89,20 +87,20 @@ fn find_next_prime(previous_primes: &[i64]) -> i64 {
     unreachable!("The loop should always return a prime");
 }
 
-pub fn add_next_prime(previous_primes: &mut Vec<i64>) {
+pub fn add_next_prime(previous_primes: &mut Vec<u64>) {
     let next_prime = find_next_prime(previous_primes);
     previous_primes.push(next_prime);
 }
 
-pub fn unique_prime_factors(n: i64, list: &[i64]) -> Vec<i64> {
-    let mut factors: Vec<i64> = Vec::new();
+pub fn unique_prime_factors(n: u64, list: &[u64]) -> Vec<u64> {
+    let mut factors: Vec<u64> = Vec::new();
 
     let mut number = n;
     for &prime in list.iter() {
-        if number.is_multiple_of(&prime) {
+        if number.is_multiple_of(prime) {
             number /= prime;
             factors.push(prime);
-            while number.is_multiple_of(&prime) {
+            while number.is_multiple_of(prime) {
                 number /= prime;
             }
         }

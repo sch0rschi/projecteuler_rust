@@ -24,7 +24,7 @@ fn main() {
         }
     }
 
-    let mut smallest_sum: i64 = i64::MAX;
+    let mut smallest_sum: u64 = u64::MAX;
 
     for p0i in 0..prime_list.len() {
         if 5 * prime_list[p0i] > smallest_sum {
@@ -70,11 +70,11 @@ fn main() {
     println!("Elapsed: {:?}", start.elapsed());
 }
 
-fn both_prime_concat(p1: i64, p2: i64, prime_sieve: &[bool]) -> bool {
+fn both_prime_concat(p1: u64, p2: u64, prime_sieve: &[bool]) -> bool {
     prime_concat(p1, p2, prime_sieve) && prime_concat(p2, p1, prime_sieve)
 }
 
-fn prime_concat(prime_least: i64, prime_most: i64, prime_sieve: &[bool]) -> bool {
+fn prime_concat(prime_least: u64, prime_most: u64, prime_sieve: &[bool]) -> bool {
     let mut multiplyer = 10;
     while multiplyer < prime_least {
         multiplyer *= 10;

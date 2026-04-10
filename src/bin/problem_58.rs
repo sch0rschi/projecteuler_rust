@@ -37,15 +37,14 @@ fn main() {
     println!("Elapsed: {:?}", start.elapsed());
 }
 
-fn check_prime(n: i64, prime_list: &[i64]) -> bool {
-    let sqrt = (n as f64).sqrt() as i64 + 1;
+fn check_prime(n: u64, prime_list: &[u64]) -> bool {
+    let sqrt = (n as f64).sqrt() as u64 + 1;
     for &prime in prime_list {
         if prime > sqrt {
             return true;
-        } else if n % prime == 0 {
+        } else if n.is_multiple_of(prime) {
             return false;
         }
     }
-    assert!(false, "unreachable");
     unreachable!()
 }

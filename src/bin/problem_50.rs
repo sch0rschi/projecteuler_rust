@@ -7,9 +7,9 @@ fn main() {
 
     let Primes { prime_sieve: sieve, prime_list: primes_list } = primes_inclusive(999_999);
 
-    let mut prefix_sums: Vec<i64> = Vec::with_capacity(primes_list.len());
+    let mut prefix_sums: Vec<u64> = Vec::with_capacity(primes_list.len());
 
-    let mut prefix_sum: i64 = 0;
+    let mut prefix_sum: u64 = 0;
     for prime in primes_list {
         prefix_sum += prime;
         prefix_sums.push(prefix_sum);

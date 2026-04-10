@@ -10,7 +10,7 @@ fn main() {
     let u8_ascii_text = fs::read_to_string("resources/0059_cipher.txt")
         .expect("Failed to read file")
         .split(",")
-        .map(|x| u8::from_str_radix(x, 10).expect("Failed to parse hex integer"))
+        .map(|x| x.parse::<u8>().expect("Failed to parse hex integer"))
         .collect_vec();
 
     let key: [u8; 3] = std::array::from_fn(|i| get_key(&u8_ascii_text, i));

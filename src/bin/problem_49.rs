@@ -18,7 +18,7 @@ fn main() {
     let start = Instant::now();
 
     let Primes { prime_sieve: sieve, prime_list: list } = primes_inclusive(9999);
-    let mut digit_count_to_primes: HashMap<u32, Vec<i64>> = HashMap::new();
+    let mut digit_count_to_primes: HashMap<u32, Vec<u64>> = HashMap::new();
     let mut prime_to_digit_counts: Vec<u32> = vec![0; 10000];
     for &prime in list.iter().filter(|&&p| p > 1000) {
         let digit_count = get_digit_counts(prime);
@@ -56,7 +56,7 @@ fn main() {
     }
 }
 
-fn get_digit_counts(mut n: i64) -> u32 {
+fn get_digit_counts(mut n: u64) -> u32 {
     let mut count = 0;
     while n > 0 {
         count += FACTORS[(n % 10) as usize] as u32;
