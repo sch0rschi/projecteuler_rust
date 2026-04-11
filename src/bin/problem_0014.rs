@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::time::Instant;
 
 fn main() {
@@ -10,32 +9,50 @@ fn main() {
     assert_eq!(837799, result);
     assert!(duration < std::time::Duration::from_secs(1));
 }
-fn solve_0014() -> i64 {
-    let mut chaining_counts: HashMap<i64, i64> = HashMap::new();
-    chaining_counts.insert(1, 1);
-    let mut max_chaining_count = 0;
-    let mut number_having_max_chain = 1;
-    for i in 2..1_000_000 {
-        let chaining_number = find_chaining_number_recursion(i, &mut chaining_counts);
-        if chaining_number > max_chaining_count {
-            max_chaining_count = chaining_number;
-            number_having_max_chain = i;
+
+fn solve_0014() -> u64 {
+    let mut cache = vec![0u16; 2_000_000];
+    cache[1] = 1;
+
+    let mut max_len = 0;
+    let mut max_len_value = 1;
+
+    for i in 500_000..1_000_000 {
+        let len = collatz_len(i, &mut cache);
+        if len > max_len {
+            max_len = len;
+            max_len_value = i;
         }
     }
-    number_having_max_chain
+
+    max_len_value
 }
 
-fn find_chaining_number_recursion(n: i64, cache: &mut HashMap<i64, i64>) -> i64 {
-    if cache.contains_key(&n) {
-        return *cache.get(&n).unwrap();
+fn collatz_len(mut n: u64, cache: &mut [u16]) -> u16 {
+    let mut steps = 0;
+    let start = n;
+
+    while n > 1 && (n as usize >= cache.len() || cache[n as usize] == 0) {
+        if n.is_multiple_of(2) {
+            n /= 2;
+            steps += 1;
+        } else {
+            n = (3 * n + 1) / 2;
+            steps += 2;
+        }
     }
-    if n % 2 == 0 {
-        let chaining_number_step = find_chaining_number_recursion(n / 2, cache);
-        cache.insert(n, chaining_number_step + 1);
-        chaining_number_step + 1
+
+    let known = if n < cache.len() as u64 {
+        cache[n as usize]
     } else {
-        let chaining_number_step = find_chaining_number_recursion(3 * n + 1, cache);
-        cache.insert(n, chaining_number_step + 1);
-        chaining_number_step + 1
+        0
+    };
+
+    let total = steps + known;
+
+    if start < cache.len() as u64 {
+        cache[start as usize] = total;
     }
+
+    total
 }
