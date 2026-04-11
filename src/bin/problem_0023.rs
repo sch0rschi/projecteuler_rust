@@ -1,5 +1,3 @@
-use bitvec::bitvec;
-use projecteuler::divisors::proper_divisor_sum;
 use std::time::Instant;
 
 fn main() {
@@ -13,27 +11,39 @@ fn main() {
 }
 
 fn solve_0023() -> usize {
-    let mut abundant_numbers: Vec<u64> = Vec::new();
-    for i in 2..=28123 {
-        let proper_divisor_sum = proper_divisor_sum(i);
-        if proper_divisor_sum > i {
-            abundant_numbers.push(i);
-        }
-    }
-    let mut bits = bitvec![1; 28123];
-    for n_1 in &abundant_numbers {
-        for n_2 in &abundant_numbers {
-            let abundant_sum = n_1 + n_2;
-            if abundant_sum < 28123 {
-                bits.set(abundant_sum as usize, false);
+    let limit = 28123;
+
+    let divisor_sums = compute_divisor_sums(limit);
+
+    let abundant: Vec<usize> = (2..=limit)
+        .filter(|&i| divisor_sums[i] > i)
+        .collect();
+
+    let mut can_be_written = vec![false; limit + 1];
+
+    for (i, &n1) in abundant.iter().enumerate() {
+        for &n2 in &abundant[i..] {
+            let sum = n1 + n2;
+            if sum > limit {
+                break;
             }
+            can_be_written[sum] = true;
         }
     }
-    let mut sum = 0;
-    for (index, value) in bits.iter().enumerate() {
-        if *value {
-            sum += index;
+
+    (1..=limit)
+        .filter(|&i| !can_be_written[i])
+        .sum()
+}
+
+fn compute_divisor_sums(limit: usize) -> Vec<usize> {
+    let mut sums = vec![0; limit + 1];
+
+    for i in 1..=limit / 2 {
+        for j in (2 * i..=limit).step_by(i) {
+            sums[j] += i;
         }
     }
-    sum
+
+    sums
 }
