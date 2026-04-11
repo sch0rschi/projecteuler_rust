@@ -10,38 +10,43 @@ fn main() {
     assert!(duration < std::time::Duration::from_secs(1));
 }
 
-fn solve_0044() -> i64 {
-    for d_i in 1i64.. {
-        let d = p(d_i);
+fn solve_0044() -> usize {
+    const N: usize = 3000;
 
-        for k in 2.. {
-            let p_k = p(k);
+    let mut pent = Vec::with_capacity(N);
+    for i in 1..N {
+        pent.push(pentagonal(i));
+    }
 
-            if p_k <= d {
-                continue;
-            }
+    let max_val = pent[N - 2] + pent[N - 2];
 
-            let candidate = p_k - d;
+    let mut is_pent = vec![false; max_val + 1];
+    for &p in &pent {
+        is_pent[p] = true;
+    }
 
-            if is_scaled_pentagonal(candidate) && is_scaled_pentagonal(p_k + candidate) {
-                return d / 2;
-            }
+    let mut best = usize::MAX;
 
-            if p_k - p(k - 1) > d {
+    for j in (1..pent.len()).rev() {
+        let pj = pent[j];
+
+        for i in (0..j).rev() {
+            let pi = pent[i];
+            let diff = pj - pi;
+
+            if diff >= best {
                 break;
+            }
+
+            if is_pent[diff] && is_pent[pj + pi] {
+                best = diff;
             }
         }
     }
-    unreachable!()
+
+    best
 }
 
-fn p(i: i64) -> i64 {
-    i * (3 * i - 1)
-}
-
-fn is_scaled_pentagonal(x: i64) -> bool {
-    let d = 1.0 + 12.0 * x as f64;
-    let sqrt_d = d.sqrt();
-
-    sqrt_d.fract() == 0.0 && (1.0 + sqrt_d) % 6.0 == 0.0
+fn pentagonal(n: usize) -> usize {
+    n * (3 * n - 1) / 2
 }
