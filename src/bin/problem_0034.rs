@@ -1,5 +1,3 @@
-use projecteuler::digits::get_digits;
-use projecteuler::factorials::get_factorial_array;
 use std::time::Instant;
 
 fn main() {
@@ -12,29 +10,36 @@ fn main() {
     assert!(duration < std::time::Duration::from_secs(1));
 }
 
+#[inline(always)]
+fn factorial_table() -> [u64; 10] {
+    let mut f = [1u64; 10];
+    for i in 2..10 {
+        f[i] = f[i - 1] * i as u64;
+    }
+    f
+}
+
 fn solve_0034() -> u64 {
-    let mut sum = 0;
-    let factorial_map = get_factorial_array(9);
+    let fact = factorial_table();
 
-    let mut max_length: u64 = 1;
-    loop {
-        let max_sum = factorial_map[9] * max_length;
-        if max_sum < 10u64.pow(max_length as u32 - 1) {
-            max_length -= 1;
-            break;
+    // upper bound: 7 * 9! = 2,540,160
+    let limit = 2_540_160;
+
+    let mut sum = 0u64;
+
+    for i in 10..limit {
+        let mut n = i;
+        let mut s = 0u64;
+
+        while n > 0 {
+            s += fact[(n % 10) as usize];
+            n /= 10;
         }
-        max_length += 1;
-    }
 
-    for i in 3u64..10u64.pow(max_length as u32) {
-        let digits = get_digits(i);
-        let factorial_sum = digits
-            .iter()
-            .map(|d: &u64| -> u64 { factorial_map[*d as usize] })
-            .sum::<u64>();
-        if factorial_sum == i {
-            sum += i;
+        if s == i as u64 {
+            sum += i as u64;
         }
     }
+
     sum
 }
