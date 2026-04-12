@@ -1,4 +1,3 @@
-use num_integer::Roots;
 use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
 
@@ -13,64 +12,64 @@ fn main() {
 }
 
 fn solve_0060() -> u64 {
-    let Primes {
-        prime_sieve,
-        mut prime_list,
-    } = primes_inclusive(100_000_000);
+    let primes = primes_inclusive(10_000);
+    let prime_list = &primes.prime_list;
 
-    let last_checkable = *prime_list.last().unwrap();
-    prime_list.retain(|x| x < &last_checkable.sqrt());
+    let n = prime_list.len();
 
-    let mut check: [[bool; 1500]; 1500] = [[false; 1500]; 1500];
+    let mut check = vec![vec![false; n]; n];
 
-    for i in 0..prime_list.len() {
-        for j in i + 1..prime_list.len() {
-            if both_prime_concat(prime_list[i], prime_list[j], &prime_sieve) {
+    for i in 0..n {
+        for j in i + 1..n {
+            if both_prime_concat(prime_list[i], prime_list[j], &primes) {
                 check[i][j] = true;
-                check[j][i] = true;
             }
         }
     }
 
-    let mut smallest_sum: u64 = u64::MAX;
+    let mut best = u64::MAX;
 
-    for p0i in 0..prime_list.len() {
-        if 5 * prime_list[p0i] > smallest_sum {
+    for p0i in 0..n {
+        let p0 = prime_list[p0i];
+        if 5 * p0 >= best {
             break;
         }
-        for p1i in p0i + 1..prime_list.len() {
-            if prime_list[p0i] + 4 * prime_list[p1i] > smallest_sum {
+
+        for p1i in p0i + 1..n {
+            let p1 = prime_list[p1i];
+            if p0 + 4 * p1 >= best {
                 break;
             }
             if !check[p0i][p1i] {
                 continue;
             }
-            for p2i in p1i + 1..prime_list.len() {
-                if prime_list[p0i] + prime_list[p1i] + 3 * prime_list[p2i] > smallest_sum {
+
+            for p2i in p1i + 1..n {
+                let p2 = prime_list[p2i];
+                if p0 + p1 + 3 * p2 >= best {
                     break;
                 }
                 if !check[p0i][p2i] || !check[p1i][p2i] {
                     continue;
                 }
-                for p3i in p2i + 1..prime_list.len() {
-                    if prime_list[p0i] + prime_list[p1i] + prime_list[p2i] + 2 * prime_list[p3i]
-                        > smallest_sum
-                    {
+
+                for p3i in p2i + 1..n {
+                    let p3 = prime_list[p3i];
+                    if p0 + p1 + p2 + 2 * p3 >= best {
                         break;
                     }
                     if !check[p0i][p3i] || !check[p1i][p3i] || !check[p2i][p3i] {
                         continue;
                     }
-                    for p4i in p3i + 1..prime_list.len() {
-                        if prime_list[p0i]
-                            + prime_list[p1i]
-                            + prime_list[p2i]
-                            + prime_list[p3i]
-                            + prime_list[p4i]
-                            > smallest_sum
-                        {
+
+                    for p4i in p3i + 1..n {
+                        let p4 = prime_list[p4i];
+                        let sum = p0 + p1 + p2 + p3 + p4;
+
+                        if sum >= best {
                             break;
                         }
+
                         if !check[p0i][p4i]
                             || !check[p1i][p4i]
                             || !check[p2i][p4i]
@@ -78,28 +77,28 @@ fn solve_0060() -> u64 {
                         {
                             continue;
                         }
-                        smallest_sum = prime_list[p0i]
-                            + prime_list[p1i]
-                            + prime_list[p2i]
-                            + prime_list[p3i]
-                            + prime_list[p4i];
+
+                        best = sum;
                     }
                 }
             }
         }
     }
 
-    smallest_sum
+    best
 }
 
-fn both_prime_concat(p1: u64, p2: u64, prime_sieve: &[bool]) -> bool {
-    prime_concat(p1, p2, prime_sieve) && prime_concat(p2, p1, prime_sieve)
+#[inline(always)]
+fn both_prime_concat(p1: u64, p2: u64, primes: &Primes) -> bool {
+    prime_concat(p1, p2, primes) && prime_concat(p2, p1, primes)
 }
 
-fn prime_concat(prime_least: u64, prime_most: u64, prime_sieve: &[bool]) -> bool {
-    let mut multiplyer = 10;
-    while multiplyer < prime_least {
-        multiplyer *= 10;
+#[inline(always)]
+fn prime_concat(prime_least: u64, prime_most: u64, primes: &Primes) -> bool {
+    let mut factor = 10;
+    while factor <= prime_least {
+        factor *= 10;
     }
-    prime_sieve[(prime_most * multiplyer + prime_least) as usize]
+
+    primes.is_prime(prime_most * factor + prime_least)
 }

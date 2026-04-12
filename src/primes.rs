@@ -3,6 +3,36 @@ pub struct Primes {
     pub prime_list: Vec<u64>,
 }
 
+impl Primes {
+    pub fn is_prime(&self, n: u64) -> bool {
+        if n < self.prime_sieve.len() as u64 {
+            return self.prime_sieve[n as usize];
+        }
+        if n < 2_047 {
+            return is_prime_miller_rabin(n, &[2]);
+        }
+        if n < 1_373_653 {
+            return is_prime_miller_rabin(n, &[2, 3]);
+        }
+        if n < 9_080_191 {
+            return is_prime_miller_rabin(n, &[31, 73]);
+        }
+        if n < 4_759_123_141 {
+            return is_prime_miller_rabin(n, &[2, 7, 61]);
+        }
+        if n < 2_152_302_898_747 {
+            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11]);
+        }
+        if n < 3_474_749_660_383 {
+            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13]);
+        }
+        if n < 341_550_071_728_321 {
+            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13, 17]);
+        }
+        panic!("This code path should not be reached");
+    }
+}
+
 pub fn find_first_n_primes(n: u64) -> Vec<u64> {
     let mut primes: Vec<u64> = [2, 3].to_vec();
 
@@ -21,7 +51,7 @@ pub fn primes_inclusive(limit: u64) -> Primes {
         .filter_map(|(i, &is_prime)| if is_prime { Some(i as u64) } else { None })
         .collect();
     Primes {
-        prime_sieve: sieve.clone(),
+        prime_sieve: sieve,
         prime_list: list,
     }
 }
@@ -111,4 +141,64 @@ pub fn unique_prime_factors(n: u64, list: &[u64]) -> Vec<u64> {
     }
 
     factors
+}
+
+pub fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
+    if n < 2 {
+        return false;
+    }
+    if n % 2 == 0 {
+        return n == 2;
+    }
+
+    let mut d = n - 1;
+    let s = d.trailing_zeros();
+    d >>= s;
+
+    for &a in bases {
+        if a % n == 0 {
+            continue;
+        }
+        if !miller_rabin_witness(n, a, d, s) {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn miller_rabin_witness(n: u64, a: u64, d: u64, s: u32) -> bool {
+    let mut x = mod_pow(a % n, d, n);
+
+    if x == 1 || x == n - 1 {
+        return true;
+    }
+
+    for _ in 1..s {
+        x = mod_mul(x, x, n);
+        if x == n - 1 {
+            return true;
+        }
+    }
+
+    false
+}
+
+fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
+    let mut result = 1u64;
+    base %= modulo;
+
+    while exp > 0 {
+        if exp & 1 == 1 {
+            result = mod_mul(result, base, modulo);
+        }
+        base = mod_mul(base, base, modulo);
+        exp >>= 1;
+    }
+
+    result
+}
+
+fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
+    ((a as u128 * b as u128) % modulo as u128) as u64
 }
