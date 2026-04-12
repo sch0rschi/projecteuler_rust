@@ -1,4 +1,4 @@
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
 
 const POW10: [u64; 10] = [
@@ -27,11 +27,12 @@ fn main() {
 }
 
 fn solve_0051() -> u64 {
-    let Primes { prime_sieve: sieve, prime_list: primes_list } = primes_inclusive(999_999);
+    let primes = primes_inclusive(999_999);
+    let primes_list = &primes.primes_list;
 
     let mut positions: [PosArray; 3] = [[0; 7]; 3];
 
-    for prime in primes_list {
+    for &prime in primes_list {
         if prime < 100_000 {
             continue;
         }
@@ -56,7 +57,7 @@ fn solve_0051() -> u64 {
                             remaining -= 1;
                             let candidate = base + replacement_digit * mask;
 
-                            if candidate > 100_000 && sieve[candidate as usize] {
+                            if candidate > 100_000 && primes.is_prime(candidate) {
                                 count += 1;
                             }
 
@@ -68,7 +69,7 @@ fn solve_0051() -> u64 {
                         if count >= 8 {
                             for d in 0..=9 {
                                 let candidate = base + d * mask;
-                                if sieve[candidate as usize] {
+                                if primes.is_prime(candidate) {
                                     return candidate;
                                 }
                             }

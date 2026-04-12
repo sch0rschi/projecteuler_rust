@@ -1,5 +1,5 @@
 use projecteuler::pandigital::is_1_to_length_pandigital;
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
 
 fn main() {
@@ -13,12 +13,10 @@ fn main() {
 }
 
 fn solve_0041() -> u64 {
-    let Primes {
-        prime_sieve: _,
-        prime_list,
-    } = primes_inclusive(7654321);
+    let primes = primes_inclusive(7654321);
+    let primes_list = &primes.primes_list;
 
-    *prime_list
+    *primes_list
         .iter()
         .rev()
         .find(|&&p| is_1_to_length_pandigital(p))

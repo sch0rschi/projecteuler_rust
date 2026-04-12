@@ -1,4 +1,4 @@
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
 
 fn main() {
@@ -12,10 +12,8 @@ fn main() {
 }
 
 fn solve_0058() -> i32 {
-    let Primes {
-        prime_sieve: _,
-        prime_list
-    } = primes_inclusive(100_000);
+    let primes = primes_inclusive(100_000);
+    let primes_list = &primes.primes_list;
 
     let mut result = 0;
     let mut diagonal_prime_count = 0;
@@ -32,9 +30,9 @@ fn solve_0058() -> i32 {
         adding += 8;
         diagonal_elements_count += 4;
         diagonal_prime_count +=
-            check_prime(top_left, prime_list.as_slice()) as u64
-                + check_prime(top_right, prime_list.as_slice()) as u64
-                + check_prime(bottom_left, prime_list.as_slice()) as u64;
+            check_prime(top_left, primes_list.as_slice()) as u64
+                + check_prime(top_right, primes_list.as_slice()) as u64
+                + check_prime(bottom_left, primes_list.as_slice()) as u64;
 
         if 10 * diagonal_prime_count < diagonal_elements_count {
             result = i;
@@ -45,9 +43,9 @@ fn solve_0058() -> i32 {
     result
 }
 
-fn check_prime(n: u64, prime_list: &[u64]) -> bool {
+fn check_prime(n: u64, primes_list: &[u64]) -> bool {
     let sqrt = (n as f64).sqrt() as u64 + 1;
-    for &prime in prime_list {
+    for &prime in primes_list {
         if prime > sqrt {
             return true;
         } else if n.is_multiple_of(prime) {

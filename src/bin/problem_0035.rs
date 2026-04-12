@@ -13,17 +13,18 @@ fn main() {
 }
 
 fn solve_0035() -> i32 {
-    let Primes { prime_sieve, prime_list: primes } = primes_inclusive(1_000_000);
+    let primes = primes_inclusive(1_000_000);
+    let primes_list = &primes.primes_list;
     let mut count = 1;
-    for &prime in primes.iter().skip(1) {
-        if is_rotating_prime(prime, &prime_sieve) {
+    for &prime in primes_list.iter().skip(1) {
+        if is_rotating_prime(prime, &primes) {
             count += 1;
         }
     }
     count
 }
 
-fn is_rotating_prime(n: u64, primes: &[bool]) -> bool {
+fn is_rotating_prime(n: u64, primes: &Primes) -> bool {
     let mut number_in_digits = get_digits(n);
     if number_in_digits.contains(&0)
         || number_in_digits.contains(&2)
@@ -35,7 +36,7 @@ fn is_rotating_prime(n: u64, primes: &[bool]) -> bool {
     }
     for _ in 0..number_in_digits.len() {
         let number = get_number(&number_in_digits);
-        if !primes[number as usize] {
+        if !primes.is_prime(number) {
             return false;
         }
         number_in_digits.rotate_left(1);

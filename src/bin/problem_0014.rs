@@ -37,7 +37,7 @@ fn collatz_len(mut n: u64, cache: &mut [u16]) -> u16 {
             n /= 2;
             steps += 1;
         } else {
-            n = (3 * n + 1) / 2;
+            n = (3 * n + 1).div_ceil(2);
             steps += 2;
         }
     }

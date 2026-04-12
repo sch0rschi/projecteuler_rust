@@ -1,12 +1,21 @@
 pub struct Primes {
-    pub prime_sieve: Vec<bool>,
-    pub prime_list: Vec<u64>,
+    prime_sieve: Vec<bool>,
+    pub primes_list: Vec<u64>,
 }
 
 impl Primes {
     pub fn is_prime(&self, n: u64) -> bool {
         if n < self.prime_sieve.len() as u64 {
             return self.prime_sieve[n as usize];
+        }
+        if n < 2 {
+            return false;
+        }
+        if n == 2 || n == 3 {
+            return true;
+        }
+        if n.is_multiple_of(2) || n.is_multiple_of(3) {
+            return false;
         }
         if n < 2_047 {
             return is_prime_miller_rabin(n, &[2]);
@@ -52,7 +61,7 @@ pub fn primes_inclusive(limit: u64) -> Primes {
         .collect();
     Primes {
         prime_sieve: sieve,
-        prime_list: list,
+        primes_list: list,
     }
 }
 
@@ -143,47 +152,16 @@ pub fn unique_prime_factors(n: u64, list: &[u64]) -> Vec<u64> {
     factors
 }
 
-pub fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
-    if n < 2 {
-        return false;
+#[inline(always)]
+fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
+    if modulo < (1 << 32) {
+        (a * b) % modulo
+    } else {
+        ((a as u128 * b as u128) % modulo as u128) as u64
     }
-    if n % 2 == 0 {
-        return n == 2;
-    }
-
-    let mut d = n - 1;
-    let s = d.trailing_zeros();
-    d >>= s;
-
-    for &a in bases {
-        if a % n == 0 {
-            continue;
-        }
-        if !miller_rabin_witness(n, a, d, s) {
-            return false;
-        }
-    }
-
-    true
 }
 
-fn miller_rabin_witness(n: u64, a: u64, d: u64, s: u32) -> bool {
-    let mut x = mod_pow(a % n, d, n);
-
-    if x == 1 || x == n - 1 {
-        return true;
-    }
-
-    for _ in 1..s {
-        x = mod_mul(x, x, n);
-        if x == n - 1 {
-            return true;
-        }
-    }
-
-    false
-}
-
+#[inline(always)]
 fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     let mut result = 1u64;
     base %= modulo;
@@ -199,6 +177,47 @@ fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     result
 }
 
-fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
-    ((a as u128 * b as u128) % modulo as u128) as u64
+#[inline(always)]
+fn miller_rabin_witness(n: u64, a: u64, d: u64, s: u32) -> bool {
+    let mut x = mod_pow(a, d, n);
+
+    if x == 1 || x == n - 1 {
+        return true;
+    }
+
+    for _ in 1..s {
+        x = mod_mul(x, x, n);
+        if x == n - 1 {
+            return true;
+        }
+    }
+
+    false
+}
+
+pub fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
+    const SMALL_PRIMES: &[u64] = &[5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
+    for &p in SMALL_PRIMES {
+        if n == p {
+            return true;
+        }
+        if n.is_multiple_of(p) {
+            return false;
+        }
+    }
+
+    let mut d = n - 1;
+    let s = d.trailing_zeros();
+    d >>= s;
+
+    for &a in bases {
+        if a >= n && a % n == 0 {
+            continue;
+        }
+        if !miller_rabin_witness(n, a, d, s) {
+            return false;
+        }
+    }
+
+    true
 }

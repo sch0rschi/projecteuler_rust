@@ -13,15 +13,15 @@ fn main() {
 
 fn solve_0060() -> u64 {
     let primes = primes_inclusive(10_000);
-    let prime_list = &primes.prime_list;
+    let primes_list = &primes.primes_list;
 
-    let n = prime_list.len();
+    let n = primes_list.len();
 
     let mut check = vec![vec![false; n]; n];
 
     for i in 0..n {
         for j in i + 1..n {
-            if both_prime_concat(prime_list[i], prime_list[j], &primes) {
+            if both_prime_concat(primes_list[i], primes_list[j], &primes) {
                 check[i][j] = true;
             }
         }
@@ -30,13 +30,13 @@ fn solve_0060() -> u64 {
     let mut best = u64::MAX;
 
     for p0i in 0..n {
-        let p0 = prime_list[p0i];
+        let p0 = primes_list[p0i];
         if 5 * p0 >= best {
             break;
         }
 
         for p1i in p0i + 1..n {
-            let p1 = prime_list[p1i];
+            let p1 = primes_list[p1i];
             if p0 + 4 * p1 >= best {
                 break;
             }
@@ -45,7 +45,7 @@ fn solve_0060() -> u64 {
             }
 
             for p2i in p1i + 1..n {
-                let p2 = prime_list[p2i];
+                let p2 = primes_list[p2i];
                 if p0 + p1 + 3 * p2 >= best {
                     break;
                 }
@@ -54,7 +54,7 @@ fn solve_0060() -> u64 {
                 }
 
                 for p3i in p2i + 1..n {
-                    let p3 = prime_list[p3i];
+                    let p3 = primes_list[p3i];
                     if p0 + p1 + p2 + 2 * p3 >= best {
                         break;
                     }
@@ -63,7 +63,7 @@ fn solve_0060() -> u64 {
                     }
 
                     for p4i in p3i + 1..n {
-                        let p4 = prime_list[p4i];
+                        let p4 = primes_list[p4i];
                         let sum = p0 + p1 + p2 + p3 + p4;
 
                         if sum >= best {

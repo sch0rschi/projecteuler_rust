@@ -1,4 +1,4 @@
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
 
 fn main() {
@@ -12,6 +12,6 @@ fn main() {
 }
 
 fn solve_0010() -> u64 {
-    let Primes { prime_sieve: _, prime_list } = primes_inclusive(2_000_000);
-    prime_list.iter().sum::<u64>()
+    let primes = primes_inclusive(2_000_000);
+    primes.primes_list.iter().sum::<u64>()
 }

@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
 
 fn main() {
@@ -13,7 +13,8 @@ fn main() {
 }
 
 fn solve_0050() -> u64 {
-    let Primes { prime_sieve: sieve, prime_list: primes_list } = primes_inclusive(999_999);
+    let primes = primes_inclusive(999_999);
+    let primes_list = &primes.primes_list;
 
     let mut prefix_sums: Vec<u64> = Vec::with_capacity(primes_list.len());
 
@@ -36,7 +37,7 @@ fn solve_0050() -> u64 {
             if end_sum - start_sum >= 1_000_000 {
                 break;
             }
-            if sieve[(end_sum - start_sum) as usize] && best_chain_count < end_index - start_index {
+            if primes.is_prime(end_sum - start_sum) && best_chain_count < end_index - start_index {
                 best_chain_count = end_index - start_index;
                 best_prime = end_sum - start_sum;
             }

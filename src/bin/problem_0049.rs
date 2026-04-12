@@ -1,4 +1,4 @@
-use projecteuler::primes::{primes_inclusive, Primes};
+use projecteuler::primes::{primes_inclusive};
 use std::collections::HashMap;
 use std::time::Instant;
 
@@ -25,10 +25,11 @@ fn main() {
 }
 
 fn solve_0049() -> String {
-    let Primes { prime_sieve: sieve, prime_list: list } = primes_inclusive(9999);
+    let primes = primes_inclusive(9999);
+    let primes_list = &primes.primes_list;
     let mut digit_count_to_primes: HashMap<u32, Vec<u64>> = HashMap::new();
     let mut prime_to_digit_counts: Vec<u32> = vec![0; 10000];
-    for &prime in list.iter().filter(|&&p| p > 1000) {
+    for &prime in primes_list.iter().filter(|&&p| p > 1000) {
         let digit_count = get_digit_counts(prime);
         digit_count_to_primes
             .entry(digit_count)
@@ -40,17 +41,17 @@ fn solve_0049() -> String {
     let digit_count_to_primes = digit_count_to_primes;
     let prime_to_digit_counts = prime_to_digit_counts;
 
-    for (digit_count, primes) in digit_count_to_primes {
-        if primes.len() < 3 {
+    for (digit_count, primes_for_digit_count) in digit_count_to_primes {
+        if primes_for_digit_count.len() < 3 {
             continue;
         }
-        for i in 0..primes.len() {
-            let lower = primes[i];
-            for &middle in primes.iter().skip(i + 1) {
+        for i in 0..primes_for_digit_count.len() {
+            let lower = primes_for_digit_count[i];
+            for &middle in primes_for_digit_count.iter().skip(i + 1) {
                 let upper = ((middle << 1) - lower) as usize;
                 if upper > 10000 {
                     break;
-                } else if sieve[upper]
+                } else if primes.is_prime(upper as u64)
                     && digit_count == prime_to_digit_counts[upper]
                     && lower != 1487
                     && middle != 4817
