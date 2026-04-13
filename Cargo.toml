@@ -11,3 +11,4 @@ bitvec = "1.0.1"
 itertools = "0.14.0"
 num-integer = "0.1.46"
 phf = { version = "0.13.1", features = ["macros"] }
+rustc-hash = "2.1.2"

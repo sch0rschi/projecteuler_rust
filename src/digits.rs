@@ -35,3 +35,12 @@ pub fn get_digits_in_binary(n: u64) -> Vec<bool> {
     }
     digits
 }
+
+pub fn get_digit_count_encoding_15_max(mut n: u64) -> u64 {
+    let mut encoding = 0;
+    while n > 0 {
+        encoding += 1 << (4 * (n % 10));
+        n /= 10;
+    }
+    encoding
+}
