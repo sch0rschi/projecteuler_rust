@@ -1,4 +1,5 @@
 use std::time::Instant;
+use projecteuler::continued_fractions::get_continued_fraction_sequence;
 
 fn main() {
     let start = Instant::now();
@@ -12,32 +13,8 @@ fn main() {
 
 fn solve_0064() -> usize {
     (1..=10_000)
-        .map(find_period_length)
+        .map(get_continued_fraction_sequence)
+        .map(|sequence| sequence.len() - 1)
         .filter(|p| p % 2 == 1)
         .count()
-}
-
-fn find_period_length(n: i32) -> usize {
-    let a0 = (n as f64).sqrt() as i32;
-    if a0 * a0 == n {
-        return 0;
-    }
-
-    let mut add = 0;
-    let mut divisor = 1;
-    let mut factor = a0;
-
-    let mut period = 0;
-
-    loop {
-        add = divisor * factor - add;
-        divisor = (n - add * add) / divisor;
-        factor = (a0 + add) / divisor;
-
-        period += 1;
-
-        if factor == 2 * a0 {
-            return period;
-        }
-    }
 }
