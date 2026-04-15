@@ -8,3 +8,4 @@ pub mod pandigital;
 pub mod word_score;
 pub mod continued_fractions;
 pub mod pells_equation;
+pub mod permutations;
