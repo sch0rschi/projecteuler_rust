@@ -1,5 +1,6 @@
 use projecteuler::primes::primes_inclusive;
 use std::time::Instant;
+use projecteuler::coprimes::phi;
 
 fn main() {
     let start = Instant::now();
@@ -23,12 +24,4 @@ fn solve_0069() -> usize {
         .max_by_key(|&(_, ratio)| ratio)
         .unwrap()
         .0
-}
-
-fn phi(n: u64, prime_factors: &[u64]) -> u64 {
-    let mut result = n;
-    for &p in prime_factors {
-        result -= result / p;
-    }
-    result
 }
