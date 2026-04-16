@@ -4,6 +4,32 @@ pub struct Primes {
 }
 
 impl Primes {
+    pub fn unique_prime_factors(&self, mut n: u64) -> Vec<u64> {
+        let mut result = Vec::new();
+        if n < 2 {
+            return result;
+        }
+        for &p in &self.primes_list {
+            if p * p > n {
+                break;
+            }
+
+            if n.is_multiple_of(p) {
+                result.push(p);
+                while n.is_multiple_of(p) {
+                    n /= p;
+                }
+            }
+        }
+        if n > 1 {
+            result.push(n);
+        }
+
+        result
+    }
+}
+
+impl Primes {
     pub fn is_prime(&self, n: u64) -> bool {
         if n < self.prime_sieve.len() as u64 {
             return self.prime_sieve[n as usize];
