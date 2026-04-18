@@ -1,4 +1,4 @@
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Triplet(pub i32, pub i32, pub i32);
 
 impl Triplet {
