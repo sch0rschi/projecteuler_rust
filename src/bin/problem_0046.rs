@@ -1,5 +1,5 @@
-use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -17,7 +17,7 @@ fn solve_0046() -> u64 {
     loop {
         upper *= 2;
 
-        let primes = primes_inclusive(upper);
+        let primes = Primes::primes_inclusive(upper);
         let primes_list = &primes.primes_list;
 
         for consecutive_prime_pair in primes_list.windows(2) {

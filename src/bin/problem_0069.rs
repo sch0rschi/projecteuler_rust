@@ -1,6 +1,6 @@
-use projecteuler::primes::primes_inclusive;
 use std::time::Instant;
 use projecteuler::coprimes::phi;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn solve_0069() -> usize {
-    let primes = primes_inclusive(1_000);
+    let primes = Primes::primes_inclusive(1_000);
 
     (2..=1_000_000)
         .map(|n| {

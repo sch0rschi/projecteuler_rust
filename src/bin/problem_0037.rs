@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use projecteuler::digits::{get_digits, get_number};
-use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -16,7 +16,7 @@ fn main() {
 fn solve_0037() -> u64 {
     let mut count = 0;
     let mut sum = 0;
-    let primes = primes_inclusive(1_000_000);
+    let primes = Primes::primes_inclusive(1_000_000);
     let primes_list = &primes.primes_list;
     for &prime in primes_list.iter().dropping(4) {
         if count >= 11 {

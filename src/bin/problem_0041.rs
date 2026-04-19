@@ -1,6 +1,6 @@
 use projecteuler::pandigital::is_1_to_length_pandigital;
-use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn solve_0041() -> u64 {
-    let primes = primes_inclusive(7654321);
+    let primes = Primes::primes_inclusive(7654321);
     let primes_list = &primes.primes_list;
 
     *primes_list

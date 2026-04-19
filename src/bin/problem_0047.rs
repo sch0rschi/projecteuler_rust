@@ -1,5 +1,5 @@
-use projecteuler::primes::{primes_inclusive, unique_prime_factors};
 use std::time::Instant;
+use projecteuler::primes::{unique_prime_factors, Primes};
 
 fn main() {
     let start = Instant::now();
@@ -15,7 +15,7 @@ fn solve_0047() -> u64 {
     let mut upper = 1024;
 
     upper *= 2;
-    let primes = primes_inclusive(upper);
+    let primes = Primes::primes_inclusive(upper);
     let primes_list = &primes.primes_list;
 
     let mut c_1 = 644;

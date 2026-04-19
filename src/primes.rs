@@ -4,6 +4,10 @@ pub struct Primes {
 }
 
 impl Primes {
+    pub fn primes_inclusive(limit: u64) -> Self {
+        primes_inclusive(limit)
+    }
+
     pub fn unique_prime_factors(&self, mut n: u64) -> Vec<u64> {
         let mut result = Vec::new();
         if n < 2 {
@@ -27,9 +31,7 @@ impl Primes {
 
         result
     }
-}
 
-impl Primes {
     pub fn is_prime(&self, n: u64) -> bool {
         if n < self.prime_sieve.len() as u64 {
             return self.prime_sieve[n as usize];
@@ -78,7 +80,7 @@ pub fn find_first_n_primes(n: u64) -> Vec<u64> {
     primes
 }
 
-pub fn primes_inclusive(limit: u64) -> Primes {
+fn primes_inclusive(limit: u64) -> Primes {
     let sieve = prime_sieve_up_to_inclusive(limit as usize);
     let list = sieve
         .iter()
@@ -91,7 +93,7 @@ pub fn primes_inclusive(limit: u64) -> Primes {
     }
 }
 
-pub fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
+fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
     if limit < 2 {
         return vec![false; limit + 1];
     }

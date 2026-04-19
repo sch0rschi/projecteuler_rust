@@ -1,5 +1,5 @@
-use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 const POW10: [u64; 10] = [
     1,
@@ -27,7 +27,7 @@ fn main() {
 }
 
 fn solve_0051() -> u64 {
-    let primes = primes_inclusive(999_999);
+    let primes = Primes::primes_inclusive(999_999);
     let primes_list = &primes.primes_list;
 
     let mut positions: [PosArray; 3] = [[0; 7]; 3];

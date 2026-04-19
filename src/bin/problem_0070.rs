@@ -1,8 +1,8 @@
 use num_integer::Roots;
 use projecteuler::coprimes::phi;
 use projecteuler::digits::get_digit_count_encoding_15_max;
-use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -16,7 +16,7 @@ fn main() {
 
 fn solve_0070() -> u64 {
     let limit = 10_000_000;
-    let primes = primes_inclusive(limit.sqrt());
+    let primes = Primes::primes_inclusive(limit.sqrt());
 
     (2..=limit)
         .filter_map(|n| {

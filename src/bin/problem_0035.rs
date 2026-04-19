@@ -1,6 +1,6 @@
 use projecteuler::digits::{get_digits, get_number};
-use projecteuler::primes::{primes_inclusive, Primes};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn solve_0035() -> i32 {
-    let primes = primes_inclusive(1_000_000);
+    let primes = Primes::primes_inclusive(1_000_000);
     let primes_list = &primes.primes_list;
     let mut count = 1;
     for &prime in primes_list.iter().skip(1) {

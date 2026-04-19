@@ -1,7 +1,7 @@
 use std::time::Instant;
 use num_integer::{Roots};
 use projecteuler::coprimes::phi;
-use projecteuler::primes::primes_inclusive;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -15,7 +15,7 @@ fn main() {
 
 fn solve_0072() -> u64 {
     let limit = 1_000_000;
-    let primes = primes_inclusive(limit.sqrt());
+    let primes = Primes::primes_inclusive(limit.sqrt());
 
     (2..=limit)
         .map(|n| {

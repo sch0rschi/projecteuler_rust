@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use projecteuler::primes::{primes_inclusive};
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 fn main() {
     let start = Instant::now();
@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn solve_0050() -> u64 {
-    let primes = primes_inclusive(999_999);
+    let primes = Primes::primes_inclusive(999_999);
     let primes_list = &primes.primes_list;
 
     let mut prefix_sums: Vec<u64> = Vec::with_capacity(primes_list.len());

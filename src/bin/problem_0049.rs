@@ -1,6 +1,6 @@
-use projecteuler::primes::{primes_inclusive};
 use std::collections::HashMap;
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 const fn powers_of_4() -> [i32; 10] {
     let mut arr = [1; 10];
@@ -25,7 +25,7 @@ fn main() {
 }
 
 fn solve_0049() -> String {
-    let primes = primes_inclusive(9999);
+    let primes = Primes::primes_inclusive(9999);
     let primes_list = &primes.primes_list;
     let mut digit_count_to_primes: HashMap<u32, Vec<u64>> = HashMap::new();
     let mut prime_to_digit_counts: Vec<u32> = vec![0; 10000];

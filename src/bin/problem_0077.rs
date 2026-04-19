@@ -1,5 +1,5 @@
-use projecteuler::primes::primes_inclusive;
 use std::time::Instant;
+use projecteuler::primes::Primes;
 
 static LIMIT: usize = 100;
 
@@ -14,7 +14,7 @@ fn main() {
 }
 
 fn solve_0077() -> u64 {
-    let primes = primes_inclusive(LIMIT as u64);
+    let primes = Primes::primes_inclusive(LIMIT as u64);
     let primes: Vec<usize> = primes.primes_list.iter().map(|&p| p as usize).collect();
 
     let mut dp = vec![0u64; LIMIT + 1];
