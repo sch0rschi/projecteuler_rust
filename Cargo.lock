@@ -293,6 +293,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "numerus"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93cbadd28a159130d0132b8763061f998c42b35f66d5ceeef8e9679399823a1d"
+
+[[package]]
 name = "once_cell"
 version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -370,6 +376,7 @@ dependencies = [
  "num-bigint",
  "num-integer",
  "num-traits",
+ "numerus",
  "phf",
  "rand",
  "rustc-hash",

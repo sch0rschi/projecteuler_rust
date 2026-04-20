@@ -13,3 +13,4 @@ num-integer = "0.1.46"
 phf = { version = "0.13.1", features = ["macros"] }
 rustc-hash = "2.1.2"
 rand = "0.10.1"
+numerus = "0.1.1"
