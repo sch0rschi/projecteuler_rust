@@ -11,3 +11,4 @@ pub mod pells_equation;
 pub mod permutations;
 pub mod coprimes;
 pub mod multiset_partitions;
+pub mod multiset_combinations;
