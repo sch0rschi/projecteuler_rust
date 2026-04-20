@@ -32,6 +32,25 @@ impl Primes {
         result
     }
 
+    pub fn prime_factors(&self, mut n: u64) -> Vec<u64> {
+        let mut result = Vec::new();
+        if n < 2 {
+            return result;
+        }
+        for &p in &self.primes_list {
+            if n == 1 {
+                break;
+            }
+
+            while n.is_multiple_of(p) {
+                result.push(p);
+                n /= p;
+            }
+        }
+
+        result
+    }
+
     pub fn is_prime(&self, n: u64) -> bool {
         if n < self.prime_sieve.len() as u64 {
             return self.prime_sieve[n as usize];
