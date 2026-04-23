@@ -1,24 +1,24 @@
-pub fn proper_divisor_sum(n: u64) -> u64 {
-    proper_divisors(n).iter().sum()
+pub struct ProperDivisorSums {
+    divisor_sums: Vec<u32>,
 }
 
-fn proper_divisors(n: u64) -> Vec<u64> {
-    let mut n_sqrt = n.isqrt();
-    let mut proper_divisors: Vec<u64> = Vec::new();
-    proper_divisors.push(1);
-    if n == 1 {
-        return proper_divisors;
-    } else if n_sqrt * n_sqrt == n {
-        proper_divisors.push(n_sqrt);
-    } else {
-        n_sqrt += 1;
-    }
-
-    for divisor_candidate in 2..n_sqrt {
-        if n.is_multiple_of(divisor_candidate) {
-            proper_divisors.push(divisor_candidate);
-            proper_divisors.push(n / divisor_candidate);
+impl ProperDivisorSums {
+    pub fn new(limit: usize) -> Self {
+        let mut divisor_sums = vec![0; limit + 1];
+        for i in 1usize..=limit / 2 {
+            for j in (2 * i..=limit).step_by(i) {
+                divisor_sums[j] += i as u32;
+            }
+        }
+        
+        ProperDivisorSums {
+            divisor_sums
         }
     }
-    proper_divisors
+
+    pub fn get(self: &ProperDivisorSums, n: u32) -> u32 {
+        self.divisor_sums[n as usize]
+    }
 }
+
+

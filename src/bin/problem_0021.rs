@@ -1,5 +1,7 @@
-use projecteuler::divisors::proper_divisor_sum;
+use projecteuler::divisors::ProperDivisorSums;
 use std::time::Instant;
+
+const LIMIT: usize = 10_000;
 
 fn main() {
     let start = Instant::now();
@@ -10,11 +12,13 @@ fn main() {
     assert_eq!(31626, result);
     assert!(duration < std::time::Duration::from_secs(1));
 }
-fn solve_0021() -> u64 {
-    let mut d: [u64; 10_000] = [0; 10_000];
+
+fn solve_0021() -> u32 {
+    let divisor_sums = ProperDivisorSums::new(LIMIT);
+    let mut d: [u32; LIMIT] = [0; LIMIT];
     let mut amicable_numbers_sum = 0;
-    for i in 1..10_000 {
-        let proper_divisor_sum = proper_divisor_sum(i);
+    for i in 1u32..LIMIT as u32 {
+        let proper_divisor_sum = divisor_sums.get(i);
         d[i as usize] = proper_divisor_sum;
         if proper_divisor_sum < i && d[proper_divisor_sum as usize] == i {
             amicable_numbers_sum += i;
