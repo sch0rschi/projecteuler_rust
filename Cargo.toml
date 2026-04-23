@@ -14,3 +14,4 @@ phf = { version = "0.13.1", features = ["macros"] }
 rustc-hash = "2.1.2"
 rand = "0.10.1"
 numerus = "0.1.1"
+regex = "1.12.3"
