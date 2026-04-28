@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-static GRID_DIMENSION: usize = 20;
+const GRID_DIMENSION: usize = 20;
 
 fn main() {
     let start = Instant::now();

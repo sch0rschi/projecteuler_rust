@@ -1,7 +1,7 @@
 use num_integer::gcd;
 use std::time::Instant;
 
-static LIMIT: u64 = 50;
+const LIMIT: u64 = 50;
 fn main() {
     let start = Instant::now();
     let result = solve_0091();

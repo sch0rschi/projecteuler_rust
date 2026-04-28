@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-static FACTORIALS: [u64; 10] = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
+const FACTORIALS: [u64; 10] = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
 fn main() {
     let start = Instant::now();
     let result = solve_0074();

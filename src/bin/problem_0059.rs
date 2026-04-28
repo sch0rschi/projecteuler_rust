@@ -2,7 +2,7 @@ use itertools::Itertools;
 use std::fs;
 use std::time::Instant;
 
-static VALID_CHARS: [bool; 256] = make_valid_chars();
+const VALID_CHARS: [bool; 256] = make_valid_chars();
 
 fn main() {
     let start = Instant::now();

@@ -3,7 +3,7 @@ use projecteuler::primes::Primes;
 use std::time::Instant;
 use projecteuler::multiset_partitions::MultisetPartitions;
 
-static LIMIT: usize = 12_000;
+const LIMIT: usize = 12_000;
 
 fn main() {
     let start = Instant::now();

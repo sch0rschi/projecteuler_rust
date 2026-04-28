@@ -1,9 +1,9 @@
 use std::time::Instant;
 use projecteuler::exponentiation::mod_pow;
 
-static EXPONENT: usize = 7_830_457;
-static FACTOR: u64 = 28_433;
-static MOD: u64 = 10_000_000_000;
+const EXPONENT: usize = 7_830_457;
+const FACTOR: u64 = 28_433;
+const MOD: u64 = 10_000_000_000;
 
 fn main() {
     let start = Instant::now();

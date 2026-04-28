@@ -65,7 +65,7 @@ fn get_digits(n: u64, length: usize) -> BitVec {
     digits
 }
 
-static STAGE_17: Stage = Stage {
+const STAGE_17: Stage = Stage {
     multiple: 17,
     shift_10: 1,
     distinct_digits: 3,
@@ -73,7 +73,7 @@ static STAGE_17: Stage = Stage {
     next: Some(&STAGE_13),
 };
 
-static STAGE_13: Stage = Stage {
+const STAGE_13: Stage = Stage {
     multiple: 13,
     shift_10: 10,
     distinct_digits: 4,
@@ -81,21 +81,21 @@ static STAGE_13: Stage = Stage {
     next: Some(&STAGE_11),
 };
 
-static STAGE_11: Stage = Stage {
+const STAGE_11: Stage = Stage {
     multiple: 11,
     shift_10: 100,
     distinct_digits: 5,
     first: false,
     next: Some(&STAGE_7),
 };
-static STAGE_7: Stage = Stage {
+const STAGE_7: Stage = Stage {
     multiple: 7,
     shift_10: 1000,
     distinct_digits: 6,
     first: false,
     next: Some(&STAGE_5),
 };
-static STAGE_5: Stage = Stage {
+const STAGE_5: Stage = Stage {
     multiple: 5,
     shift_10: 10000,
     distinct_digits: 7,
@@ -103,14 +103,14 @@ static STAGE_5: Stage = Stage {
     next: Some(&STAGE_3),
 };
 
-static STAGE_3: Stage = Stage {
+const STAGE_3: Stage = Stage {
     multiple: 3,
     shift_10: 100000,
     distinct_digits: 8,
     first: false,
     next: Some(&STAGE_2),
 };
-static STAGE_2: Stage = Stage {
+const STAGE_2: Stage = Stage {
     multiple: 2,
     shift_10: 1000000,
     distinct_digits: 9,

@@ -1,7 +1,7 @@
 use std::time::Instant;
 use projecteuler::divisors::ProperDivisorSums;
 
-static LIMIT: usize = 1_000_000;
+const LIMIT: usize = 1_000_000;
 
 fn main() {
     let start = Instant::now();

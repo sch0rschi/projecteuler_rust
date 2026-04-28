@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-static MODULO: u128 = 10_000_000_000;
+const MODULO: u128 = 10_000_000_000;
 
 fn main() {
     let start = Instant::now();

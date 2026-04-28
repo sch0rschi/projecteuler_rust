@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-static LIMIT: usize = 100;
+const LIMIT: usize = 100;
 fn main() {
     let start = Instant::now();
     let result = solve_0076();

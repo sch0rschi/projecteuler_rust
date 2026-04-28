@@ -3,7 +3,7 @@ use bitvec::bitvec;
 use num_integer::Roots;
 use projecteuler::primes::Primes;
 
-static LIMIT: usize = 50_000_000;
+const LIMIT: usize = 50_000_000;
 
 fn main() {
     let start = Instant::now();

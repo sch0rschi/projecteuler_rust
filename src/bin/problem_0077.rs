@@ -1,7 +1,7 @@
 use std::time::Instant;
 use projecteuler::primes::Primes;
 
-static LIMIT: usize = 100;
+const LIMIT: usize = 100;
 
 fn main() {
     let start = Instant::now();

@@ -2,11 +2,11 @@ use itertools::Itertools;
 use rand::prelude::*;
 use std::time::Instant;
 
-static SQUARES: usize = 40;
-static DICE_SIDES: usize = 4;
-static GO: usize = 0;
-static JAIL: usize = 10;
-static G2J: usize = 30;
+const SQUARES: usize = 40;
+const DICE_SIDES: usize = 4;
+const GO: usize = 0;
+const JAIL: usize = 10;
+const G2J: usize = 30;
 
 fn main() {
     let start = Instant::now();

@@ -1,7 +1,7 @@
 use std::time::Instant;
 use bitvec::bitvec;
 
-static LIMIT: usize = 10_000_000;
+const LIMIT: usize = 10_000_000;
 fn main() {
     let start = Instant::now();
     let result = solve_0092();

@@ -1,7 +1,7 @@
 use projecteuler::integer_pythagorean_triplets::{expand, R};
 use std::time::Instant;
 
-static LIMIT: usize = 1_500_000;
+const LIMIT: usize = 1_500_000;
 fn main() {
     let start = Instant::now();
     let result = solve_0075();

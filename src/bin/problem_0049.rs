@@ -12,7 +12,7 @@ const fn powers_of_4() -> [i32; 10] {
     arr
 }
 
-static FACTORS: [i32; 10] = powers_of_4();
+const FACTORS: [i32; 10] = powers_of_4();
 
 fn main() {
     let start = Instant::now();
