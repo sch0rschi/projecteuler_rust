@@ -64,7 +64,7 @@ fn solve_0017() -> u64 {
     // ===== 100–999 =====
     // "one hundred", ..., "nine hundred"
     let sum_hundreds = SINGLE_DIGIT_LENGTHS.iter().sum::<u64>() * 100 + 9 * 100 * HUNDRED_LENGTH;
-    // "and" appears in 9 × 99 numbers
+    // "and" appears in 9 * 99 numbers
     let sum_and = 9 * 99 * AND_LENGTH;
     // 1–99 repeats 9 times
     let sum_repeated = sum_1_to_99 * 9;
