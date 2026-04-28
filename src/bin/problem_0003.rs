@@ -1,48 +1,23 @@
-use std::cmp::max;
-use std::time::Instant;
-
-enum FactorResult {
-    Factors(i64, i64),
-    Prime(i64),
-}
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0003();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(6857, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0003, 6857);
 }
 
-fn solve_0003() -> i64 {
-    let number: i64 = 600851475143;
-    factorization_recursion(&number)
+fn solve_0003() -> u64 {
+    largest_prime_factor(600_851_475_143)
 }
 
-fn factorization_recursion(n: &i64) -> i64 {
-    let result = divisors_or_prime(n);
-    match result {
-        FactorResult::Prime(p) => p,
-        FactorResult::Factors(n_1, n_2) => {
-            let factor_1 = factorization_recursion(&n_1);
-            if factor_1 >= n_2 {
-                return factor_1;
-            }
-            let factor_2 = factorization_recursion(&n_2);
-            max(factor_1, factor_2)
+fn largest_prime_factor(mut n: u64) -> u64 {
+    let mut factor = 3;
+
+    while factor * factor <= n {
+        if n.is_multiple_of(factor) {
+            n /= factor;
+        } else {
+            factor += 2;
         }
     }
-}
 
-fn divisors_or_prime(n: &i64) -> FactorResult {
-    let square_root_n = n.isqrt();
-
-    for potential_factor in (2..=square_root_n).rev() {
-        if n % potential_factor == 0 {
-            return FactorResult::Factors(potential_factor, n / potential_factor);
-        }
-    }
-    FactorResult::Prime(*n)
+    n
 }

@@ -2,7 +2,7 @@ use phf::phf_map;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 pub static CARD_ENCODING: phf::Map<&'static str, u8> = phf_map! {
     "2C" => 1,  "2D" => 2,  "2H" => 3,  "2S" => 4,
@@ -20,14 +20,7 @@ pub static CARD_ENCODING: phf::Map<&'static str, u8> = phf_map! {
     "AC" => 49, "AD" => 50, "AH" => 51, "AS" => 52,
 };
 
-fn main() {
-    let start = Instant::now();
-    let result = solve_0054();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(376, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+fn main() {solve_print_and_check(solve_0054, 376);
 }
 
 fn solve_0054() -> i32 {

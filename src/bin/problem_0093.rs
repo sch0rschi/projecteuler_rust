@@ -1,13 +1,8 @@
 use itertools::Itertools;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
+
 fn main() {
-    let start = Instant::now();
-    let result = solve_0093();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1258, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0093, 1258);
 }
 
 fn solve_0093() -> u32 {
@@ -69,7 +64,7 @@ fn apply_operation(numbers_1: &Vec<f32>, numbers_2: &Vec<f32>) -> Vec<f32> {
             results.push(number_1 + number_2);
             results.push(number_1 - number_2);
             results.push(number_1 * number_2);
-            if *number_2 != 0.0  {
+            if *number_2 != 0.0 {
                 let x = number_1 / number_2;
                 results.push(x);
             }
@@ -77,7 +72,7 @@ fn apply_operation(numbers_1: &Vec<f32>, numbers_2: &Vec<f32>) -> Vec<f32> {
             results.push(number_2 + number_1);
             results.push(number_2 - number_1);
             results.push(number_2 * number_1);
-            if *number_1 != 0.0  {
+            if *number_1 != 0.0 {
                 let x = number_2 / number_1;
                 results.push(x);
             }

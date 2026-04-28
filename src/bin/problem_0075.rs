@@ -1,15 +1,9 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::integer_pythagorean_triplets::{expand, R};
-use std::time::Instant;
 
 const LIMIT: usize = 1_500_000;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0075();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(161667, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0075, 161667);
 }
 
 fn solve_0075() -> usize {

@@ -1,15 +1,9 @@
 use num_bigint::BigUint;
 use num_traits::FromPrimitive;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0057();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(153, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0057, 153);
 }
 
 fn solve_0057() -> i32 {
@@ -25,7 +19,8 @@ fn solve_0057() -> i32 {
     let mut pow10_d = BigUint::from_u8(10).unwrap();
 
     for _ in 2..=1000 {
-        while n >= pow10_n { // pow10 is a quasi counter for length
+        while n >= pow10_n {
+            // pow10 is a quasi counter for length
             pow10_n *= 10u8;
         }
         while d >= pow10_d {

@@ -1,15 +1,9 @@
 use num_integer::Integer;
 use projecteuler::digits::get_digits;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0033();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(100, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0033, 100);
 }
 
 fn solve_0033() -> u64 {

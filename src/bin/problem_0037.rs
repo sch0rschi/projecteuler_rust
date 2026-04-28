@@ -1,16 +1,10 @@
 use itertools::Itertools;
 use projecteuler::digits::{get_digits, get_number};
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0037();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(748317, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0037, 748317);
 }
 
 fn solve_0037() -> u64 {

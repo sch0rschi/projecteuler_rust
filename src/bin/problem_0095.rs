@@ -1,16 +1,10 @@
-use std::time::Instant;
 use projecteuler::divisors::ProperDivisorSums;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const LIMIT: usize = 1_000_000;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0095();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(14316, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0095, 14316);
 }
 
 fn solve_0095() -> u32 {

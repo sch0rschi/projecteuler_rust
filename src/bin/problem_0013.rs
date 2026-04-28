@@ -1,15 +1,9 @@
 use num_bigint::BigInt;
 use std::str::FromStr;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0013();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!("5537376230", result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0013, "5537376230".to_string());
 }
 
 fn solve_0013() -> String {

@@ -1,13 +1,7 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0023();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(4179871, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0023, 4179871);
 }
 
 fn solve_0023() -> usize {
@@ -15,9 +9,7 @@ fn solve_0023() -> usize {
 
     let divisor_sums = compute_divisor_sums(limit);
 
-    let abundant: Vec<usize> = (2..=limit)
-        .filter(|&i| divisor_sums[i] > i)
-        .collect();
+    let abundant: Vec<usize> = (2..=limit).filter(|&i| divisor_sums[i] > i).collect();
 
     let mut can_be_written = vec![false; limit + 1];
 
@@ -34,6 +26,7 @@ fn solve_0023() -> usize {
     (1..=limit)
         .filter(|&i| !can_be_written[i])
         .sum()
+
 }
 
 fn compute_divisor_sums(limit: usize) -> Vec<usize> {

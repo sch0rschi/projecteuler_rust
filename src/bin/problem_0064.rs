@@ -1,14 +1,8 @@
-use std::time::Instant;
 use projecteuler::continued_fractions::get_continued_fraction_sequence;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0064();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1322, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0064, 1322);
 }
 
 fn solve_0064() -> usize {
@@ -17,4 +11,5 @@ fn solve_0064() -> usize {
         .map(|sequence| sequence.len() - 1)
         .filter(|p| p % 2 == 1)
         .count()
+
 }

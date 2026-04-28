@@ -1,15 +1,9 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::pandigital::is_1_to_length_pandigital;
-use std::time::Instant;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0041();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(7652413, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0041, 7652413);
 }
 
 fn solve_0041() -> u64 {
@@ -21,4 +15,5 @@ fn solve_0041() -> u64 {
         .rev()
         .find(|&&p| is_1_to_length_pandigital(p))
         .unwrap()
+
 }

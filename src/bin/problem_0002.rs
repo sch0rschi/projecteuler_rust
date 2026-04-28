@@ -1,27 +1,19 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0002();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(4613732, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0002, 4613732);
 }
 
-fn solve_0002() -> i32 {
-    let mut f_np = 1;
-    let mut f_n = 2;
-    let mut sum = f_n;
+const LIMIT: u32 = 4_000_000;
 
-    while f_n <= 4000000 {
-        let temp = f_n;
-        f_n += f_np;
-        f_np = temp;
-        if f_n % 2 == 0 {
-            sum += f_n;
-        }
+fn solve_0002() -> u32 {
+    let mut f_n = 2;
+    let mut f_n3 = 8;
+    let mut sum = 2;
+
+    while f_n3 <= LIMIT {
+        sum += f_n3;
+        (f_n, f_n3) = (f_n3, 4 * f_n3 + f_n);
     }
 
     sum

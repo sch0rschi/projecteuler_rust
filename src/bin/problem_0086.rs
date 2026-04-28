@@ -1,14 +1,8 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::integer_pythagorean_triplets::{expand, R};
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0086();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1818, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0086, 1818);
 }
 
 fn solve_0086() -> i32 {
@@ -48,7 +42,7 @@ fn count_integer_shortest_paths_for_m(m: i32) -> i32 {
 
         // l_1 longest leg anyways
         for scale in 1..=(m / longer) {
-            counter +=  shorter * scale / 2;
+            counter += shorter * scale / 2;
         }
         // l_1 longest leg, not always
         for scale in 1..=(m / shorter) {

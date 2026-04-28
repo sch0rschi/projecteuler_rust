@@ -1,17 +1,11 @@
 use num_integer::Integer;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0073();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(7295372, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0073, 7295372);
 }
 
-fn solve_0073() -> u64 {
+fn solve_0073() -> i32 {
     let limit = 12_000;
     let lower_fraction_nominator = 1;
     let lower_fraction_denominator = 3;

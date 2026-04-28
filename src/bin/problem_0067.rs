@@ -1,22 +1,20 @@
-use std::fs;
-use std::time::Instant;
 use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
+use std::fs;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0067();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(7273, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0067, 7273);
 }
 
 fn solve_0067() -> u64 {
     let mut triangle = fs::read_to_string("resources/0067_triangle.txt")
         .expect("Failed to read file")
         .lines()
-        .map(|line| {line.split(" ").map(|s| s.parse::<u64>().unwrap()).collect::<Vec<u64>>()})
+        .map(|line| {
+            line.split(" ")
+                .map(|s| s.parse::<u64>().unwrap())
+                .collect::<Vec<u64>>()
+        })
         .collect_vec();
 
     for row in (0..triangle.len() - 1).rev() {
@@ -26,5 +24,4 @@ fn solve_0067() -> u64 {
     }
 
     triangle[0][0]
-
 }

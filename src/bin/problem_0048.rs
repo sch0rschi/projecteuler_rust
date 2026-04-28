@@ -1,15 +1,9 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const MODULO: u128 = 10_000_000_000;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0048();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(9110846700, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0048, 9110846700);
 }
 
 fn solve_0048() -> u128 {

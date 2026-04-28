@@ -1,15 +1,9 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::permutations::PermutationPruner;
 use std::str::FromStr;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0068();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(6531031914842725, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0068, 6531031914842725);
 }
 
 fn solve_0068() -> u64 {
@@ -18,7 +12,7 @@ fn solve_0068() -> u64 {
     let mut permutation = PermutationPruner::new(elements);
 
     while let Some(configuration) = permutation.next_permutation() {
-        if *configuration[0] > 6  {
+        if *configuration[0] > 6 {
             permutation.prune(0);
             continue;
         }

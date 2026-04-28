@@ -1,18 +1,11 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::exponentiation::mod_pow;
 
 const EXPONENT: usize = 7_830_457;
 const FACTOR: u64 = 28_433;
 const MOD: u64 = 10_000_000_000;
 
-fn main() {
-    let start = Instant::now();
-    let result = solve_0097();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(8739992577, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+fn main() {solve_print_and_check(solve_0097, 8739992577);
 }
 
 fn solve_0097() -> u64 {

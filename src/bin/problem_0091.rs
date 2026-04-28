@@ -1,15 +1,9 @@
 use num_integer::gcd;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const LIMIT: u64 = 50;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0091();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(14234, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0091, 14234);
 }
 
 fn solve_0091() -> u64 {

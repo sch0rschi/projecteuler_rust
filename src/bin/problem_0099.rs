@@ -1,14 +1,8 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0099();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(709, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0099, 709);
 }
 
 fn solve_0099() -> usize {
@@ -25,5 +19,6 @@ fn solve_0099() -> usize {
         })
         .max_by(|a, b| a.1.total_cmp(&b.1))
         .unwrap()
-        .0 + 1
+        .0
+        + 1
 }

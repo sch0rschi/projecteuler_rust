@@ -1,17 +1,11 @@
 use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0081();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(427337, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0081, 427337);
 }
 
 fn solve_0081() -> u32 {

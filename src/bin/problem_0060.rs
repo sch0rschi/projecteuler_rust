@@ -1,14 +1,8 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0060();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(26033, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0060, 26033);
 }
 
 fn solve_0060() -> u64 {

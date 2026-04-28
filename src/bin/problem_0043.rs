@@ -1,5 +1,5 @@
 use bitvec::prelude::*;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 struct Stage {
     multiple: u64,
@@ -10,13 +10,7 @@ struct Stage {
 }
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0043();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(16695334890, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0043, 16695334890);
 }
 
 fn solve_0043() -> u64 {
@@ -34,10 +28,10 @@ fn recursion(stage: &Stage, number: u64, sum: &mut u64) {
         }
         let new_number = number
             + if stage.first {
-            stage_number
-        } else {
-            (stage_number / 100) * 100 * stage.shift_10
-        };
+                stage_number
+            } else {
+                (stage_number / 100) * 100 * stage.shift_10
+            };
         let new_number_digits = get_digits(new_number, stage.distinct_digits);
         let new_number_digit_count = new_number_digits.count_ones();
         if new_number_digit_count != stage.distinct_digits {

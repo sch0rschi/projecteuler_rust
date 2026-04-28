@@ -1,15 +1,9 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const GRID_DIMENSION: usize = 20;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0011();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(70600674, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0011, 70600674);
 }
 
 #[allow(clippy::needless_range_loop)]

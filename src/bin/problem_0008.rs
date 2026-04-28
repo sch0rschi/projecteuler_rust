@@ -1,17 +1,7 @@
-use std::time::Instant;
+use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
-fn main() {
-    let start = Instant::now();
-    let result = solve_0008();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(23514624000, result);
-    assert!(duration < std::time::Duration::from_secs(1));
-}
-
-fn solve_0008() -> u64 {
-    let input = "73167176531330624919225119674426574742355349194934
+const INPUT: &str = "73167176531330624919225119674426574742355349194934
     96983520312774506326239578318016984801869478851843
     85861560789112949495459501737958331952853208805511
     12540698747158523863050715693290963295227443043557
@@ -32,19 +22,35 @@ fn solve_0008() -> u64 {
     05886116467109405077541002256983155200055935729725
     71636269561882670428252483600823257530420752963450";
 
-    let input = input
-        .chars()
-        .filter(|c| c.is_ascii_digit())
-        .map(|c| c.to_digit(10).unwrap() as u64)
-        .collect::<Vec<u64>>();
+fn main() {
+    solve_print_and_check(solve_0008, 23514624000);
+}
 
-    let mut max_product: u64 = 0;
-    for start in 0..input.len() - 13 {
-        let mut product: u64 = 1;
-        for element in input.iter().skip(start).take(13) {
-            product *= element;
+fn solve_0008() -> u64 {
+    let digits = INPUT.chars().filter_map(|c| c.to_digit(10)).collect_vec();
+
+    let mut zero_free_count = 0;
+    let mut max_product = 0;
+    let mut product: u64 = 1;
+
+    for (index, &digit) in digits.iter().enumerate() {
+        if digit == 0 {
+            zero_free_count = 0;
+            product = 1;
+            continue;
         }
-        max_product = max_product.max(product);
+
+        if zero_free_count >= 13 {
+            product /= digits[index - 13] as u64;
+        }
+
+        product *= digit as u64;
+        zero_free_count += 1;
+
+        if zero_free_count >= 13 {
+            max_product = max_product.max(product);
+        }
     }
+
     max_product
 }

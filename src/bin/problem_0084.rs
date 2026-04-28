@@ -1,6 +1,6 @@
 use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use rand::prelude::*;
-use std::time::Instant;
 
 const SQUARES: usize = 40;
 const DICE_SIDES: usize = 4;
@@ -9,16 +9,10 @@ const JAIL: usize = 10;
 const G2J: usize = 30;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0084();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(101524, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0084, 101524);
 }
 
-fn solve_0084() -> u32 {
+fn solve_0084() -> usize {
     let mut rng = rand::rng();
 
     let mut square = 0usize;
@@ -72,7 +66,7 @@ fn solve_0084() -> u32 {
         if count.is_multiple_of(CHECK_INTERVAL)
             && let Some((a, b, c)) = converged(&square_counter)
         {
-            return (a * 10000 + b * 100 + c) as u32;
+            return a * 10000 + b * 100 + c;
         }
     }
 }

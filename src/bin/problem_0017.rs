@@ -1,4 +1,4 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const SINGLE_DIGIT_LENGTHS: [u64; 10] = [
     0, // 0 unused
@@ -42,13 +42,7 @@ const AND_LENGTH: u64 = 3; // "and"
 const THOUSAND_LENGTH: u64 = 11; // "one thousand"
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0017();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(21124, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0017, 21124);
 }
 
 fn solve_0017() -> u64 {

@@ -1,22 +1,11 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
+const LIMIT: u64 = 504000;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0000();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(21337343999916000, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0000, 21337343999916000);
 }
 
 fn solve_0000() -> u64 {
-    let count: u64 = 504000;
-    let mut sum: u64 = 0;
-
-    for n in (1..=count).step_by(2) {
-        sum += n * n;
-    }
-
-    sum
+    let m: u64 = LIMIT / 2;
+    m * (2*m - 1) * (2*m + 1) / 3
 }

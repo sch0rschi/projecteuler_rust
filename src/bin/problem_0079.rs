@@ -1,20 +1,13 @@
-use std::fs;
-use std::time::Instant;
 use bitvec::bitvec;
+use projecteuler::evaluation_helper::solve_print_and_check;
+use std::fs;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0079();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(73162890, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0079, 73162890);
 }
 
 fn solve_0079() -> u64 {
-    let input = fs::read_to_string("resources/0079_keylog.txt")
-        .expect("Failed to read file");
+    let input = fs::read_to_string("resources/0079_keylog.txt").expect("Failed to read file");
 
     let mut adj: [Vec<u8>; 10] = std::array::from_fn(|_| Vec::new());
     let mut indegree = [0i8; 10];

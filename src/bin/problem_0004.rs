@@ -1,29 +1,33 @@
-use std::time::Instant;
+use std::ops::RangeInclusive;
+use num_integer::Roots;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0004();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(906609, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0004, 906609);
 }
 
-fn solve_0004() -> i32 {
-    let mut max_palindrome = 0;
-    for i_1 in 100..=999 {
-        for i_2 in 100..=999 {
-            if is_palindrome_number(i_1 * i_2) && i_1 * i_2 > max_palindrome {
-                max_palindrome = i_1 * i_2;
-            }
+fn solve_0004() -> u32 {
+    RangeInclusive::new(100, 999).rev().map(make_palindrome).find(|&p| is_valid_product(p)).unwrap()
+}
+
+fn is_valid_product(palindrome: u32) -> bool {
+    let lower = (palindrome / 999).max(palindrome.sqrt());
+    let upper = (palindrome / 100).min(999);
+    for divisor in lower..=upper {
+        if palindrome.is_multiple_of(divisor) {
+            return true;
         }
     }
-    max_palindrome
+    false
 }
 
-fn is_palindrome_number(n: i32) -> bool {
-    let n_string = n.to_string();
-    let n_string_reversed = n_string.chars().rev().collect::<String>();
-    n_string == n_string_reversed
+fn make_palindrome(mut n: u32) -> u32 {
+    let mut accumulator = n;
+
+    while n > 0 {
+        accumulator = accumulator * 10 + n % 10;
+        n /= 10;
+    }
+
+    accumulator
 }

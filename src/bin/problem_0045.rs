@@ -1,13 +1,7 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0045();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1533776805, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0045, 1533776805);
 }
 
 fn solve_0045() -> i32 {

@@ -1,14 +1,8 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const LIMIT: usize = 100;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0076();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(190569291, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0076, 190569291);
 }
 
 fn solve_0076() -> u64 {

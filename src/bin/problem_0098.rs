@@ -1,18 +1,12 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::collections::HashMap;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve();
-    let duration = start.elapsed();
-    println!("{result}");
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(18769, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0098, 18769);
 }
 
-fn solve() -> u64 {
+fn solve_0098() -> u64 {
     let words: HashMap<String, Vec<String>> = fs::read_to_string("resources/0098_words.txt")
         .unwrap()
         .split(',')
@@ -70,7 +64,7 @@ fn solve() -> u64 {
         }
     }
 
-    0
+    unreachable!()
 }
 
 #[inline]

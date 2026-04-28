@@ -1,17 +1,11 @@
 use num_integer::Roots;
 use projecteuler::coprimes::phi;
 use projecteuler::digits::get_digit_count_encoding_15_max;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0070();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(8319823, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0070, 8319823)
 }
 
 fn solve_0070() -> u64 {
@@ -31,6 +25,7 @@ fn solve_0070() -> u64 {
         .min_by_key(|&(_, ratio)| ratio)
         .unwrap()
         .0
+
 }
 
 fn is_permutation(p0: u64, p1: u64) -> bool {

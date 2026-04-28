@@ -1,19 +1,13 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 const LIMIT: usize = 100;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0077();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(71, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0077, 71);
 }
 
-fn solve_0077() -> u64 {
+fn solve_0077() -> usize {
     let primes = Primes::primes_inclusive(LIMIT as u64);
     let primes: Vec<usize> = primes.primes_list.iter().map(|&p| p as usize).collect();
 
@@ -26,7 +20,7 @@ fn solve_0077() -> u64 {
         }
         for (i, &item) in dp.iter().enumerate().take(p + 1).skip(1) {
             if item > 5_000 {
-                return i as u64;
+                return i;
             }
         }
     }

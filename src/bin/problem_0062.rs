@@ -1,15 +1,9 @@
-use rustc_hash::FxHashMap as HashMap;
-use std::time::Instant;
 use projecteuler::digits::get_digit_count_encoding_15_max;
+use projecteuler::evaluation_helper::solve_print_and_check;
+use rustc_hash::FxHashMap as HashMap;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0062();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(127035954683, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0062, 127035954683);
 }
 
 fn solve_0062() -> u64 {

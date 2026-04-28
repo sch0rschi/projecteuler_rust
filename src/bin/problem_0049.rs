@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
+use std::collections::HashMap;
 
 const fn powers_of_4() -> [i32; 10] {
     let mut arr = [1; 10];
@@ -15,13 +15,7 @@ const fn powers_of_4() -> [i32; 10] {
 const FACTORS: [i32; 10] = powers_of_4();
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0049();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!("296962999629", result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0049, "296962999629".to_string());
 }
 
 fn solve_0049() -> String {

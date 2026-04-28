@@ -1,22 +1,7 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0034();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(40730, result);
-    assert!(duration < std::time::Duration::from_secs(1));
-}
-
-#[inline(always)]
-fn factorial_table() -> [u64; 10] {
-    let mut f = [1u64; 10];
-    for i in 2..10 {
-        f[i] = f[i - 1] * i as u64;
-    }
-    f
+    solve_print_and_check(solve_0034, 40730);
 }
 
 fn solve_0034() -> u64 {
@@ -42,4 +27,13 @@ fn solve_0034() -> u64 {
     }
 
     sum
+}
+
+#[inline(always)]
+fn factorial_table() -> [u64; 10] {
+    let mut f = [1u64; 10];
+    for i in 2..10 {
+        f[i] = f[i - 1] * i as u64;
+    }
+    f
 }

@@ -1,17 +1,11 @@
 use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::fs;
-use std::time::Instant;
 
 const VALID_CHARS: [bool; 256] = make_valid_chars();
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0059();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(129448, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0059, 129448);
 }
 
 fn solve_0059() -> u32 {
@@ -23,7 +17,11 @@ fn solve_0059() -> u32 {
 
     let key: [u8; 3] = std::array::from_fn(|i| get_key(&u8_ascii_text, i));
 
-    let sum: u32 = u8_ascii_text.iter().zip(key.iter().cycle()).map(|(x, y)| (x ^ y) as u32).sum();
+    let sum: u32 = u8_ascii_text
+        .iter()
+        .zip(key.iter().cycle())
+        .map(|(x, y)| (x ^ y) as u32)
+        .sum();
 
     sum
 }

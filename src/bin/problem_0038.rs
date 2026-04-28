@@ -1,14 +1,8 @@
 use projecteuler::digits::{get_digits, get_number, is_pandigital};
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0038();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(932718654, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0038, 932718654);
 }
 
 fn solve_0038() -> u64 {

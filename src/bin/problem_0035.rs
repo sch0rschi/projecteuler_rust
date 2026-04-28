@@ -1,15 +1,9 @@
 use projecteuler::digits::{get_digits, get_number};
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0035();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(55, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0035, 55);
 }
 
 fn solve_0035() -> i32 {

@@ -1,18 +1,12 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
-const LIMIT: usize = 55374+1;
+const LIMIT: usize = 55374 + 1;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0078();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(55374, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0078, 55374);
 }
 
 // using the partition function from https://en.wikipedia.org/wiki/Partition_function_(number_theory)
-fn solve_0078() -> u64 {
+fn solve_0078() -> usize {
     let mut dp = vec![0i64; LIMIT + 1];
     dp[0] = 1;
 
@@ -47,7 +41,7 @@ fn solve_0078() -> u64 {
         }
 
         if dp[n] == 0 {
-            return n as u64;
+            return n;
         }
     }
 

@@ -13,3 +13,4 @@ pub mod coprimes;
 pub mod multiset_partitions;
 pub mod multiset_combinations;
 pub mod exponentiation;
+pub mod evaluation_helper;

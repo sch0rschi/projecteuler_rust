@@ -1,18 +1,12 @@
-use std::time::Instant;
 use bitvec::bitvec;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const LIMIT: usize = 10_000_000;
 fn main() {
-    let start = Instant::now();
-    let result = solve_0092();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(8581146, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0092, 8581146);
 }
 
-fn solve_0092() -> u64 {
+fn solve_0092() -> i32 {
     let mut count = 0;
     let mut seen_1 = bitvec![0; 568]; // 7 * 81 + 1
     let mut seen_89 = bitvec![0; 568];
@@ -38,7 +32,6 @@ fn solve_0092() -> u64 {
             chain.push(i);
             i = next(i);
         }
-
     }
     count
 }
@@ -46,7 +39,7 @@ fn solve_0092() -> u64 {
 fn next(mut n: usize) -> usize {
     let mut sum = 0;
     while n > 0 {
-        sum+= (n % 10) * (n % 10);
+        sum += (n % 10) * (n % 10);
         n /= 10;
     }
     sum

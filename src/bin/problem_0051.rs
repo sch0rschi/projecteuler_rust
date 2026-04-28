@@ -1,4 +1,4 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 const POW10: [u64; 10] = [
@@ -17,13 +17,7 @@ const POW10: [u64; 10] = [
 type PosArray = [usize; 7]; // pos[0] = len, pos[1..] = positions
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0051();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(121313, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0051, 121313);
 }
 
 fn solve_0051() -> u64 {
@@ -47,7 +41,8 @@ fn solve_0051() -> u64 {
             for i in 0..len - 2 {
                 for j in i + 1..len - 1 {
                     for k in j + 1..len {
-                        let mask = POW10[pos_arr[i + 1]] + POW10[pos_arr[j + 1]] + POW10[pos_arr[k + 1]];
+                        let mask =
+                            POW10[pos_arr[i + 1]] + POW10[pos_arr[j + 1]] + POW10[pos_arr[k + 1]];
                         let base = prime - digit as u64 * mask;
 
                         let mut count = 0;
@@ -94,7 +89,8 @@ fn fill_relevant_digit_positions(mut n: u64, positions: &mut [PosArray; 3]) {
         let digit = (n % 10) as usize;
         if digit < 3 {
             let len = positions[digit][0];
-            if len < 6 { // maximum 6 positions
+            if len < 6 {
+                // maximum 6 positions
                 positions[digit][len + 1] = pos;
                 positions[digit][0] = len + 1;
             }

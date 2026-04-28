@@ -1,15 +1,9 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::integer_pythagorean_triplets::{expand, R};
 use projecteuler::triplet::Triplet;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0039();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(840, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0039, 840);
 }
 
 fn solve_0039() -> usize {
@@ -30,6 +24,7 @@ fn solve_0039() -> usize {
         .max_by_key(|&(_, v)| v)
         .unwrap()
         .0
+
 }
 
 fn count_perimeters(root_triplet: Triplet, solutions_per_perimeter: &mut [i32; 1001]) {

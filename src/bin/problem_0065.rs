@@ -1,16 +1,10 @@
 use std::mem::swap;
-use std::time::Instant;
 
 use num_bigint::BigInt;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0065();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(272, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0065, 272);
 }
 
 fn solve_0065() -> u64 {
@@ -35,4 +29,5 @@ fn solve_0065() -> u64 {
         .chars()
         .map(|c| c.to_digit(10).unwrap() as u64)
         .sum()
+
 }

@@ -1,17 +1,11 @@
-use std::time::Instant;
 use num_integer::Integer;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0071();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(428570, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0071, 428570);
 }
 
-fn solve_0071() -> u64 {
+fn solve_0071() -> i32 {
     let limit = 1_000_000;
     let mut closest_proper_numerator = 2;
     let mut closest_proper_denominator = 5;
@@ -22,7 +16,9 @@ fn solve_0071() -> u64 {
         if denominator > limit {
             break;
         }
-        if numerator.gcd (&denominator) == 1 && numerator * closest_proper_denominator > closest_proper_numerator * denominator {
+        if numerator.gcd(&denominator) == 1
+            && numerator * closest_proper_denominator > closest_proper_numerator * denominator
+        {
             closest_proper_numerator = numerator;
             closest_proper_denominator = denominator;
         }

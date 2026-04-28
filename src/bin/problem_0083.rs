@@ -1,16 +1,10 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0083();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(425185, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0083, 425185);
 }
 
 fn solve_0083() -> u32 {
@@ -49,7 +43,11 @@ fn solve_0083() -> u32 {
             let new_row = row as isize + delta_row;
             let new_column = column as isize + delta_column;
 
-            if new_row < 0 || new_column < 0 || new_row >= rows as isize || new_column >= cols as isize {
+            if new_row < 0
+                || new_column < 0
+                || new_row >= rows as isize
+                || new_column >= cols as isize
+            {
                 continue;
             }
 

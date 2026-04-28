@@ -1,16 +1,10 @@
 use num_bigint::BigInt;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::collections::HashSet;
 use std::ops::Mul;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0029();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(9183, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0029, 9183);
 }
 
 fn solve_0029() -> usize {

@@ -1,21 +1,16 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::{solve_print_and_check};
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0001();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(233168, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0001, 233168);
 }
 
-pub fn solve_0001() -> i32 {
-    let mut sum = 0;
-    for n in 1..1000 {
-        if n % 3 == 0 || n % 5 == 0 {
-            sum += n;
-        }
-    }
-    sum
+fn solve_0001() -> u32 {
+    let n = 999;
+
+    let sum = |k: u32| {
+        let m = n / k;
+        k * m * (m + 1) / 2
+    };
+
+    sum(3) + sum(5) - sum(15)
 }

@@ -1,16 +1,10 @@
-use std::time::Instant;
-use num_integer::{Roots};
+use num_integer::Roots;
 use projecteuler::coprimes::phi;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0072();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(303963552391, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0072, 303963552391);
 }
 
 fn solve_0072() -> u64 {
@@ -23,4 +17,5 @@ fn solve_0072() -> u64 {
             phi(n, &factors)
         })
         .sum()
+
 }

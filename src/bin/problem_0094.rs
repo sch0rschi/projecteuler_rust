@@ -1,16 +1,10 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::integer_pythagorean_triplets::{expand, R};
-use std::time::Instant;
 
 const LIMIT: u64 = 1_000_000_000;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0094();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(518408346, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0094, 518408346);
 }
 
 fn solve_0094() -> u64 {
@@ -26,10 +20,10 @@ fn solve_0094() -> u64 {
 
         let shorter = triplet.0.min(triplet.1);
 
-        if 2 * shorter ==  hypotenuse + 1 {
+        if 2 * shorter == hypotenuse + 1 {
             sum += 3 * hypotenuse as u64 - 1;
         }
-        if 2 * shorter ==  hypotenuse - 1 {
+        if 2 * shorter == hypotenuse - 1 {
             sum += 3 * hypotenuse as u64 + 1;
         }
 

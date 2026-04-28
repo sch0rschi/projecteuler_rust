@@ -1,14 +1,8 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0058();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(26241, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0058, 26241);
 }
 
 fn solve_0058() -> i32 {
@@ -29,10 +23,9 @@ fn solve_0058() -> i32 {
         bottom_left += 6 + adding;
         adding += 8;
         diagonal_elements_count += 4;
-        diagonal_prime_count +=
-            check_prime(top_left, primes_list.as_slice()) as u64
-                + check_prime(top_right, primes_list.as_slice()) as u64
-                + check_prime(bottom_left, primes_list.as_slice()) as u64;
+        diagonal_prime_count += check_prime(top_left, primes_list.as_slice()) as u64
+            + check_prime(top_right, primes_list.as_slice()) as u64
+            + check_prime(bottom_left, primes_list.as_slice()) as u64;
 
         if 10 * diagonal_prime_count < diagonal_elements_count {
             result = i;

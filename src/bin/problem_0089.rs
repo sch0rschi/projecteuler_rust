@@ -1,16 +1,10 @@
 use numerus::int_to_roman_upper;
 use numerus::roman_to_int;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0089();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(743, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0089, 743);
 }
 
 fn solve_0089() -> usize {
@@ -18,7 +12,8 @@ fn solve_0089() -> usize {
         .expect("failed to read input file")
         .lines()
         .map(parse_and_diff)
-        .sum()
+        .sum::<usize>()
+
 }
 
 fn parse_and_diff(roman: &str) -> usize {

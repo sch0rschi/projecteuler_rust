@@ -1,21 +1,15 @@
-use std::time::Instant;
 use bitvec::bitvec;
 use num_integer::Roots;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 const LIMIT: usize = 50_000_000;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0087();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1097343, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0087, 1097343);
 }
 
-fn solve_0087() -> u64 {
+fn solve_0087() -> usize {
     let primes = Primes::primes_inclusive(LIMIT.sqrt() as u64);
     let primes_list = &primes.primes_list;
 
@@ -55,5 +49,5 @@ fn solve_0087() -> u64 {
         }
     }
 
-    seen.count_ones() as u64
+    seen.count_ones()
 }

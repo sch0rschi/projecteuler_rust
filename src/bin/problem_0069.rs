@@ -1,18 +1,12 @@
-use std::time::Instant;
 use projecteuler::coprimes::phi;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::primes::Primes;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0069();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(510510, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0069, 510510);
 }
 
-fn solve_0069() -> usize {
+fn solve_0069() -> i32 {
     let primes = Primes::primes_inclusive(1_000);
 
     (2..=1_000_000)
@@ -24,4 +18,5 @@ fn solve_0069() -> usize {
         .max_by_key(|&(_, ratio)| ratio)
         .unwrap()
         .0
+
 }

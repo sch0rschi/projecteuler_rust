@@ -1,17 +1,14 @@
-use projecteuler::primes;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
+use projecteuler::primes::Primes;
+
+const LIMIT: u64 = 10001;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0007();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(104743, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0007, 104743);
 }
 
 fn solve_0007() -> u64 {
-    let primes = primes::find_first_n_primes(10001);
-    *primes.last().unwrap()
+    let estimate = LIMIT * ((LIMIT as f64).ln().ceil() * 1.1) as u64;
+    let primes = Primes::primes_inclusive(estimate);
+    *primes.primes_list.get(LIMIT as usize - 1).unwrap()
 }

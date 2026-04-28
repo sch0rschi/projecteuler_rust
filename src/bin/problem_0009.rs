@@ -1,15 +1,9 @@
 use projecteuler::integer_pythagorean_triplets::{expand, R};
 use projecteuler::triplet::Triplet;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0009();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(31875000, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0009, 31875000);
 }
 
 fn solve_0009() -> usize {
@@ -26,13 +20,13 @@ fn expansion_recursion(triplet: Triplet) -> Option<Triplet> {
         (1001..) => None,
         _ => {
             let (expansion_1, expansion_2, expansion_3) = expand(triplet);
-            if let Some(expansion) = expansion_recursion(expansion_1) {
+            if let Some(expansion) = expansion_recursion(expansion_3) {
                 return Some(expansion);
             }
             if let Some(expansion) = expansion_recursion(expansion_2) {
                 return Some(expansion);
             }
-            if let Some(expansion) = expansion_recursion(expansion_3) {
+            if let Some(expansion) = expansion_recursion(expansion_1) {
                 return Some(expansion);
             }
             None

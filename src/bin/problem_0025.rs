@@ -1,16 +1,10 @@
 use num_bigint::BigInt;
 use num_traits::One;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use std::ops::Add;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0025();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(4782, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0025, 4782);
 }
 
 fn solve_0025() -> i32 {

@@ -1,15 +1,9 @@
 use num_bigint::BigInt;
-use std::time::Instant;
 use num_integer::Roots;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0080();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(40886, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0080, 40886);
 }
 
 fn solve_0080() -> u64 {

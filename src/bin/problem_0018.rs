@@ -1,14 +1,8 @@
 use std::cmp::max;
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0018();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(1074, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0018, 1074);
 }
 fn solve_0018() -> i32 {
     let mut triangle: Vec<Vec<i32>> = vec![

@@ -1,17 +1,11 @@
-use std::time::Instant;
+use projecteuler::evaluation_helper::solve_print_and_check;
 
 const FACTORIALS: [u64; 10] = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
 fn main() {
-    let start = Instant::now();
-    let result = solve_0074();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(402, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0074, 402);
 }
 
-fn solve_0074() -> u64 {
+fn solve_0074() -> i32 {
     let mut chain_count = 0;
 
     let mut loop_length_map = vec![0u64; 2_600_000];
@@ -33,10 +27,7 @@ fn solve_0074() -> u64 {
             }
 
             if seen[next as usize] {
-                let pos = chain_list
-                    .iter()
-                    .position(|&x| x == next)
-                    .unwrap();
+                let pos = chain_list.iter().position(|&x| x == next).unwrap();
 
                 let loop_length = (chain_list.len() - pos) as u64;
 

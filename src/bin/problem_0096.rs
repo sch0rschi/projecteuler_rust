@@ -1,18 +1,12 @@
 use bitvec::bitvec;
 use bitvec::prelude::BitVec;
 use itertools::Itertools;
+use projecteuler::evaluation_helper::solve_print_and_check;
 use regex::Regex;
 use std::fs;
-use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
-    let result = solve_0096();
-    let duration = start.elapsed();
-    println!("{}", result);
-    println!("Elapsed: {:?}", duration);
-    assert_eq!(24702, result);
-    assert!(duration < std::time::Duration::from_secs(1));
+    solve_print_and_check(solve_0096, 24702);
 }
 
 fn solve_0096() -> u32 {
@@ -30,6 +24,7 @@ fn solve_0096() -> u32 {
                 + solved_grid.closed[0][2] as u32
         })
         .sum()
+
 }
 
 #[derive(Clone)]
