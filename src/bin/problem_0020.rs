@@ -1,23 +1,27 @@
-use num_bigint::BigInt;
 use projecteuler::evaluation_helper::solve_print_and_check;
-use std::ops::{Add, Mul};
 
 fn main() {
     solve_print_and_check(solve_0020, 648);
 }
-fn solve_0020() -> u32 {
-    let mut factor = BigInt::from(1);
-    let mut product = BigInt::from(1);
 
-    while factor <= BigInt::from(100) {
-        product = product.mul(factor.clone());
-        factor = factor.add(1);
+fn solve_0020() -> u32 {
+    let mut digits = Vec::with_capacity(200);
+    digits.push(1u16);
+
+    for n in 2..=100 {
+        let mut carry = 0;
+
+        for d in digits.iter_mut() {
+            let val = *d * n + carry;
+            *d = val % 10;
+            carry = val / 10;
+        }
+
+        while carry > 0 {
+            digits.push(carry % 10);
+            carry /= 10;
+        }
     }
 
-    product
-        .to_string()
-        .chars()
-        .map(|x| x.to_digit(10).unwrap())
-        .sum()
-
+    digits.iter().map(|&d| d as u32).sum()
 }
