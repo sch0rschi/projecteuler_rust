@@ -1,22 +1,33 @@
+use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::word_score::score;
 use std::fs;
-use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
     solve_print_and_check(solve_0022, 871198282);
 }
-fn solve_0022() -> i32 {
-    let content = fs::read_to_string("resources/0022_names.txt").expect("Failed to read file");
 
-    let mut names: Vec<&str> = content[1..content.len() - 1].split("\",\"").collect();
+fn solve_0022() -> u32 {
+    let content = fs::read("resources/0022_names.txt").unwrap();
 
-    names.sort_unstable();
+    let mut buckets: Vec<Vec<&[u8]>> = (0..26 * 26)
+        .map(|_| Vec::with_capacity(16))
+        .collect::<Vec<_>>();
 
-    let score_sum: i32 = names
-        .iter()
+    content
+        .split(|&b| b == b'"')
+        .filter(|&name| !name.is_empty() && name[0] != b',')
+        .for_each(|name| {
+            let idx = ((name[0] - b'A') as usize) * 26
+                + ((name.get(1).copied().unwrap_or(b'A') - b'A') as usize);
+            buckets[idx].push(name);
+        });
+
+    buckets.iter_mut().for_each(|b| b.sort_unstable());
+
+    buckets
+        .into_iter()
+        .flatten()
         .enumerate()
-        .map(|(i, &name)| (i as i32 + 1) * score(name))
-        .sum();
-
-    score_sum
+        .map(|(i, name)| (i as u32 + 1) * score(name))
+        .sum()
 }
