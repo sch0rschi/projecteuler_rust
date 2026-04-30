@@ -1,13 +1,6 @@
-use num_bigint::BigInt;
-use std::str::FromStr;
 use projecteuler::evaluation_helper::solve_print_and_check;
 
-fn main() {
-    solve_print_and_check(solve_0013, "5537376230".to_string());
-}
-
-fn solve_0013() -> String {
-    let input = "37107287533902102798797998220837590246510135740250
+const INPUT: &str = "37107287533902102798797998220837590246510135740250
 46376937677490009712648124896970078050417018260538
 74324986199524741059474233309513058123726617309629
 91942213363574161572522430563301811072406154908250
@@ -107,9 +100,25 @@ fn solve_0013() -> String {
 72107838435069186155435662884062257473692284509516
 20849603980134001723930671666823555245252804609722
 53503534226472524250874054075591789781264330331690";
-    let sum: BigInt = input
+
+fn main() {
+    solve_print_and_check(solve_0013, 5537376230);
+}
+
+fn solve_0013() -> u64 {
+    let mut sum: u64 = INPUT
         .lines()
-        .map(|line| -> BigInt { BigInt::from_str(line.trim()).unwrap() })
+        .map(|line| {
+            line.as_bytes()
+                .iter()
+                .take(12)
+                .fold(0u64, |acc, &b| acc * 10 + (b - b'0') as u64)
+        })
         .sum();
-    sum.to_string()[0..10].to_string()
+
+    while sum >= 10_000_000_000 {
+        sum /= 10;
+    }
+
+    sum
 }
