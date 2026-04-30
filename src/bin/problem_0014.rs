@@ -5,48 +5,47 @@ fn main() {
 }
 
 fn solve_0014() -> u64 {
-    let mut cache = vec![0u16; 2_000_000];
+    let mut cache = vec![0u16; 1_000_001];
     cache[1] = 1;
 
-    let mut max_len = 0;
-    let mut max_len_value = 1;
+    let mut max_len = 0u16;
+    let mut max_val = 1u64;
 
-    for i in 500_000..1_000_000 {
+    for i in (1..1_000_000u64).step_by(2) {
         let len = collatz_len(i, &mut cache);
         if len > max_len {
             max_len = len;
-            max_len_value = i;
+            max_val = i;
+        }
+
+        let even_length = cache[i.div_ceil(2) as usize];
+        cache[(i + 1) as usize] = even_length;
+        if even_length + 1 > max_len {
+            max_len = even_length + 1;
+            max_val = i + 1;
         }
     }
-
-    max_len_value
+    max_val
 }
 
-fn collatz_len(mut n: u64, cache: &mut [u16]) -> u16 {
-    let mut steps = 0;
-    let start = n;
+fn collatz_len(start: u64, cache: &mut [u16]) -> u16 {
+    let mut n = start;
+    let mut steps = 0u16;
 
-    while n > 1 && (n as usize >= cache.len() || cache[n as usize] == 0) {
-        if n.is_multiple_of(2) {
-            n /= 2;
-            steps += 1;
-        } else {
-            n = (3 * n + 1).div_ceil(2);
-            steps += 2;
+    while n > 1 {
+        if n < cache.len() as u64
+            && let cached = cache[n as usize]
+            && cached != 0
+        {
+            steps += cached;
+            break;
         }
+
+        steps += 1;
+
+        n = if n & 1 == 0 { n >> 1 } else { (3 * n + 1) >> 1 };
     }
 
-    let known = if n < cache.len() as u64 {
-        cache[n as usize]
-    } else {
-        0
-    };
-
-    let total = steps + known;
-
-    if start < cache.len() as u64 {
-        cache[start as usize] = total;
-    }
-
-    total
+    cache[start as usize] = steps;
+    steps
 }
