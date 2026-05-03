@@ -11,17 +11,18 @@ fn solve_0027() -> i64 {
 
     let mut max_n = 0;
     let mut max_product = 0;
-    for &b in primes_list.iter().take_while(|&p| *p <= 1000) {
+
+    for &b in primes_list {
         let b = b as i64;
-        if b <= max_n {
-            break;
-        }
-        for a in -999..=999 {
-            let mut n: i64 = 0;
-            loop {
-                let polynomial_value = n * n + a * n + b;
-                if polynomial_value >= 0 && primes.is_prime(polynomial_value as u64) {
-                    n += 1;
+
+        for a in (-999i64..=999).step_by(2) {
+            let mut value = b + a + 1;
+            let mut delta = a + 3;
+
+            for n in 1.. {
+                if value >= 0 && primes.is_prime(value as u64) {
+                    value += delta;
+                    delta += 2;
                 } else {
                     if n > max_n {
                         max_n = n;
@@ -32,5 +33,6 @@ fn solve_0027() -> i64 {
             }
         }
     }
+
     max_product
 }
