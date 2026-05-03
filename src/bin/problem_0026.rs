@@ -43,7 +43,7 @@ fn multiplicative_order_10(p: u64, primes: &Primes) -> u64 {
     let factors = primes.unique_prime_factors(phi);
 
     for factor in factors {
-        while order % factor == 0 && mod_pow(10, order / factor, p) == 1 {
+        while order.is_multiple_of(factor) && mod_pow(10, order / factor, p) == 1 {
             order /= factor;
         }
     }

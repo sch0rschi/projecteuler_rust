@@ -7,7 +7,16 @@ pub struct Primes {
 
 impl Primes {
     pub fn primes_inclusive(limit: u64) -> Self {
-        primes_inclusive(limit)
+        let sieve = prime_sieve_up_to_inclusive(limit as usize);
+        let list = sieve
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &is_prime)| if is_prime { Some(i as u64) } else { None })
+            .collect();
+        Primes {
+            prime_sieve: sieve,
+            primes_list: list,
+        }
     }
 
     pub fn unique_prime_factors(&self, mut n: u64) -> Vec<u64> {
@@ -91,29 +100,6 @@ impl Primes {
     }
 }
 
-pub fn find_first_n_primes(n: u64) -> Vec<u64> {
-    let mut primes: Vec<u64> = [2, 3].to_vec();
-
-    for _ in 3..=n {
-        let next_prime = find_next_prime(&primes);
-        primes.push(next_prime);
-    }
-    primes
-}
-
-fn primes_inclusive(limit: u64) -> Primes {
-    let sieve = prime_sieve_up_to_inclusive(limit as usize);
-    let list = sieve
-        .iter()
-        .enumerate()
-        .filter_map(|(i, &is_prime)| if is_prime { Some(i as u64) } else { None })
-        .collect();
-    Primes {
-        prime_sieve: sieve,
-        primes_list: list,
-    }
-}
-
 fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
     if limit < 2 {
         return vec![false; limit + 1];
@@ -159,48 +145,6 @@ fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
     out
 }
 
-fn find_next_prime(previous_primes: &[u64]) -> u64 {
-    let last_prime = *previous_primes.last().unwrap();
-    for candidate_prime in ((last_prime + 2)..).step_by(2) {
-        let candidate_prime_sqrt = candidate_prime.isqrt();
-
-        if previous_primes
-            .iter()
-            .take_while(|&&p| p <= candidate_prime_sqrt)
-            .all(|&previous_prime| candidate_prime % previous_prime != 0)
-        {
-            return candidate_prime;
-        }
-    }
-    unreachable!("The loop should always return a prime");
-}
-
-pub fn add_next_prime(previous_primes: &mut Vec<u64>) {
-    let next_prime = find_next_prime(previous_primes);
-    previous_primes.push(next_prime);
-}
-
-pub fn unique_prime_factors(n: u64, list: &[u64]) -> Vec<u64> {
-    let mut factors: Vec<u64> = Vec::new();
-
-    let mut number = n;
-    for &prime in list.iter() {
-        if number.is_multiple_of(prime) {
-            number /= prime;
-            factors.push(prime);
-            while number.is_multiple_of(prime) {
-                number /= prime;
-            }
-        }
-
-        if number == 1 {
-            break;
-        }
-    }
-
-    factors
-}
-
 #[inline(always)]
 fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     if modulo < (1 << 32) {
@@ -228,7 +172,7 @@ fn miller_rabin_witness(n: u64, a: u64, d: u64, s: u32) -> bool {
     false
 }
 
-pub fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
+fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
     const SMALL_PRIMES: &[u64] = &[5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
     for &p in SMALL_PRIMES {
         if n == p {
