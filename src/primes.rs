@@ -1,3 +1,5 @@
+use crate::exponentiation::mod_pow;
+
 pub struct Primes {
     prime_sieve: Vec<bool>,
     pub primes_list: Vec<u64>,
@@ -206,22 +208,6 @@ fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     } else {
         ((a as u128 * b as u128) % modulo as u128) as u64
     }
-}
-
-#[inline(always)]
-fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
-    let mut result = 1u64;
-    base %= modulo;
-
-    while exp > 0 {
-        if exp & 1 == 1 {
-            result = mod_mul(result, base, modulo);
-        }
-        base = mod_mul(base, base, modulo);
-        exp >>= 1;
-    }
-
-    result
 }
 
 #[inline(always)]

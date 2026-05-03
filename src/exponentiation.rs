@@ -1,4 +1,4 @@
-pub fn mod_pow(base: u64, mut exp: usize, modulus: u64) -> u64 {
+pub fn mod_pow(base: u64, mut exp: u64, modulus: u64) -> u64 {
     let m = modulus as u128;
 
     let mut base = base as u128 % m;

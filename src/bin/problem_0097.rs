@@ -1,7 +1,7 @@
 use projecteuler::evaluation_helper::solve_print_and_check;
 use projecteuler::exponentiation::mod_pow;
 
-const EXPONENT: usize = 7_830_457;
+const EXPONENT: u64 = 7_830_457;
 const FACTOR: u64 = 28_433;
 const MOD: u64 = 10_000_000_000;
 
