@@ -1,36 +1,52 @@
 use projecteuler::evaluation_helper::solve_print_and_check;
+use projecteuler::exponentiation::mod_pow;
+use projecteuler::primes::Primes;
+
+const LIMIT: usize = 1000;
 
 fn main() {
     solve_print_and_check(solve_0026, 983);
 }
 
-fn solve_0026() -> i32 {
-    let mut d = 1;
-    let mut max_fraction_cycle_length = 0;
-    for i in 2..1000 {
-        let fraction_cycle_length = get_fraction_cycle_length(i);
-        if fraction_cycle_length > max_fraction_cycle_length {
-            max_fraction_cycle_length = fraction_cycle_length;
-            d = i;
+// https://en.wikipedia.org/wiki/Repeating_decimal#Fractions_with_prime_denominators
+// https://en.wikipedia.org/wiki/Multiplicative_order
+fn solve_0026() -> u64 {
+    let primes = Primes::primes_inclusive(LIMIT as u64);
+
+    let mut best_cycle_length = 0;
+    let mut best_cycle_length_prime = None;
+
+    for &prime in primes.primes_list.iter().rev() {
+        if prime < best_cycle_length {
+            break;
+        }
+        if [2, 5].contains(&prime) {
+            continue;
+        }
+
+        let cycle_length = multiplicative_order_10(prime, &primes);
+
+        if cycle_length > best_cycle_length {
+            best_cycle_length = cycle_length;
+            best_cycle_length_prime = Some(prime);
         }
     }
-    d
+
+    best_cycle_length_prime.expect("There should be a prime with positive cycle length.")
 }
 
-fn get_fraction_cycle_length(n: i32) -> i32 {
-    let mut remainder = 1;
-    let mut occurrence: i32 = 0;
-    let mut remainder_occurrences: Vec<i32> = vec![0; n as usize];
-    remainder_occurrences.resize(n as usize, 0);
-    while remainder > 0 {
-        remainder *= 10;
-        let fraction = remainder / n;
-        remainder -= n * fraction;
-        if remainder_occurrences[remainder as usize] != 0 {
-            return occurrence - remainder_occurrences[remainder as usize];
+fn multiplicative_order_10(p: u64, primes: &Primes) -> u64 {
+    let phi = p - 1;
+
+    let mut order = phi;
+
+    let factors = primes.unique_prime_factors(phi);
+
+    for factor in factors {
+        while order % factor == 0 && mod_pow(10, order / factor, p) == 1 {
+            order /= factor;
         }
-        remainder_occurrences[remainder as usize] = occurrence;
-        occurrence += 1;
     }
-    0
+
+    order
 }
