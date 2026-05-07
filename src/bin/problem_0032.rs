@@ -1,75 +1,123 @@
+use num_integer::Integer;
 use projecteuler::evaluation_helper::solve_print_and_check;
+
+const FULL: u16 = 0b11_1111_1110;
+const PRODUCT_LIMIT: usize = 10_000;
+
+#[derive(Copy, Clone)]
+struct Digits {
+    valid: bool,
+    mask: u16,
+}
 
 fn main() {
     solve_print_and_check(solve_0032, 45228);
 }
 
-fn solve_0032() -> i64 {
-    let mut used = [false; 10000];
-    let mut sum = 0i64;
+fn solve_0032() -> usize {
+    let digits_table = build_table();
 
-    for a in 2..10 {
-        for b in 1234..9877 {
-            let c = a * b;
-            if c >= 10000 {
-                continue;
-            }
+    let valid_1_digit: Vec<usize> = (1..10).filter(|&n| digits_table[n].valid).collect();
+    let valid_2_digit: Vec<usize> = (12..100).filter(|&n| digits_table[n].valid).collect();
+    let valid_3_digit: Vec<usize> = (123..1_000).filter(|&n| digits_table[n].valid).collect();
+    let valid_4_digit: Vec<usize> = (1234..10_000).filter(|&n| digits_table[n].valid).collect();
 
-            if is_pandigital(a, b, c) && !used[c] {
-                used[c] = true;
-                sum += c as i64;
-            }
-        }
-    }
+    let mut is_added = [false; PRODUCT_LIMIT + 1];
+    let mut sum = 0;
 
-    for a in 12..100 {
-        for b in 123..1000 {
-            let c = a * b;
-            if c >= 10000 {
-                continue;
-            }
+    sum_pandigital_products(
+        &digits_table,
+        &mut is_added,
+        &mut sum,
+        &valid_1_digit,
+        &valid_4_digit,
+    );
 
-            if is_pandigital(a, b, c) && !used[c] {
-                used[c] = true;
-                sum += c as i64;
-            }
-        }
-    }
+    sum_pandigital_products(
+        &digits_table,
+        &mut is_added,
+        &mut sum,
+        &valid_2_digit,
+        &valid_3_digit,
+    );
 
     sum
 }
 
-#[inline(always)]
-fn is_pandigital(a: usize, b: usize, c: usize) -> bool {
-    let mut mask: u32 = 0;
-    let mut count = 0;
+fn sum_pandigital_products(
+    digits_table: &[Digits; PRODUCT_LIMIT + 1],
+    is_added: &mut [bool; PRODUCT_LIMIT + 1],
+    sum: &mut usize,
+    factors_1: &[usize],
+    factors_2: &[usize],
+) {
+    for &factor_1 in factors_1 {
+        let d1 = digits_table[factor_1];
+        let max_factor_2 = PRODUCT_LIMIT / factor_1;
 
-    let push = |mut x: usize, mask: &mut u32, count: &mut usize| {
-        while x > 0 {
-            let d = x % 10;
-            if d == 0 {
-                return false;
+        for &factor_2 in factors_2 {
+            if factor_2 >= max_factor_2 {
+                break;
             }
-            let bit = 1 << d;
-            if (*mask & bit) != 0 {
-                return false;
+
+            let d2 = digits_table[factor_2];
+
+            if (d1.mask & d2.mask) != 0 {
+                continue;
             }
-            *mask |= bit;
-            *count += 1;
-            x /= 10;
+
+            let combined = d1.mask | d2.mask;
+            let remaining = FULL & !combined;
+            if remaining == 0 {
+                continue;
+            }
+
+            let product = factor_1 * factor_2;
+            if is_added[product] {
+                continue;
+            }
+
+            let dp = digits_table[product];
+            if dp.valid && dp.mask == remaining {
+                is_added[product] = true;
+                *sum += product;
+            }
         }
-        true
-    };
+    }
+}
 
-    if !push(a, &mut mask, &mut count) {
-        return false;
-    }
-    if !push(b, &mut mask, &mut count) {
-        return false;
-    }
-    if !push(c, &mut mask, &mut count) {
-        return false;
+fn build_table() -> [Digits; PRODUCT_LIMIT + 1] {
+    let mut table = [Digits {
+        valid: false,
+        mask: 0,
+    }; PRODUCT_LIMIT + 1];
+
+    for (table_index, table_element) in table.iter_mut().enumerate().skip(1) {
+        let mut mask = 0u16;
+        let mut valid = true;
+        let mut div = table_index;
+        let mut rem;
+
+        while div > 0 {
+            (div, rem) = div.div_rem(&10);
+
+            if rem == 0 {
+                valid = false;
+                break;
+            }
+
+            let digit_mask = 1u16 << rem;
+
+            if (mask & digit_mask) != 0 {
+                valid = false;
+                break;
+            }
+
+            mask |= digit_mask;
+        }
+
+        *table_element = Digits { valid, mask };
     }
 
-    count == 9 && mask == 0b1111111110 // bits 1..9 set
+    table
 }
