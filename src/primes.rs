@@ -1,22 +1,87 @@
 use crate::exponentiation::mod_pow;
 
+const SMALL_PRIMES: &[u64] = &[7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
+
 pub struct Primes {
-    prime_sieve: Vec<bool>,
     pub primes_list: Vec<u64>,
+    limit: usize,
+    is_prime: Vec<bool>,
 }
 
 impl Primes {
     pub fn primes_inclusive(limit: u64) -> Self {
-        let sieve = prime_sieve_up_to_inclusive(limit as usize);
-        let list = sieve
-            .iter()
-            .enumerate()
-            .filter_map(|(i, &is_prime)| if is_prime { Some(i as u64) } else { None })
-            .collect();
-        Primes {
-            prime_sieve: sieve,
-            primes_list: list,
+        let limit = limit as usize;
+
+        if limit < 2 {
+            return Self {
+                primes_list: Vec::new(),
+                limit,
+                is_prime: vec![],
+            };
         }
+
+        let size = (limit >> 1) + 1;
+        let mut is_prime = vec![true; size];
+
+        is_prime[0] = false;
+
+        let mut primes_list = Vec::with_capacity((limit as f64 / (limit as f64).ln()) as usize);
+
+        primes_list.push(2);
+
+        let mut p = 3;
+
+        while p * p <= limit {
+            let idx = p >> 1;
+
+            if is_prime[idx] {
+                let mut m = p * p;
+                let step = 2 * p;
+
+                while m <= limit {
+                    is_prime[m >> 1] = false;
+                    m += step;
+                }
+
+                primes_list.push(p as u64);
+            }
+
+            p += 2;
+        }
+
+        while p <= limit {
+            if is_prime[p >> 1] {
+                primes_list.push(p as u64);
+            }
+            p += 2;
+        }
+
+        Self {
+            primes_list,
+            limit,
+            is_prime,
+        }
+    }
+
+    #[inline(always)]
+    pub fn is_prime(&self, n: u64) -> bool {
+        if n < 2 {
+            return false;
+        }
+        if n == 2 {
+            return true;
+        }
+        if n.is_multiple_of(2) {
+            return false;
+        }
+
+        let n_usize = n as usize;
+
+        if n_usize <= self.limit {
+            return self.is_prime[n_usize >> 1];
+        }
+
+        is_prime(n)
     }
 
     pub fn unique_prime_factors(&self, mut n: u64) -> Vec<u64> {
@@ -24,6 +89,7 @@ impl Primes {
         if n < 2 {
             return result;
         }
+
         for &p in &self.primes_list {
             if p * p > n {
                 break;
@@ -36,6 +102,7 @@ impl Primes {
                 }
             }
         }
+
         if n > 1 {
             result.push(n);
         }
@@ -48,6 +115,7 @@ impl Primes {
         if n < 2 {
             return result;
         }
+
         for &p in &self.primes_list {
             if n == 1 {
                 break;
@@ -61,88 +129,79 @@ impl Primes {
 
         result
     }
-
-    pub fn is_prime(&self, n: u64) -> bool {
-        if n < self.prime_sieve.len() as u64 {
-            return self.prime_sieve[n as usize];
-        }
-        if n < 2 {
-            return false;
-        }
-        if n == 2 || n == 3 {
-            return true;
-        }
-        if n.is_multiple_of(2) || n.is_multiple_of(3) {
-            return false;
-        }
-        if n < 2_047 {
-            return is_prime_miller_rabin(n, &[2]);
-        }
-        if n < 1_373_653 {
-            return is_prime_miller_rabin(n, &[2, 3]);
-        }
-        if n < 9_080_191 {
-            return is_prime_miller_rabin(n, &[31, 73]);
-        }
-        if n < 4_759_123_141 {
-            return is_prime_miller_rabin(n, &[2, 7, 61]);
-        }
-        if n < 2_152_302_898_747 {
-            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11]);
-        }
-        if n < 3_474_749_660_383 {
-            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13]);
-        }
-        if n < 341_550_071_728_321 {
-            return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13, 17]);
-        }
-        panic!("This code path should not be reached");
-    }
 }
 
-fn prime_sieve_up_to_inclusive(limit: usize) -> Vec<bool> {
-    if limit < 2 {
-        return vec![false; limit + 1];
+pub fn is_prime(n: u64) -> bool {
+    if n < 2 {
+        return false;
+    }
+    if n == 2 || n == 3 || n == 5 {
+        return true;
+    }
+    if n.is_multiple_of(2) || n.is_multiple_of(3) || n.is_multiple_of(5) {
+        return false;
     }
 
-    let size = (limit >> 1) + 1;
-    let mut bits = vec![u64::MAX; size.div_ceil(64)];
+    if n < 100_000_000 {
+        return is_prime_wheel_30(n);
+    }
 
-    bits[0] &= !1u64;
+    for &p in SMALL_PRIMES {
+        if n == p {
+            return true;
+        }
+        if n.is_multiple_of(p) {
+            return false;
+        }
+    }
 
-    let mut p = 3;
+    miller_rabin(n)
+}
 
-    while p * p <= limit {
-        let pi = p >> 1;
+pub fn is_prime_wheel_30(n: u64) -> bool {
 
-        if ((bits[pi >> 6] >> (pi & 63)) & 1) == 1 {
-            let mut m = p * p;
+    const CYCLE: [u64; 8] = [4, 2, 4, 2, 4, 6, 2, 6];
 
-            while m <= limit {
-                let mi = m >> 1;
-                bits[mi >> 6] &= !(1u64 << (mi & 63));
-                m += 2 * p;
-            }
+    let mut divisor = 7u64;
+    let mut i = 0usize;
+
+    while divisor * divisor <= n {
+        if n.is_multiple_of(divisor) {
+            return false;
         }
 
-        p += 2;
+        divisor += CYCLE[i];
+        i = (i + 1) & 7;
     }
 
-    let mut out = vec![false; limit + 1];
+    true
+}
 
-    if limit >= 2 {
-        out[2] = true;
+
+fn miller_rabin(n: u64) -> bool {
+    if n < 2_047 {
+        return is_prime_miller_rabin(n, &[2]);
+    }
+    if n < 1_373_653 {
+        return is_prime_miller_rabin(n, &[2, 3]);
+    }
+    if n < 9_080_191 {
+        return is_prime_miller_rabin(n, &[31, 73]);
+    }
+    if n < 4_759_123_141 {
+        return is_prime_miller_rabin(n, &[2, 7, 61]);
+    }
+    if n < 2_152_302_898_747 {
+        return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11]);
+    }
+    if n < 3_474_749_660_383 {
+        return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13]);
+    }
+    if n < 341_550_071_728_321 {
+        return is_prime_miller_rabin(n, &[2, 3, 5, 7, 11, 13, 17]);
     }
 
-    let mut i = 3;
-    while i <= limit {
-        let idx = i >> 1;
-        let bit = (bits[idx >> 6] >> (idx & 63)) & 1;
-        out[i] = bit == 1;
-        i += 2;
-    }
-
-    out
+    panic!("Number too large for Miller-Rabin test: {}", n);
 }
 
 #[inline(always)]
@@ -157,32 +216,17 @@ fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
 #[inline(always)]
 fn miller_rabin_witness(n: u64, a: u64, d: u64, s: u32) -> bool {
     let mut x = mod_pow(a, d, n);
-
-    if x == 1 || x == n - 1 {
-        return true;
-    }
+    let mut is_composite = x != 1 && x != n - 1;
 
     for _ in 1..s {
         x = mod_mul(x, x, n);
-        if x == n - 1 {
-            return true;
-        }
+        is_composite &= x != n - 1;
     }
 
-    false
+    !is_composite
 }
 
 fn is_prime_miller_rabin(n: u64, bases: &[u64]) -> bool {
-    const SMALL_PRIMES: &[u64] = &[5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
-    for &p in SMALL_PRIMES {
-        if n == p {
-            return true;
-        }
-        if n.is_multiple_of(p) {
-            return false;
-        }
-    }
-
     let mut d = n - 1;
     let s = d.trailing_zeros();
     d >>= s;
