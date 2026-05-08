@@ -1,49 +1,31 @@
 use num_integer::Integer;
-use projecteuler::digits::get_digits;
 use projecteuler::evaluation_helper::solve_print_and_check;
 
 fn main() {
     solve_print_and_check(solve_0033, 100);
 }
 
-fn solve_0033() -> u64 {
-    let mut nominator_product = 1;
-    let mut denominator_product = 1;
-    for nominator in 10..100 {
-        for denominator in nominator + 1..100 {
-            let nominator_digits = get_digits(nominator);
-            let denominator_digits = get_digits(denominator);
-            if nominator_digits[0] != nominator_digits[1]
-                && denominator_digits[0] != denominator_digits[1]
-            {
-                if nominator_digits[0] == denominator_digits[0]
-                    && nominator_digits[0] != 0
-                    && nominator * denominator_digits[1] == nominator_digits[1] * denominator
-                {
-                    nominator_product *= nominator;
-                    denominator_product *= denominator;
-                }
-                if nominator_digits[1] == denominator_digits[0]
-                    && nominator * denominator_digits[1] == nominator_digits[0] * denominator
-                {
-                    nominator_product *= nominator;
-                    denominator_product *= denominator;
-                }
-                if nominator_digits[0] == denominator_digits[1]
-                    && nominator * denominator_digits[0] == nominator_digits[1] * denominator
-                {
-                    nominator_product *= nominator;
-                    denominator_product *= denominator;
-                }
-                if nominator_digits[1] == denominator_digits[1]
-                    && nominator * denominator_digits[0] == nominator_digits[1] * denominator
-                {
-                    nominator_product *= nominator;
-                    denominator_product *= denominator;
+fn solve_0033() -> u16 {
+    let mut result_numerator = 1u16;
+    let mut result_denominator = 1u16;
+
+    for numerator_tens in 1u16..10 {
+        for numerator_ones in 1u16..10 {
+            let numerator = 10 * numerator_tens + numerator_ones;
+            for denominator_ones in (numerator_tens + 1)..10 {
+                let denominator_tens = numerator_ones;
+                let denominator = 10 * denominator_tens + denominator_ones;
+
+                if numerator * denominator_ones == denominator * numerator_tens {
+                    result_numerator *= numerator;
+                    result_denominator *= denominator;
+                    let gcd = result_numerator.gcd(&result_denominator);
+                    result_numerator /= gcd;
+                    result_denominator /= gcd;
                 }
             }
         }
     }
-    let gcd = nominator_product.gcd(&denominator_product);
-    denominator_product / gcd
+
+    result_denominator
 }
