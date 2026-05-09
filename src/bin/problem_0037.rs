@@ -1,40 +1,54 @@
-use itertools::Itertools;
-use projecteuler::digits::{get_digits, get_number};
 use projecteuler::evaluation_helper::solve_print_and_check;
-use projecteuler::primes::Primes;
+use projecteuler::primes_u32::is_prime;
+use smallvec::SmallVec;
+
+const FIRST_DIGITS: [u32; 4] = [2, 3, 5, 7];
 
 fn main() {
     solve_print_and_check(solve_0037, 748317);
 }
 
-fn solve_0037() -> u64 {
-    let mut count = 0;
-    let mut sum = 0;
-    let primes = Primes::primes_inclusive(1_000_000);
-    let primes_list = &primes.primes_list;
-    for &prime in primes_list.iter().dropping(4) {
-        if count >= 11 {
-            break;
+fn solve_0037() -> u32 {
+    let mut sum = 0u32;
+    let mut count = 0u32;
+    let mut current: SmallVec<[u32; 32]> = SmallVec::from_slice(&FIRST_DIGITS);
+    let mut next: SmallVec<[u32; 32]> = SmallVec::with_capacity(32);
+
+    while count < 11 {
+        next.clear();
+        for &n in &current {
+            let pow10 = 10u32.pow(n.ilog10() + 1);
+            for d in [3, 7] {
+                let candidate = n * 10 + d;
+                if is_prime(candidate) {
+                    next.push(candidate);
+                    if is_left_truncatable(candidate, pow10) {
+                        sum += candidate;
+                        count += 1;
+                    }
+                }
+            }
+            for d in [1, 9] {
+                let candidate = n * 10 + d;
+                if is_prime(candidate) {
+                    next.push(candidate);
+                }
+            }
         }
-        if is_truncatable_prime(&primes, prime) {
-            sum += prime;
-            count += 1;
-        }
+        std::mem::swap(&mut current, &mut next);
     }
+
     sum
 }
 
-fn is_truncatable_prime(primes: &Primes, prime: u64) -> bool {
-    let prime_digits = get_digits(prime);
-    for i in 1..prime_digits.len() {
-        let left_stripped = get_number(&prime_digits[i..prime_digits.len()]);
-        if !primes.is_prime(left_stripped) {
+fn is_left_truncatable(n: u32, mut pow10: u32) -> bool {
+    while pow10 > 1 {
+        let div = n / pow10;
+        let truncated = n - div * pow10;
+        if !is_prime(truncated) {
             return false;
         }
-        let right_stripped = get_number(&prime_digits[0..prime_digits.len() - i]);
-        if !primes.is_prime(right_stripped) {
-            return false;
-        }
+        pow10 /= 10;
     }
     true
 }
