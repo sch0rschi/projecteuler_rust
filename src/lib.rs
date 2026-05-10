@@ -1,17 +1,3 @@
-pub mod primes;
-pub mod divisors;
-pub mod digits;
-pub mod factorials;
-pub mod integer_pythagorean_triplets;
-pub mod triplet;
-pub mod pandigital;
-pub mod word_score;
-pub mod continued_fractions;
-pub mod pells_equation;
-pub mod permutations;
-pub mod coprimes;
-pub mod multiset_partitions;
-pub mod multiset_combinations;
-pub mod exponentiation;
-pub mod evaluation_helper;
-pub mod primes_u32;
+pub mod libs;
+
+include!(concat!(env!("OUT_DIR"), "/solutions.rs"));
