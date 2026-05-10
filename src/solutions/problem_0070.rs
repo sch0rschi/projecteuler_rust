@@ -1,65 +1,34 @@
-use crate::libs::coprimes::phi;
 use crate::libs::digits::get_digit_count_encoding_15_max;
-use crate::libs::primes::Primes;
+use crate::libs::totients::get_totient_sieve;
 use num_integer::Roots;
 
 pub fn solve_0070() -> u64 {
-    let limit = 10_000_000;
-    let primes = Primes::primes_inclusive(limit.sqrt());
+    let limit = 10_000_000usize;
+    let totient_sieve = get_totient_sieve(limit);
 
-    (2..=limit)
-        .filter_map(|n| {
-            let factors = unique_prime_factors_2_capped(n, &primes)?;
-            let phi = phi(n, &factors);
-            if !is_permutation(n, phi) {
-                return None;
-            }
-            let ratio = n * 1_000_000 / phi;
-            Some((n, ratio))
-        })
-        .min_by_key(|&(_, ratio)| ratio)
-        .unwrap()
-        .0
+    let mut best_n = u64::MAX.sqrt();
+    let mut best_ph = 1u64;
+
+    for (n, &phi) in totient_sieve.iter().enumerate().skip(2) {
+        let ph = phi as u64;
+        let n64 = n as u64;
+
+        if ph == 0 || ph == n64 {
+            continue;
+        }
+
+        if n64 * best_ph < best_n * ph && is_permutation(n64, ph) {
+            best_n = n64;
+            best_ph = ph;
+        }
+    }
+
+    best_n
 }
 
-fn is_permutation(p0: u64, p1: u64) -> bool {
-    get_digit_count_encoding_15_max(p0) == get_digit_count_encoding_15_max(p1)
-}
-
-pub fn unique_prime_factors_2_capped(mut n: u64, primes: &Primes) -> Option<[u64; 2]> {
-    let mut result = [0; 2];
-    let mut count = 0;
-    if n < 2 {
-        return None;
-    }
-    for &p in &primes.primes_list {
-        if p * p > n {
-            break;
-        }
-
-        if n.is_multiple_of(p) {
-            if count >= 2 {
-                return None;
-            }
-            result[count] = p;
-            count += 1;
-            while n.is_multiple_of(p) {
-                n /= p;
-            }
-        }
-    }
-    if n > 1 {
-        if count != 1 {
-            return None;
-        }
-        result[count] = n;
-        count += 1;
-    }
-
-    if count != 2 {
-        return None;
-    }
-    Some(result)
+#[inline]
+fn is_permutation(a: u64, b: u64) -> bool {
+    get_digit_count_encoding_15_max(a) == get_digit_count_encoding_15_max(b)
 }
 
 #[cfg(test)]

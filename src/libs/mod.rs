@@ -16,3 +16,4 @@ pub mod multiset_combinations;
 pub mod exponentiation;
 pub mod evaluation_helper;
 pub mod primes_u32;
+pub mod totients;
