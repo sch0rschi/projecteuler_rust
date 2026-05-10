@@ -1,96 +1,168 @@
 use crate::libs::primes::Primes;
+use itertools::Itertools;
 
+// Those two constants are "educated" guesses
+const MAX_PRIME_SEARCH: u64 = 10_000;
+const MAX_FAST_PRIME_CHECK: u64 = 10_000_000;
 
 pub fn solve_0060() -> u64 {
-    let primes = Primes::primes_inclusive(10_000);
-    let primes_list = &primes.primes_list;
+    let primes = Primes::primes_inclusive(MAX_FAST_PRIME_CHECK);
+    let mut best: u64 = u64::MAX;
 
-    let n = primes_list.len();
+    let primes_list_shortened: Vec<u64> = primes
+        .primes_list
+        .iter()
+        .cloned()
+        .take_while(|&p| p <= MAX_PRIME_SEARCH)
+        .filter(|&p| p == 3 || p != 2 && p != 5 && p % 3 == 1)
+        .collect_vec();
 
-    let mut check = vec![vec![false; n]; n];
+    prepare_then_search(&primes, &primes_list_shortened, &mut best);
 
-    for i in 0..n {
-        for j in i + 1..n {
-            if both_prime_concat(primes_list[i], primes_list[j], &primes) {
-                check[i][j] = true;
-            }
-        }
-    }
+    let primes_list_shortened: Vec<u64> = primes
+        .primes_list
+        .iter()
+        .cloned()
+        .take_while(|&p| p <= MAX_PRIME_SEARCH)
+        .filter(|&p| p == 3 || p != 2 && p != 5 && p % 3 == 2)
+        .collect_vec();
 
-    let mut best = u64::MAX;
-
-    for p0i in 0..n {
-        let p0 = primes_list[p0i];
-        if 5 * p0 >= best {
-            break;
-        }
-
-        for p1i in p0i + 1..n {
-            let p1 = primes_list[p1i];
-            if p0 + 4 * p1 >= best {
-                break;
-            }
-            if !check[p0i][p1i] {
-                continue;
-            }
-
-            for p2i in p1i + 1..n {
-                let p2 = primes_list[p2i];
-                if p0 + p1 + 3 * p2 >= best {
-                    break;
-                }
-                if !check[p0i][p2i] || !check[p1i][p2i] {
-                    continue;
-                }
-
-                for p3i in p2i + 1..n {
-                    let p3 = primes_list[p3i];
-                    if p0 + p1 + p2 + 2 * p3 >= best {
-                        break;
-                    }
-                    if !check[p0i][p3i] || !check[p1i][p3i] || !check[p2i][p3i] {
-                        continue;
-                    }
-
-                    for p4i in p3i + 1..n {
-                        let p4 = primes_list[p4i];
-                        let sum = p0 + p1 + p2 + p3 + p4;
-
-                        if sum >= best {
-                            break;
-                        }
-
-                        if !check[p0i][p4i]
-                            || !check[p1i][p4i]
-                            || !check[p2i][p4i]
-                            || !check[p3i][p4i]
-                        {
-                            continue;
-                        }
-
-                        best = sum;
-                    }
-                }
-            }
-        }
-    }
+    prepare_then_search(&primes, &primes_list_shortened, &mut best);
 
     best
 }
 
-#[inline(always)]
-fn both_prime_concat(p1: u64, p2: u64, primes: &Primes) -> bool {
-    prime_concat(p1, p2, primes) && prime_concat(p2, p1, primes)
+fn prepare_then_search(primes: &Primes, primes_list_shortened: &[u64], best: &mut u64) {
+    let factors: Vec<u64> = primes_list_shortened
+        .iter()
+        .map(|&p| {
+            let mut x = p;
+            let mut factor = 10u64;
+
+            while x >= 10 {
+                x /= 10;
+                factor *= 10;
+            }
+
+            factor
+        })
+        .collect();
+
+    let n = primes_list_shortened.len();
+    let mut cache: Vec<Option<bool>> = vec![None; n * (n - 1) / 2];
+
+    search(
+        best,
+        primes,
+        &mut cache,
+        primes_list_shortened,
+        &factors,
+    );
 }
 
 #[inline(always)]
-fn prime_concat(prime_least: u64, prime_most: u64, primes: &Primes) -> bool {
-    let mut factor = 10;
-    while factor <= prime_least {
-        factor *= 10;
+fn search(
+    best: &mut u64,
+    primes: &Primes,
+    cache: &mut [Option<bool>],
+    primes_list_shortened: &[u64],
+    factors: &[u64],
+) {
+    #[derive(Clone, Copy)]
+    struct Frame {
+        next: usize,
+        depth: usize,
+        current_sum: u64,
+        current_prime_indices: [usize; 5],
     }
 
-    primes.is_prime(prime_most * factor + prime_least)
+    let mut stack = Vec::with_capacity(16);
+
+    stack.push(Frame {
+        next: 0,
+        depth: 0,
+        current_sum: 0,
+        current_prime_indices: [0; 5],
+    });
+
+    while let Some(mut frame) = stack.pop() {
+        if frame.depth == 5 {
+            *best = frame.current_sum.min(*best);
+            continue;
+        }
+
+        let remaining = 5 - frame.depth;
+
+        while frame.next < primes_list_shortened.len() {
+            let prime_1_index = frame.next;
+            frame.next += 1;
+
+            let p = primes_list_shortened[prime_1_index];
+
+            if frame.current_sum + (remaining as u64) * p >= *best {
+                break;
+            }
+
+            let mut valid = true;
+
+            for i in 0..frame.depth {
+                let current_prime_index = frame.current_prime_indices[i];
+
+                let cache_index =
+                    triangular_index(prime_1_index, current_prime_index);
+
+                let are_concat_prime = match cache[cache_index] {
+                    Some(v) => v,
+                    None => {
+                        let v = both_concat_prime(
+                            primes_list_shortened[current_prime_index],
+                            p,
+                            factors[current_prime_index],
+                            factors[prime_1_index],
+                            primes,
+                        );
+
+                        cache[cache_index] = Some(v);
+                        v
+                    }
+                };
+
+                if !are_concat_prime {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if !valid {
+                continue;
+            }
+
+            stack.push(frame);
+
+            let mut next_indices = frame.current_prime_indices;
+            next_indices[frame.depth] = prime_1_index;
+
+            stack.push(Frame {
+                next: prime_1_index + 1,
+                depth: frame.depth + 1,
+                current_sum: frame.current_sum + p,
+                current_prime_indices: next_indices,
+            });
+
+            break;
+        }
+    }
+}
+
+#[inline(always)]
+fn triangular_index(i: usize, j: usize) -> usize {
+    // i is always smaller than j
+    i * (i - 1) / 2 + j
+}
+
+#[inline(always)]
+fn both_concat_prime(a: u64, b: u64, factor_a: u64, factor_b: u64, primes: &Primes) -> bool {
+    primes.is_prime(a * factor_b + b) && primes.is_prime(b * factor_a + a)
 }
 
 #[cfg(test)]
