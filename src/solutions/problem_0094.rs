@@ -1,32 +1,36 @@
-use crate::libs::integer_pythagorean_triplets::{expand, R};
+use crate::libs::integer_pythagorean_triplets::{expand_1_3, R};
+use crate::libs::triplet::Triplet;
 
-const LIMIT: u64 = 1_000_000_000;
+const LIMIT: i64 = 1_000_000_000;
 
-
-pub fn solve_0094() -> u64 {
-    let mut sum: u64 = 0;
+pub fn solve_0094() -> i64 {
+    let mut sum: i64 = 0;
 
     let mut search_space_stack = vec![R];
 
     while let Some(triplet) = search_space_stack.pop() {
-        let hypotenuse = triplet.2;
-        if hypotenuse as u64 > LIMIT / 3 + 1 {
+        let Triplet(a, b, c) = triplet;
+        let (a, b, c) = (a as i64, b as i64, c as i64);
+
+        if c > LIMIT / 3 + 1 {
             continue;
         }
 
-        let shorter = triplet.0.min(triplet.1);
-
-        if 2 * shorter == hypotenuse + 1 {
-            sum += 3 * hypotenuse as u64 - 1;
+        let shorter = a.min(b);
+        if 2 * shorter == c + 1 {
+            sum += 3 * c - 1;
         }
-        if 2 * shorter == hypotenuse - 1 {
-            sum += 3 * hypotenuse as u64 + 1;
+        if 2 * shorter == c - 1 {
+            sum += 3 * c + 1;
         }
 
-        let (a, b, c) = expand(triplet);
-        search_space_stack.push(a);
-        search_space_stack.push(b);
-        search_space_stack.push(c);
+        let Triplet(a2, b2, c2) = triplet;
+        let (t1, t3) = expand_1_3(Triplet(a2, b2, c2));
+        search_space_stack.push(t1);
+        // we don't need this expansion,
+        // because this leg produces triplets where a and b move apart from each other
+        // search_space_stack.push(t2);
+        search_space_stack.push(t3);
     }
 
     sum

@@ -10,3 +10,11 @@ pub fn expand(t: Triplet) -> (Triplet, Triplet, Triplet) {
         Triplet(-a + 2 * b + 2 * c, -2 * a + b + 2 * c, -2 * a + 2 * b + 3 * c),
     )
 }
+
+pub fn expand_1_3(t: Triplet) -> (Triplet, Triplet) {
+    let Triplet(a, b, c) = t;
+    (
+        Triplet(a - 2 * b + 2 * c, 2 * a - b + 2 * c, 2 * a - 2 * b + 3 * c),
+        Triplet(-a + 2 * b + 2 * c, -2 * a + b + 2 * c, -2 * a + 2 * b + 3 * c),
+    )
+}
