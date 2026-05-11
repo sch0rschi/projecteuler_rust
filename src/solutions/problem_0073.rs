@@ -1,23 +1,31 @@
-use num_integer::Integer;
+const LIMIT: u32 = 12_000;
 
-
+// https://en.wikipedia.org/wiki/Farey_sequence
 pub fn solve_0073() -> i32 {
-    let limit = 12_000;
-    let lower_fraction_nominator = 1;
-    let lower_fraction_denominator = 3;
-    let upper_fraction_nominator = 1;
-    let upper_fraction_denominator = 2;
+
+    let mut a = 0;
+    let mut b = 1;
+    let mut c = 1;
+    let mut d = LIMIT;
+
     let mut count = 0;
-    for nominator in 1..limit {
-        for denominator in 2..=limit {
-            if nominator * lower_fraction_denominator > denominator * lower_fraction_nominator
-                && nominator * upper_fraction_denominator < denominator * upper_fraction_nominator
-                && nominator.gcd(&denominator) == 1
-            {
-                count += 1;
-            }
+
+    while !(c == 1 && d == 2) {
+        let k = (LIMIT + b) / d;
+
+        let e = k * c - a;
+        let f = k * d - b;
+
+        a = c;
+        b = d;
+        c = e;
+        d = f;
+
+        if 3 * a > b && 2 * a < b {
+            count += 1;
         }
     }
+
     count
 }
 
