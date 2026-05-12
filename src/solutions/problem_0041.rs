@@ -1,15 +1,17 @@
-use crate::libs::pandigital::is_1_to_length_pandigital;
-use crate::libs::primes::Primes;
+use crate::libs::permutations::prev_permutation;
+use crate::libs::primes_u32::is_prime;
 
+pub fn solve_0041() -> u32 {
+    let mut digits = [7u32, 6, 5, 4, 3, 2, 1];
+    let mut done = false;
 
-pub fn solve_0041() -> u64 {
-    let primes = Primes::primes_inclusive(7654321);
-    let primes_list = &primes.primes_list;
-
-    *primes_list
-        .iter()
-        .rev()
-        .find(|&&p| is_1_to_length_pandigital(p))
+    std::iter::from_fn(move || {
+        if done { return None; }
+        let n = digits.iter().fold(0u32, |acc, &d| acc * 10 + d);
+        if !prev_permutation(&mut digits) { done = true; }
+        Some(n)
+    })
+        .find(|&n| is_prime(n))
         .unwrap()
 }
 
