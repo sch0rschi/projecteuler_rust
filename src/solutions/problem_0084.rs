@@ -1,106 +1,92 @@
-use itertools::Itertools;
-use rand::prelude::*;
+use nalgebra::{DMatrix, DVector};
 
 const SQUARES: usize = 40;
-const DICE_SIDES: usize = 4;
-const GO: usize = 0;
 const JAIL: usize = 10;
 const G2J: usize = 30;
+const DICE_SIDES: usize = 4;
 
-
+// Exact stationary distribution via Markov chain + linear system solve (T-I)v=0.
+// Avoids the non-determinism and slow convergence of the Monte Carlo approach.
 pub fn solve_0084() -> usize {
-    let mut rng = rand::rng();
+    const STATES: usize = SQUARES * 3;
+    let mut trans = DMatrix::<f64>::zeros(STATES, STATES);
 
-    let mut square = 0usize;
-    let mut double_count = 0usize;
-    let mut square_counter = [0u64; SQUARES];
-    let mut count: u128 = 0;
+    for sq in 0..SQUARES {
+        for dc in 0..3usize {
+            let from = sq * 3 + dc;
+            for d1 in 1..=DICE_SIDES {
+                for d2 in 1..=DICE_SIDES {
+                    let prob = 1.0 / (DICE_SIDES * DICE_SIDES) as f64;
+                    let is_double = d1 == d2;
+                    let new_dc = if is_double { dc + 1 } else { 0 };
 
-    let mut cc_cards = (1usize..=16).collect_array().unwrap();
-    cc_cards.shuffle(&mut rng);
+                    if is_double && new_dc == 3 {
+                        trans[(JAIL * 3, from)] += prob;
+                        continue;
+                    }
 
-    let mut ch_cards = (1usize..=16).collect_array().unwrap();
-    ch_cards.shuffle(&mut rng);
-
-    const CHECK_INTERVAL: u128 = 100_000;
-
-    loop {
-        let dice_1 = rng.random_range(1..=DICE_SIDES);
-        let dice_2 = rng.random_range(1..=DICE_SIDES);
-
-        if dice_1 == dice_2 {
-            double_count += 1;
-        } else {
-            double_count = 0;
-        }
-
-        if double_count == 3 {
-            double_count = 0;
-            square = JAIL;
-        } else {
-            square = (square + dice_1 + dice_2) % SQUARES;
-
-            if square == G2J {
-                square = JAIL;
+                    let moved = (sq + d1 + d2) % SQUARES;
+                    for (dest, p) in resolve(moved) {
+                        let to = dest * 3 + new_dc;
+                        trans[(to, from)] += prob * p;
+                    }
+                }
             }
-
-            if square == GO {
-                cc_cards.shuffle(&mut rng);
-                ch_cards.shuffle(&mut rng);
-            }
-
-            square = match square {
-                2 | 17 | 33 => handle_cc(square, &mut cc_cards),
-                7 | 22 | 36 => handle_ch(square, &mut ch_cards),
-                _ => square,
-            };
-        }
-
-        square_counter[square] += 1;
-        count += 1;
-
-        if count.is_multiple_of(CHECK_INTERVAL)
-            && let Some((a, b, c)) = converged(&square_counter)
-        {
-            return a * 10000 + b * 100 + c;
         }
     }
-}
 
-fn handle_ch(square: usize, ch_cards: &mut [usize; 16]) -> usize {
-    let ch_card = ch_cards[0];
-    ch_cards.rotate_left(1);
-
-    match ch_card {
-        1 => GO,
-        2 => JAIL,
-        3 => 11,
-        4 => 24,
-        5 => 39,
-        6 => 5,
-        7 | 8 => next_r(square),
-        9 => next_u(square),
-        10 => {
-            let new_square = square.saturating_sub(3);
-
-            if 33 == new_square {
-                handle_cc(new_square, ch_cards)
-            } else {
-                new_square
-            }
+    for from in 0..STATES {
+        let col_sum: f64 = (0..STATES).map(|to| trans[(to, from)]).sum();
+        if (col_sum - 1.0).abs() > 1e-9 {
+            println!("col {from} (sq={} dc={}) sums to {col_sum}", from / 3, from % 3);
         }
-        _ => square,
     }
+
+    let mut a = trans - DMatrix::<f64>::identity(STATES, STATES);
+    for j in 0..STATES {
+        a[(STATES - 1, j)] = 1.0;
+    }
+
+    let mut b = DVector::<f64>::zeros(STATES);
+    b[STATES - 1] = 1.0;
+
+    let v = a.lu().solve(&b).expect("singular");
+
+    let mut sq_prob: Vec<(usize, f64)> = (0..SQUARES)
+        .map(|sq| (sq, v[sq*3] + v[sq*3+1] + v[sq*3+2]))
+        .collect();
+    sq_prob.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+
+    sq_prob[0].0 * 10000 + sq_prob[1].0 * 100 + sq_prob[2].0
 }
 
-fn handle_cc(square: usize, cc_cards: &mut [usize; 16]) -> usize {
-    let cc_card = cc_cards[0];
-    cc_cards.rotate_left(1);
-
-    match cc_card {
-        1 => GO,
-        2 => JAIL,
-        _ => square,
+fn resolve(sq: usize) -> Vec<(usize, f64)> {
+    match sq {
+        G2J => vec![(JAIL, 1.0)],
+        2 | 17 | 33 => vec![
+            (0,    1.0/16.0),
+            (JAIL, 1.0/16.0),
+            (sq,   14.0/16.0),
+        ],
+        7 | 22 | 36 => {
+            let back3 = sq - 3;
+            let mut v = vec![
+                (0,          1.0/16.0),
+                (JAIL,       1.0/16.0),
+                (11,         1.0/16.0),
+                (24,         1.0/16.0),
+                (39,         1.0/16.0),
+                (5,          1.0/16.0),
+                (next_r(sq), 2.0/16.0),
+                (next_u(sq), 1.0/16.0),
+                (sq,         6.0/16.0), // stay: 6 cards do nothing
+            ];
+            for (dest, p) in resolve(back3) {
+                v.push((dest, p / 16.0));
+            }
+            v
+        }
+        _ => vec![(sq, 1.0)],
     }
 }
 
@@ -110,53 +96,6 @@ fn next_r(x: usize) -> usize {
 
 fn next_u(x: usize) -> usize {
     if !(12..28).contains(&x) { 12 } else { 28 }
-}
-
-fn converged(square_counter: &[u64; SQUARES]) -> Option<(usize, usize, usize)> {
-    let total = square_counter.iter().sum::<u64>() as f64;
-    if total == 0.0 {
-        return None;
-    }
-
-    let mut top: [(usize, u64); SQUARES] = {
-        let mut arr = [(0usize, 0u64); SQUARES];
-        for (i, c) in square_counter.iter().enumerate() {
-            arr[i] = (i, *c);
-        }
-        arr
-    };
-
-    top.sort_by(|a, b| b.1.cmp(&a.1));
-
-    let top4 = &top[0..4];
-
-    let mut stats = [(0usize, 0f64, 0f64, 0f64); 4];
-
-    for (i, &(idx, count)) in top4.iter().enumerate() {
-        let p = count as f64 / total;
-        let sigma = (p * (1.0 - p) / total).sqrt();
-        let margin = 1.96 * sigma;
-
-        stats[i] = (idx, p, p - margin, p + margin);
-    }
-
-    let overlap = (0..4).any(|i| (i + 1..4).any(|j| interval_overlap(stats[i], stats[j])));
-
-    if !overlap {
-        let a = top4[0].0;
-        let b = top4[1].0;
-        let c = top4[2].0;
-        return Some((a, b, c));
-    }
-
-    None
-}
-
-fn interval_overlap(a: (usize, f64, f64, f64), b: (usize, f64, f64, f64)) -> bool {
-    let (_, _, a_low, a_high) = a;
-    let (_, _, b_low, b_high) = b;
-
-    a_low <= b_high && b_low <= a_high
 }
 
 #[cfg(test)]

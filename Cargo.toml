@@ -11,11 +11,10 @@ bitvec = "1.0.1"
 itertools = "0.14.0"
 num-integer = "0.1.46"
 rustc-hash = "2.1.2"
-rand = "0.10.1"
 numerus = "0.1.1"
 regex = "1.12.3"
 smallvec = "1.15.1"
-bytemuck = "1.25.0"
+nalgebra = "0.34.2"
 
 [build-dependencies]
 ureq = "3.3.0"
