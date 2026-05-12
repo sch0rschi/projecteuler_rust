@@ -1,19 +1,21 @@
 const POKER_HANDS: &str = include_str!("../../resources/0054_poker.txt");
-const HAND_RANKS_BYTES: &[u8] = include_bytes!("../../resources/HandRanks.dat");
+static HAND_RANKS: &[u32] = {
+    #[repr(align(4))]
+    struct Aligned<T: ?Sized>(T);
+    static ALIGNED: &Aligned<[u8]> = &Aligned(*include_bytes!("../../resources/HandRanks.dat"));
+    unsafe { std::slice::from_raw_parts(ALIGNED.0.as_ptr() as *const u32, ALIGNED.0.len() / 4) }
+};
 
 pub fn solve_0054() -> i32 {
-    let lookup_table = load_table();
 
     POKER_HANDS
         .lines()
         .filter(|line| {
             let cards = parse_line(line.as_bytes());
             let hand_1_rank = eval_5(
-                lookup_table,
                 [cards[0], cards[1], cards[2], cards[3], cards[4]],
             );
             let hand_2_rank = eval_5(
-                lookup_table,
                 [cards[5], cards[6], cards[7], cards[8], cards[9]],
             );
             hand_1_rank > hand_2_rank
@@ -45,18 +47,14 @@ fn encode_card(card: &[u8]) -> u8 {
     rank * 4 + suit + 1
 }
 
-fn load_table() -> &'static [u32] {
-    bytemuck::cast_slice(HAND_RANKS_BYTES)
-}
-
-fn eval_5(lookup_table: &[u32], cards: [u8; 5]) -> u32 {
+fn eval_5(cards: [u8; 5]) -> u32 {
     let mut p = 53usize;
-    p = lookup_table[p + cards[0] as usize] as usize;
-    p = lookup_table[p + cards[1] as usize] as usize;
-    p = lookup_table[p + cards[2] as usize] as usize;
-    p = lookup_table[p + cards[3] as usize] as usize;
-    p = lookup_table[p + cards[4] as usize] as usize;
-    lookup_table[p]
+    p = HAND_RANKS[p + cards[0] as usize] as usize;
+    p = HAND_RANKS[p + cards[1] as usize] as usize;
+    p = HAND_RANKS[p + cards[2] as usize] as usize;
+    p = HAND_RANKS[p + cards[3] as usize] as usize;
+    p = HAND_RANKS[p + cards[4] as usize] as usize;
+    HAND_RANKS[p]
 }
 
 #[cfg(test)]
