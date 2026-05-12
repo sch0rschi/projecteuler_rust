@@ -1,47 +1,35 @@
-const LIMIT: usize = 55374 + 1;
-
-
-// using the partition function from https://en.wikipedia.org/wiki/Partition_function_(number_theory)
 pub fn solve_0078() -> usize {
-    let mut dp = vec![0i64; LIMIT + 1];
+    const MODULO: i32 = 1_000_000;
+    const LIMIT: usize = 60_000;
+
+    let mut dp = vec![0i32; LIMIT + 1];
     dp[0] = 1;
 
-    let modulo = 1_000_000;
+    let pents: Vec<(usize, usize)> = (1..)
+        .map(|k: usize| (k * (3 * k - 1) / 2, k * (3 * k + 1) / 2))
+        .take_while(|&(g1, _)| g1 <= LIMIT)
+        .collect();
 
     for n in 1..=LIMIT {
-        let mut k = 1;
-        let mut val = 0;
+        let mut val = 0i32;
 
-        loop {
-            let g1 = k * (3 * k - 1) / 2;
-            let g2 = k * (3 * k + 1) / 2;
-
-            if g1 > n {
-                break;
-            }
-
-            let sign = if k % 2 == 0 { -1 } else { 1 };
-
+        for (i, &(g1, g2)) in pents.iter().enumerate() {
+            if g1 > n { break; }
+            let sign = if i % 2 == 0 { 1 } else { -1 };
             val += sign * dp[n - g1];
-
             if g2 <= n {
                 val += sign * dp[n - g2];
             }
-
-            k += 1;
         }
 
-        dp[n] = val % modulo;
-        if dp[n] < 0 {
-            dp[n] += modulo;
-        }
+        dp[n] = val.rem_euclid(MODULO);
 
         if dp[n] == 0 {
             return n;
         }
     }
 
-    panic!()
+    panic!("A solution should have been found.");
 }
 
 #[cfg(test)]
