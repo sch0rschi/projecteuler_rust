@@ -1,21 +1,18 @@
+use crate::libs::pentagonal_numbers::{is_pentagonal, pentagonal};
+
 pub fn solve_0044() -> usize {
-    const N: usize = 3000;
-
-    let pent: Vec<usize> = (1..N).map(pentagonal).collect();
-
-    let max_val = pent[N - 2] + pent[N - 2];
-
-    let mut is_pent = vec![false; max_val + 1];
-    for &p in &pent {
-        is_pent[p] = true;
-    }
-
+    let mut pent = Vec::new();
     let mut best = usize::MAX;
 
-    for j in 1..pent.len() {
-        let pj = pent[j];
+    let mut j = 1usize;
+    loop {
+        let pj = pentagonal(j);
 
-        for i in 0..j {
+        if pj.saturating_sub(1) >= best {
+            break;
+        }
+
+        for i in (0..pent.len()).rev() {
             let pi = pent[i];
             let diff = pj - pi;
 
@@ -23,17 +20,16 @@ pub fn solve_0044() -> usize {
                 break;
             }
 
-            if is_pent[diff] && is_pent[pj + pi] {
+            if is_pentagonal(diff) && is_pentagonal(pj + pi) {
                 best = diff;
             }
         }
+
+        pent.push(pj);
+        j += 1;
     }
 
     best
-}
-
-fn pentagonal(n: usize) -> usize {
-    n * (3 * n - 1) / 2
 }
 
 #[cfg(test)]
