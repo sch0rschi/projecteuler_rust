@@ -1,18 +1,8 @@
-use crate::libs::coprimes::phi;
-use crate::libs::primes::Primes;
-use num_integer::Roots;
-
+use crate::libs::totients::get_totient_sieve;
 
 pub fn solve_0072() -> u64 {
-    let limit = 1_000_000;
-    let primes = Primes::primes_inclusive(limit.sqrt());
-
-    (2..=limit)
-        .map(|n| {
-            let factors = primes.unique_prime_factors(n);
-            phi(n, &factors)
-        })
-        .sum()
+    let phi = get_totient_sieve(1_000_000);
+    phi[2..=1_000_000].iter().map(|&p| p as u64).sum()
 }
 
 #[cfg(test)]

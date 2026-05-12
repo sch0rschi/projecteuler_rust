@@ -52,9 +52,9 @@ iterations per problem.
 
 ### Runtime Highlights
 
-- **Problems 0–50:** `~30ms`
-- **Problems 51–100:** `~487ms`
-- **Total runtime (all 101 problems):** `~516ms`
+- **Problems 0–50:** `~29ms`
+- **Problems 51–100:** `~416ms`
+- **Total runtime (all 101 problems):** `~445ms`
 
 ---
 
@@ -74,16 +74,16 @@ Several problems complete in effectively constant time (`~0–50ns`), including:
 
 | Problem | Avg Runtime |
 |---------|------------:|
-| 0072    |    69.170ms |
-| 0060    |    64.738ms |
-| 0092    |    62.666ms |
-| 0073    |    59.931ms |
-| 0074    |    48.587ms |
-| 0070    |    47.006ms |
-| 0071    |    30.519ms |
-| 0095    |    17.999ms |
-| 0084    |    15.371ms |
-| 0093    |    12.278ms |
+| 0060    |    65.086ms |
+| 0092    |    62.956ms |
+| 0073    |    59.966ms |
+| 0074    |    48.716ms |
+| 0070    |    46.055ms |
+| 0071    |    30.492ms |
+| 0095    |    17.955ms |
+| 0093    |    12.264ms |
+| 0084    |    11.801ms |
+| 0094    |    10.482ms |
 
 ---
 
@@ -95,7 +95,7 @@ Several problems complete in effectively constant time (`~0–50ns`), including:
     - combinatorial search
     - graph/path exploration
     - dynamic programming
-- Even the slowest solution completes in under `~69ms`.
+- Even the slowest solution completes in `~65ms`.
 
 ---
 
