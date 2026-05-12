@@ -1,19 +1,31 @@
 const FACTORIALS: [u32; 10] = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
-
-const LIMIT: usize = 2_600_000;
+const LIMIT: u32 = 1_000_000;
+const EXTENDING_LIMIT: usize = 2_600_000;
 
 pub fn solve_0074() -> i32 {
     let mut chain_count = 0;
-    let mut loop_length_map = vec![0u8; LIMIT];
-    let mut seen = vec![false; LIMIT];
+    let mut loop_length_map = vec![0u8; EXTENDING_LIMIT];
     let mut chain_list: Vec<u32> = Vec::with_capacity(64);
 
-    let mut next_cache = vec![0u32; LIMIT];
-    for n in 1..LIMIT {
+    let mut next_cache = vec![0u32; EXTENDING_LIMIT];
+    for n in 1..EXTENDING_LIMIT {
         next_cache[n] = next_cache[n / 10] + FACTORIALS[n % 10];
     }
 
-    for n in 1u32..=1_000_000 {
+    // pre-fill known cycle members
+    loop_length_map[1] = 1;
+    loop_length_map[2] = 1;
+    loop_length_map[145] = 1;
+    loop_length_map[40585] = 1;
+    loop_length_map[169] = 3;
+    loop_length_map[363601] = 3;
+    loop_length_map[1454] = 3;
+    loop_length_map[871] = 2;
+    loop_length_map[45361] = 2;
+    loop_length_map[872] = 2;
+    loop_length_map[45362] = 2;
+
+    for n in 1u32..LIMIT {
         chain_list.clear();
 
         let mut next = n;
@@ -21,36 +33,17 @@ pub fn solve_0074() -> i32 {
         loop {
             if loop_length_map[next as usize] != 0 {
                 let total_len = chain_list.len() as u8 + loop_length_map[next as usize];
+                for (i, &x) in chain_list.iter().enumerate() {
+                    loop_length_map[x as usize] = total_len - i as u8;
+                }
                 if total_len == 60 {
                     chain_count += 1;
                 }
                 break;
             }
 
-            if seen[next as usize] {
-                let pos = chain_list.iter().position(|&x| x == next).unwrap();
-
-                let loop_length = (chain_list.len() - pos) as u8;
-
-                for &loop_element in &chain_list[pos..] {
-                    loop_length_map[loop_element as usize] = loop_length;
-                }
-
-                if chain_list.len() == 60 && pos > 0 {
-                    chain_count += 1;
-                }
-
-                break;
-            }
-
-            seen[next as usize] = true;
             chain_list.push(next);
-
             next = next_cache[next as usize];
-        }
-
-        for &x in &chain_list {
-            seen[x as usize] = false;
         }
     }
 
