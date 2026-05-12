@@ -1,32 +1,27 @@
 const LIMIT: u32 = 12_000;
 
 // https://en.wikipedia.org/wiki/Farey_sequence
-pub fn solve_0073() -> i32 {
+pub fn solve_0073() -> u32 {
+    count(0, 1, 1, 1)
+}
 
-    let mut a = 0;
-    let mut b = 1;
-    let mut c = 1;
-    let mut d = LIMIT;
+fn count(a: u32, b: u32, c: u32, d: u32) -> u32 {
+    let mediant_num = a + c;
+    let mediant_den = b + d;
 
-    let mut count = 0;
-
-    while !(c == 1 && d == 2) {
-        let k = (LIMIT + b) / d;
-
-        let e = k * c - a;
-        let f = k * d - b;
-
-        a = c;
-        b = d;
-        c = e;
-        d = f;
-
-        if 3 * a > b && 2 * a < b {
-            count += 1;
-        }
+    if mediant_den > LIMIT {
+        return 0;
     }
 
-    count
+    if mediant_num * 3 <= mediant_den {
+        return count(mediant_num, mediant_den, c, d);
+    }
+
+    if mediant_num * 2 >= mediant_den {
+        return count(a, b, mediant_num, mediant_den);
+    }
+
+    1 + count(a, b, mediant_num, mediant_den) + count(mediant_num, mediant_den, c, d)
 }
 
 #[cfg(test)]
