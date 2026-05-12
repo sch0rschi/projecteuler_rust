@@ -1,66 +1,50 @@
 use crate::libs::primes::Primes;
-use std::collections::HashMap;
-
-const fn powers_of_4() -> [i32; 10] {
-    let mut arr = [1; 10];
-    let mut i = 1;
-    while i < 10 {
-        arr[i] = arr[i - 1] << 2;
-        i += 1;
-    }
-    arr
-}
-
-const FACTORS: [i32; 10] = powers_of_4();
-
 
 pub fn solve_0049() -> String {
     let primes = Primes::primes_inclusive(9999);
-    let primes_list = &primes.primes_list;
-    let mut digit_count_to_primes: HashMap<u32, Vec<u64>> = HashMap::new();
-    let mut prime_to_digit_counts: Vec<u32> = vec![0; 10000];
-    for &prime in primes_list.iter().filter(|&&p| p > 1000) {
-        let digit_count = get_digit_counts(prime);
-        digit_count_to_primes
-            .entry(digit_count)
-            .or_default()
-            .push(prime);
-        prime_to_digit_counts[prime as usize] = digit_count;
-    }
 
-    let digit_count_to_primes = digit_count_to_primes;
-    let prime_to_digit_counts = prime_to_digit_counts;
+    let mut candidates: Vec<(u32, u32)> = primes
+        .primes_list
+        .iter()
+        .filter(|&&p| p >= 1000)
+        .map(|&p| (digit_fingerprint(p as u32), p as u32))
+        .collect();
 
-    for (digit_count, primes_for_digit_count) in digit_count_to_primes {
-        if primes_for_digit_count.len() < 3 {
-            continue;
-        }
-        for i in 0..primes_for_digit_count.len() {
-            let lower = primes_for_digit_count[i];
-            for &middle in primes_for_digit_count.iter().skip(i + 1) {
-                let upper = ((middle << 1) - lower) as usize;
-                if upper > 10000 {
-                    break;
-                } else if primes.is_prime(upper as u64)
-                    && digit_count == prime_to_digit_counts[upper]
-                    && lower != 1487
-                    && middle != 4817
-                {
-                    return format!("{}{}{}", lower, middle, upper);
+    candidates.sort_unstable();
+
+    let mut i = 0;
+    while i < candidates.len() {
+        let fp = candidates[i].0;
+        let j = candidates[i..].partition_point(|&(f, _)| f == fp) + i;
+        let group = &candidates[i..j];
+
+        if group.len() >= 3 {
+            for a in 0..group.len() {
+                let pa = group[a].1;
+                for b in (a + 1)..group.len() {
+                    let pb = group[b].1;
+                    let pc = 2 * pb - pa;
+                    if pc > 9999 {
+                        break;
+                    }
+                    if group[b..].binary_search_by_key(&pc, |&(_, p)| p).is_ok() && pa != 1487 {
+                        return format!("{}{}{}", pa, pb, pc);
+                    }
                 }
             }
         }
+
+        i = j;
     }
-    unreachable!()
+
+    panic!("A solution should have been found.");
 }
 
-fn get_digit_counts(mut n: u64) -> u32 {
-    let mut count = 0;
-    while n > 0 {
-        count += FACTORS[(n % 10) as usize] as u32;
-        n /= 10;
-    }
-    count
+#[inline(always)]
+fn digit_fingerprint(n: u32) -> u32 {
+    let mut digits = [n / 1000, (n / 100) % 10, (n / 10) % 10, n % 10];
+    digits.sort_unstable();
+    digits[0] | digits[1] << 4 | digits[2] << 8 | digits[3] << 12
 }
 
 #[cfg(test)]
