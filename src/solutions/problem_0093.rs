@@ -1,80 +1,121 @@
-use itertools::Itertools;
-
-
 pub fn solve_0093() -> u32 {
     let mut max_n = 0;
-    let mut max_digits: Vec<i32> = Vec::new();
-    for numbers in (1..=9).combinations(4) {
-        let numbers_casted = numbers.iter().map(|&n| n as f32).collect_vec();
-        let n = find_consecutive_n(&numbers_casted);
-        if n > max_n {
-            max_digits = numbers;
-            max_n = n;
-        }
-    }
+    let mut max_digits = [0u32; 4];
 
-    max_digits[0] as u32 * 1000
-        + max_digits[1] as u32 * 100
-        + max_digits[2] as u32 * 10
-        + max_digits[3] as u32
-}
-
-fn find_consecutive_n(digits: &[f32]) -> usize {
-    let mut covered = vec![false; 10_000];
-    covered.fill(false);
-    covered[0] = true;
-
-    let all_results = digits
-        .iter()
-        .permutations(4)
-        .flat_map(|permutation| {
-            let digit_0: Vec<f32> = vec![*permutation[0]];
-            let digit_1 = vec![*permutation[1]];
-            let digit_2 = vec![*permutation[2]];
-            let digit_3 = vec![*permutation[3]];
-
-            let result_0 = apply_operation(&digit_0, &digit_1);
-            let result_1 = apply_operation(&result_0, &digit_2);
-            let result_chain = apply_operation(&result_1, &digit_3);
-            let left = apply_operation(&digit_0, &digit_1);
-            let right = apply_operation(&digit_2, &digit_3);
-            let result_split = apply_operation(&left, &right);
-            [result_chain, result_split].concat()
-        })
-        .collect_vec();
-
-    for result in all_results {
-        let rounded = result.round();
-        if (result - rounded).abs() < 0.000000000000001 {
-            covered[rounded as usize] = true;
-        }
-    }
-
-    covered.iter().position(|&b| !b).unwrap() - 1
-}
-
-fn apply_operation(numbers_1: &Vec<f32>, numbers_2: &Vec<f32>) -> Vec<f32> {
-    let mut results = Vec::new();
-    for number_1 in numbers_1 {
-        for number_2 in numbers_2 {
-            results.push(number_1 + number_2);
-            results.push(number_1 - number_2);
-            results.push(number_1 * number_2);
-            if *number_2 != 0.0 {
-                let x = number_1 / number_2;
-                results.push(x);
-            }
-
-            results.push(number_2 + number_1);
-            results.push(number_2 - number_1);
-            results.push(number_2 * number_1);
-            if *number_1 != 0.0 {
-                let x = number_2 / number_1;
-                results.push(x);
+    for a in 1..=6u32 {
+        for b in a + 1..=7 {
+            for c in b + 1..=8 {
+                for d in c + 1..=9 {
+                    let mut covered = [false; 10_000];
+                    let nums = [a as f64, b as f64, c as f64, d as f64];
+                    all_results(&nums, &mut covered);
+                    let n = (1..).find(|&i| !covered[i]).unwrap() - 1;
+                    if n > max_n {
+                        max_n = n;
+                        max_digits = [a, b, c, d];
+                    }
+                }
             }
         }
     }
-    results
+
+    max_digits[0] * 1000 + max_digits[1] * 100 + max_digits[2] * 10 + max_digits[3]
+}
+
+fn all_results(nums: &[f64; 4], covered: &mut [bool; 10_000]) {
+    let perms = [
+        [0, 1, 2, 3],
+        [0, 1, 3, 2],
+        [0, 2, 1, 3],
+        [0, 2, 3, 1],
+        [0, 3, 1, 2],
+        [0, 3, 2, 1],
+        [1, 0, 2, 3],
+        [1, 0, 3, 2],
+        [1, 2, 0, 3],
+        [1, 2, 3, 0],
+        [1, 3, 0, 2],
+        [1, 3, 2, 0],
+        [2, 0, 1, 3],
+        [2, 0, 3, 1],
+        [2, 1, 0, 3],
+        [2, 1, 3, 0],
+        [2, 3, 0, 1],
+        [2, 3, 1, 0],
+        [3, 0, 1, 2],
+        [3, 0, 2, 1],
+        [3, 1, 0, 2],
+        [3, 1, 2, 0],
+        [3, 2, 0, 1],
+        [3, 2, 1, 0],
+    ];
+
+    for p in &perms {
+        let [a, b, c, d] = [nums[p[0]], nums[p[1]], nums[p[2]], nums[p[3]]];
+        // all 5 distinct binary tree shapes for 4 operands:
+        // shape 1: ((a ○ b) ○ c) ○ d
+        for ab in ops(a, b) {
+            for abc in ops(ab, c) {
+                for abcd in ops(abc, d) {
+                    mark(abcd, covered);
+                }
+            }
+        }
+        // shape 2: (a ○ (b ○ c)) ○ d
+        for bc in ops(b, c) {
+            for abc in ops(a, bc) {
+                for abcd in ops(abc, d) {
+                    mark(abcd, covered);
+                }
+            }
+        }
+        // shape 3: (a ○ b) ○ (c ○ d)
+        for ab in ops(a, b) {
+            for cd in ops(c, d) {
+                for abcd in ops(ab, cd) {
+                    mark(abcd, covered);
+                }
+            }
+        }
+        // shape 4: a ○ ((b ○ c) ○ d)
+        for bc in ops(b, c) {
+            for bcd in ops(bc, d) {
+                for abcd in ops(a, bcd) {
+                    mark(abcd, covered);
+                }
+            }
+        }
+        // shape 5: a ○ (b ○ (c ○ d))
+        for cd in ops(c, d) {
+            for bcd in ops(b, cd) {
+                for abcd in ops(a, bcd) {
+                    mark(abcd, covered);
+                }
+            }
+        }
+    }
+}
+
+#[inline]
+fn ops(a: f64, b: f64) -> [f64; 5] {
+    [
+        a + b,
+        a - b,
+        a * b,
+        if b != 0.0 { a / b } else { f64::NAN },
+        f64::NAN,
+    ]
+}
+
+#[inline]
+fn mark(v: f64, covered: &mut [bool; 10_000]) {
+    if v.is_nan() || v <= 0.0 {
+        return;
+    }
+    let r = v.round();
+    if (v - r).abs() < 1e-9 && r < 10_000.0 {
+        covered[r as usize] = true;
+    }
 }
 
 #[cfg(test)]
