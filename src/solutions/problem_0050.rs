@@ -1,40 +1,27 @@
 use crate::libs::primes::Primes;
-use itertools::Itertools;
-
 
 pub fn solve_0050() -> u64 {
     let primes = Primes::primes_inclusive(999_999);
     let primes_list = &primes.primes_list;
 
-    let mut prefix_sums: Vec<u64> = Vec::with_capacity(primes_list.len());
-
-    let mut prefix_sum: u64 = 0;
-    for prime in primes_list {
-        prefix_sum += prime;
-        prefix_sums.push(prefix_sum);
+    let mut prefix_sums = vec![0u64];
+    for &p in primes_list {
+        let next = prefix_sums.last().unwrap() + p;
+        prefix_sums.push(next);
+        if next >= 1_000_000 { break; }
     }
+    let len = prefix_sums.len();
 
-    let mut best_chain_count = 0;
-    let mut best_prime = 0;
-
-    for (end_index, end_sum) in prefix_sums.iter().enumerate().rev() {
-        for (start_index, start_sum) in prefix_sums
-            .iter()
-            .enumerate()
-            .rev()
-            .dropping(prefix_sums.len() - end_index + best_chain_count)
-        {
-            if end_sum - start_sum >= 1_000_000 {
-                break;
-            }
-            if primes.is_prime(end_sum - start_sum) && best_chain_count < end_index - start_index {
-                best_chain_count = end_index - start_index;
-                best_prime = end_sum - start_sum;
+    for chain_len in (1..len).rev() {
+        for start in 0..=(len - 1 - chain_len) {
+            let sum = prefix_sums[start + chain_len] - prefix_sums[start];
+            if sum >= 1_000_000 { break; }
+            if primes.is_prime(sum) {
+                return sum;
             }
         }
     }
-
-    best_prime
+    panic!("A solution should have been found.");
 }
 
 #[cfg(test)]
