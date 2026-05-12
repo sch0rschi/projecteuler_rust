@@ -1,19 +1,11 @@
-use crate::libs::coprimes::phi;
-use crate::libs::primes::Primes;
+use crate::libs::totients::get_totient_sieve;
 
-
-pub fn solve_0069() -> i32 {
-    let primes = Primes::primes_inclusive(1_000);
+pub fn solve_0069() -> usize {
+    let phi = get_totient_sieve(1_000_000);
 
     (2..=1_000_000)
-        .map(|n| {
-            let factors = primes.unique_prime_factors(n as u64);
-            let phi = phi(n as u64, &factors);
-            (n, n as u64 * 1_000_000u64 / phi)
-        })
-        .max_by_key(|&(_, ratio)| ratio)
+        .max_by_key(|&n| n as u64 * 1_000_000u64 / phi[n] as u64)
         .unwrap()
-        .0
 }
 
 #[cfg(test)]
