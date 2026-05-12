@@ -1,26 +1,40 @@
-use num_bigint::BigUint;
+pub fn solve_0056() -> u32 {
+    let mut max_sum = 0;
 
-
-pub fn solve_0056() -> u64 {
-    let mut max_digit_sum = 0;
-
-    for i in 1u16..100 {
-        let a = BigUint::from(i);
-        let mut power = BigUint::from(1u8);
+    for a in 1u32..100 {
+        let mut digits = vec![1u8];
+        let mut best_for_a = 0;
 
         for _ in 1..100 {
-            power *= &a;
+            multiply_in_place(&mut digits, a);
 
-            let digit_sum = digit_sum(&power);
-            max_digit_sum = max_digit_sum.max(digit_sum);
+            let sum: u32 = digits.iter().map(|&d| d as u32).sum();
+            if sum > best_for_a {
+                best_for_a = sum;
+            }
+        }
+
+        if best_for_a > max_sum {
+            max_sum = best_for_a;
         }
     }
 
-    max_digit_sum
+    max_sum
 }
 
-fn digit_sum(n: &BigUint) -> u64 {
-    n.to_string().bytes().map(|b| (b - b'0') as u64).sum()
+fn multiply_in_place(digits: &mut Vec<u8>, mul: u32) {
+    let mut carry = 0u32;
+
+    for d in digits.iter_mut() {
+        let prod = (*d as u32) * mul + carry;
+        *d = (prod % 10) as u8;
+        carry = prod / 10;
+    }
+
+    while carry > 0 {
+        digits.push((carry % 10) as u8);
+        carry /= 10;
+    }
 }
 
 #[cfg(test)]
