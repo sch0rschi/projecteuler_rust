@@ -1,3 +1,5 @@
+const POW10: [i32; 7] = [1, 10, 100, 1_000, 10_000, 100_000, 1_000_000];
+
 pub fn solve_0040() -> i32 {
     let mut d_index = 1;
     let mut fraction_length = 0;
@@ -21,8 +23,9 @@ pub fn solve_0040() -> i32 {
             fraction_length += (offset + 1) * number_length;
 
             let in_number_index = (d_index - fraction_length - 1) % number_length;
-            let mut digit = number / 10_i32.pow(number_length as u32 - in_number_index as u32 - 1);
-            digit %= 10;
+
+            let digit = (number / POW10[(number_length - in_number_index - 1) as usize]) % 10;
+
             product *= digit;
         }
 
@@ -30,8 +33,7 @@ pub fn solve_0040() -> i32 {
 
         number_length += 1;
         number_count *= 10;
-
-        start_number = 10_i32.pow((number_length - 1) as u32);
+        start_number = POW10[(number_length - 1) as usize];
     }
 
     product
