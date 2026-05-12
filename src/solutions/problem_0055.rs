@@ -1,32 +1,44 @@
 pub fn solve_0055() -> i32 {
-    let mut count = 0;
-
-    for i in 1u128..10000 {
-        if is_lychrel(i) {
-            count += 1;
-        }
-    }
-
-    count
+    (1u64..10000).filter(|&i| is_lychrel(i)).count() as i32
 }
 
-fn is_lychrel(mut n: u128) -> bool {
-    for _ in 1..=50 {
+fn is_lychrel(n: u64) -> bool {
+    let mut n = n as u128;
+    for _ in 0..50 {
         n += reverse(n);
-        if n == reverse(n) {
-            return false;
-        }
+        if is_palindrome(n) { return false; }
     }
     true
 }
 
+#[inline(always)]
 fn reverse(mut n: u128) -> u128 {
-    let mut result = 0u128;
+    let mut r = 0u128;
     while n > 0 {
-        result = result * 10 + n % 10;
+        r = r * 10 + n % 10;
         n /= 10;
     }
-    result
+    r
+}
+
+#[inline(always)]
+fn is_palindrome(n: u128) -> bool {
+    let mut digits = [0u8; 40];
+    let mut len = 0usize;
+    let mut m = n;
+    while m > 0 {
+        digits[len] = (m % 10) as u8;
+        len += 1;
+        m /= 10;
+    }
+    let mut lo = 0;
+    let mut hi = len - 1;
+    while lo < hi {
+        if digits[lo] != digits[hi] { return false; }
+        lo += 1;
+        hi -= 1;
+    }
+    true
 }
 
 #[cfg(test)]
