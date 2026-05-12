@@ -10,11 +10,8 @@ pub fn solve_0046() -> u64 {
         let primes = Primes::primes_inclusive(upper);
         let primes_list = &primes.primes_list;
 
-        for consecutive_prime_pair in primes_list.windows(2) {
-            let [lower_prime, upper_prime] = consecutive_prime_pair else {
-                todo!()
-            };
-            for composite in ((*lower_prime + 2)..*upper_prime).step_by(2) {
+        for window in primes_list.windows(2) {
+            for composite in ((window[0] + 2)..window[1]).step_by(2) {
                 let check = check_composite(composite, &primes);
                 if !check {
                     return composite;
