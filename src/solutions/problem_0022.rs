@@ -1,19 +1,19 @@
 use crate::libs::word_score::score;
-use std::fs;
+
+const CONTENT: &str = include_str!("../../resources/0022_names.txt");
 
 pub fn solve_0022() -> u32 {
-    let content = fs::read("resources/0022_names.txt").unwrap();
+    let mut buckets: Vec<Vec<&str>> = (0..26 * 26).map(|_| Vec::with_capacity(16)).collect();
 
-    let mut buckets: Vec<Vec<&[u8]>> = (0..26 * 26)
-        .map(|_| Vec::with_capacity(16))
-        .collect::<Vec<_>>();
-
-    content
-        .split(|&b| b == b'"')
-        .filter(|&name| !name.is_empty() && name[0] != b',')
+    CONTENT
+        .split('"')
+        .filter(|name| !name.is_empty() && !name.starts_with(','))
         .for_each(|name| {
-            let idx = ((name[0] - b'A') as usize) * 26
-                + ((name.get(1).copied().unwrap_or(b'A') - b'A') as usize);
+            let bytes = name.as_bytes();
+
+            let idx = ((bytes[0] - b'A') as usize) * 26
+                + ((bytes.get(1).copied().unwrap_or(b'A') - b'A') as usize);
+
             buckets[idx].push(name);
         });
 

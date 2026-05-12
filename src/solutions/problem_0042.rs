@@ -1,19 +1,23 @@
 use crate::libs::word_score::score;
-use std::fs;
 
+const WORDS: &str = include_str!("../../resources/0042_words.txt");
 
 pub fn solve_0042() -> usize {
-    fs::read("resources/0042_words.txt")
-        .unwrap()
-        .split(|&b| b == b'"')
-        .filter(|&word| !word.is_empty() && word != b"," && is_triangle_number(score(word)))
-        .count()
-}
+    let mut tri = [false; 1000];
 
-fn is_triangle_number(x: u32) -> bool {
-    let discriminant = 1 + 8 * x as u64;
-    let sqrt = (discriminant as f64).sqrt() as u64;
-    sqrt * sqrt == discriminant && (sqrt - 1).is_multiple_of(2)
+    let mut n = 1;
+    let mut t = 1;
+    while t < tri.len() {
+        tri[t] = true;
+        n += 1;
+        t = n * (n + 1) / 2;
+    }
+
+    WORDS
+        .split('"')
+        .filter(|&w| !w.is_empty() && w != ",")
+        .filter(|&w| tri[score(w) as usize])
+        .count()
 }
 
 #[cfg(test)]
