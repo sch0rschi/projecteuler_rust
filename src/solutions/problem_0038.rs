@@ -1,33 +1,66 @@
-use crate::libs::digits::{get_digits, get_number, is_pandigital};
-
-
 pub fn solve_0038() -> u64 {
-    let mut max_pandigital: u64 = 0;
-    for i in 1u64..10000 {
-        if let Some(pandigital) = get_pandigital(i) {
-            max_pandigital = max_pandigital.max(pandigital);
-        }
-    }
-    max_pandigital
+    (1u64..10_000)
+        .filter_map(get_max_pandigital)
+        .max()
+        .unwrap()
 }
 
-fn get_pandigital(i: u64) -> Option<u64> {
-    let mut pandigital: Vec<u64> = Vec::with_capacity(15);
-    for multiplier in 1..=9 {
-        let add = i * multiplier;
-        let mut add_digits = get_digits(add);
-        add_digits.reverse();
-        pandigital.append(&mut add_digits);
-        if pandigital.len() >= 9 {
-            break;
+fn get_max_pandigital(i: u64) -> Option<u64> {
+    let mut value = 0u64;
+    let mut used = 0u16;
+    let mut digits = 0u32;
+
+    for multiplier in 1u64..=9 {
+        let n = i * multiplier;
+
+        let mut pow10 = 1u64;
+        if n >= 10000 {
+            pow10 = 10000;
+        } else if n >= 1000 {
+            pow10 = 1000;
+        } else if n >= 100 {
+            pow10 = 100;
+        } else if n >= 10 {
+            pow10 = 10;
+        }
+
+        let mut x = n;
+        let mut p = pow10;
+
+        while p > 0 {
+            let digit = (x / p) as u16;
+            x %= p;
+            p /= 10;
+
+            if digit == 0 {
+                return None;
+            }
+
+            let bit = 1 << digit;
+            if used & bit != 0 {
+                return None;
+            }
+
+            used |= bit;
+            digits += 1;
+
+            value = value * 10 + digit as u64;
+        }
+
+        if digits == 9 {
+            return if used == 0b1111111110 {
+                Some(value)
+            } else {
+                None
+            };
+        }
+
+        if digits > 9 {
+            return None;
         }
     }
-    if pandigital.len() == 9 && is_pandigital(&pandigital) {
-        pandigital.reverse();
-        Some(get_number(&pandigital))
-    } else {
-        None
-    }
+
+    None
 }
 
 #[cfg(test)]
