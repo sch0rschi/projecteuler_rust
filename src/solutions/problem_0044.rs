@@ -1,10 +1,7 @@
 pub fn solve_0044() -> usize {
     const N: usize = 3000;
 
-    let mut pent = Vec::with_capacity(N);
-    for i in 1..N {
-        pent.push(pentagonal(i));
-    }
+    let pent: Vec<usize> = (1..N).map(pentagonal).collect();
 
     let max_val = pent[N - 2] + pent[N - 2];
 
@@ -15,10 +12,10 @@ pub fn solve_0044() -> usize {
 
     let mut best = usize::MAX;
 
-    for j in (1..pent.len()).rev() {
+    for j in 1..pent.len() {
         let pj = pent[j];
 
-        for i in (0..j).rev() {
+        for i in 0..j {
             let pi = pent[i];
             let diff = pj - pi;
 
