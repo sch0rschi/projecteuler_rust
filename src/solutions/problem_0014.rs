@@ -1,47 +1,90 @@
-pub fn solve_0014() -> u64 {
-    let mut cache = vec![0u16; 1_000_001];
-    cache[1] = 1;
+const LIMIT: usize = 1_000_000;
 
-    let mut max_len = 0u16;
-    let mut max_val = 1u64;
+// https://risingentropy.com/2019/06/12/record-breaking-collatz-chains/
+pub fn solve_0014() -> usize {
+    let mut chain_lengths = vec![0u32; LIMIT];
+    chain_lengths[2] = 1;
+    chain_lengths[3] = 7;
+    chain_lengths[4] = 2;
+    chain_lengths[5] = 5;
+    chain_lengths[6] = 8;
+    chain_lengths[7] = 16;
+    chain_lengths[8] = 3;
+    chain_lengths[9] = 19;
+    chain_lengths[10] = 6;
+    chain_lengths[11] = 14;
 
-    for i in (1..1_000_000u64).step_by(2) {
-        let len = collatz_len(i, &mut cache);
-        if len > max_len {
-            max_len = len;
-            max_val = i;
-        }
+    for base in (12..LIMIT - 12).step_by(12) {
+        // n mod 12 == 0
+        chain_lengths[base] = chain_lengths[base / 2] + 1;
+        // n mod 12 == 2
+        let chain_length_2 = chain_lengths[(base + 2) / 2] + 1;
+        chain_lengths[base + 2] = chain_length_2;
+        // n mod 12 == 4
+        chain_lengths[base + 4] = chain_lengths[(base + 4) / 2] + 1;
+        // n mod 12 == 6
+        chain_lengths[base + 6] = chain_lengths[(base + 6) / 2] + 1;
+        // n mod 12 == 8
+        let chain_length_8 = chain_lengths[(base + 8) / 2] + 1;
+        chain_lengths[base + 8] = chain_length_8;
+        // n mod 12 == 10
+        chain_lengths[base + 10] = chain_lengths[(base + 10) / 2] + 1;
 
-        let even_length = cache[i.div_ceil(2) as usize];
-        cache[(i + 1) as usize] = even_length;
-        if even_length + 1 > max_len {
-            max_len = even_length + 1;
-            max_val = i + 1;
-        }
+        // n mod 12 == 1
+        let n = base + 1;
+        let target = (3 * n + 1) / 4;
+        chain_lengths[n] = chain_lengths[target] + 3;
+        // n mod 12 == 5
+        let n = base + 5;
+        let target = (3 * n + 1) / 4;
+        chain_lengths[n] = chain_lengths[target] + 3;
+
+        // n mod 12 == 3
+        chain_lengths[base + 3] = chain_length_2;
+        // n mod 12 == 9
+        chain_lengths[base + 9] = chain_length_8;
+
+        // n mod 12 == 7
+        let n = base + 7;
+        let (next, chain_length) = build_chain(n);
+        chain_lengths[n] = chain_length + chain_lengths[next];
+        // n mod 12 == 11
+        let n = base + 11;
+        let (next, chain_length) = build_chain(n);
+        chain_lengths[n] = chain_length + chain_lengths[next];
     }
-    max_val
+    let base = 12 * (LIMIT / 12);
+    chain_lengths[base] = chain_lengths[base / 2] + 1;
+    let n = base + 1;
+    let target = (3 * n + 1) / 4;
+    chain_lengths[n] = chain_lengths[target] + 3;
+    chain_lengths[base + 2] = chain_lengths[(base + 2) / 2] + 1;
+    chain_lengths[base + 3] = chain_lengths[base + 2];
+
+    chain_lengths
+        .iter()
+        .enumerate()
+        .max_by_key(|(_, l)| *l)
+        .unwrap()
+        .0
 }
 
-fn collatz_len(start: u64, cache: &mut [u16]) -> u16 {
-    let mut n = start;
-    let mut steps = 0u16;
-
-    while n > 1 {
-        if n < cache.len() as u64
-            && let cached = cache[n as usize]
-            && cached != 0
-        {
-            steps += cached;
-            break;
+#[inline(always)]
+fn build_chain(n: usize) -> (usize, u32) {
+    let mut next = n;
+    let mut count = 0;
+    loop {
+        next = next_collatz(next);
+        count += 1;
+        if next < n {
+            return (next, count);
         }
-
-        steps += 1;
-
-        n = if n & 1 == 0 { n >> 1 } else { (3 * n + 1) >> 1 };
     }
+}
 
-    cache[start as usize] = steps;
-    steps
+#[inline(always)]
+fn next_collatz(n: usize) -> usize {
+    if n.is_multiple_of(2) { n / 2 } else { 3 * n + 1 }
 }
 
 #[cfg(test)]

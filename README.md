@@ -52,9 +52,9 @@ iterations per problem.
 
 ### Runtime Highlights
 
-- **Problems 0–50:** `~13ms`
-- **Problems 51–100:** `~193ms`
-- **Total runtime (all 101 problems):** `~206ms`
+- **Problems 0–50:** `~11ms`
+- **Problems 51–100:** `~186ms`
+- **Total runtime (all 101 problems):** `~197ms`
 
 ---
 
@@ -74,22 +74,22 @@ Several problems complete in effectively constant time (`~0–50ns`), including:
 
 | Problem | Avg Runtime |
 |---------|------------:|
-| 0060    |  `65.086ms` |
-| 0070    |  `46.055ms` |
-| 0095    |  `17.955ms` |
-| 0073    |  `17.362ms` |
-| 0058    |   `5.732ms` |
-| 0078    |   `4.974ms` |
-| 0014    |   `4.216ms` |
-| 0055    |  ` 3.139ms` |
-| 0069    |   `2.922ms` |
-| 0072    |   `2.412ms` |
+| 0060    |  `64.532ms` |
+| 0070    |  `46.691ms` |
+| 0095    |  `17.814ms` |
+| 0073    |  `16.750ms` |
+| 0058    |   `5.471ms` |
+| 0078    |   `4.750ms` |
+| 0055    |   `2.948ms` |
+| 0069    |   `2.857ms` |
+| 0072    |   `2.336ms` |
+| 0074    |   `2.308ms` |
 
 ---
 
 ### Notes
 
-- The entire first half of the problems executes in `~13ms`.
+- The entire first half of the problems executes in `~11ms`.
 - Most runtime-heavy problems involve:
     - prime sieving
     - combinatorial search
