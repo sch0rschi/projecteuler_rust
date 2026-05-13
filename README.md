@@ -53,7 +53,7 @@ iterations per problem.
 ### Runtime Highlights
 
 - **Problems 0–50:** `~11ms`
-- **Problems 51–100:** `~186ms`
+- **Problems 51–100:** `~185ms`
 - **Total runtime (all 101 problems):** `~197ms`
 
 ---
@@ -74,7 +74,7 @@ Several problems complete in effectively constant time (`~0–50ns`), including:
 
 | Problem | Avg Runtime |
 |---------|------------:|
-| 0060    |  `64.532ms` |
+| 0060    |  `65.241ms` |
 | 0070    |  `46.691ms` |
 | 0095    |  `17.814ms` |
 | 0073    |  `16.750ms` |
