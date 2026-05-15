@@ -1,19 +1,17 @@
 pub mod solutions {}
-pub mod primes;
-pub mod divisors;
-pub mod digits;
-pub mod factorials;
-pub mod integer_pythagorean_triplets;
-pub mod triplet;
-pub mod pandigital;
-pub mod word_score;
 pub mod continued_fractions;
-pub mod pells_equation;
-pub mod permutations;
-pub mod coprimes;
-pub mod multiset_partitions;
-pub mod multiset_combinations;
-pub mod exponentiation;
+pub mod digits;
+pub mod divisors;
 pub mod evaluation_helper;
-pub mod totients;
+pub mod exponentiation;
+pub mod integer_pythagorean_triplets;
+pub mod multiset_combinations;
+pub mod multiset_partitions;
+pub mod pells_equation;
 pub mod pentagonal_numbers;
+pub mod permutations;
+
+pub mod primes;
+pub mod totients;
+pub mod triplet;
+pub mod word_score;

@@ -36,9 +36,7 @@ fn multiplicative_order_10(p: usize, primes: &Primes) -> usize {
 
     let mut order = phi;
 
-    let factors = primes.unique_prime_factors(phi);
-
-    for factor in factors {
+    for (factor, _) in primes.unique_prime_factors(phi) {
         while order.is_multiple_of(factor) && mod_pow(10, order / factor, p) == 1 {
             order /= factor;
         }

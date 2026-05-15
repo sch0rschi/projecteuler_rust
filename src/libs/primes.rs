@@ -1,4 +1,3 @@
-use std::iter::repeat_n;
 use primal::Sieve;
 
 pub struct Primes {
@@ -22,22 +21,8 @@ impl Primes {
         }
     }
 
-    pub fn unique_prime_factors(&self, n: usize) -> Vec<usize> {
-        self.sieve
-            .factor(n)
-            .unwrap_or_default()
-            .into_iter()
-            .map(|(p, _)| p)
-            .collect()
-    }
-
-    pub fn prime_factors(&self, n: usize) -> Vec<usize> {
-        self.sieve
-            .factor(n)
-            .unwrap_or_default()
-            .into_iter()
-            .flat_map(|(p, exp)| repeat_n(p, exp))
-            .collect()
+    pub fn unique_prime_factors(&self, n: usize) -> Vec<(usize,usize)> {
+        self.sieve.factor(n).unwrap()
     }
 
     pub fn get_primes_list(&self) -> Vec<usize> {
