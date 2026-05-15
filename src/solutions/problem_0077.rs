@@ -4,13 +4,12 @@ const LIMIT: usize = 100;
 
 
 pub fn solve_0077() -> usize {
-    let primes = Primes::primes_inclusive(LIMIT as u64);
-    let primes: Vec<usize> = primes.primes_list.iter().map(|&p| p as usize).collect();
+    let primes = Primes::primes_inclusive(LIMIT);
 
-    let mut dp = vec![0u64; LIMIT + 1];
+    let mut dp = vec![0usize; LIMIT + 1];
     dp[0] = 1;
 
-    for &p in &primes {
+    for p in primes.single_iterator() {
         for i in p..=LIMIT {
             dp[i] += dp[i - p];
         }

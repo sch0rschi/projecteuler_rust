@@ -78,7 +78,7 @@ impl<'a, T> PermutationPruner<'a, T> {
     }
 }
 
-pub fn prev_permutation(arr: &mut [u32]) -> bool {
+pub fn prev_permutation(arr: &mut [usize]) -> bool {
     let n = arr.len();
     let mut i = n - 1;
     while i > 0 && arr[i - 1] <= arr[i] {

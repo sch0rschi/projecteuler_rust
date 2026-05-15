@@ -5,13 +5,14 @@ const LIMIT: usize = 1000;
 
 // https://en.wikipedia.org/wiki/Repeating_decimal#Fractions_with_prime_denominators
 // https://en.wikipedia.org/wiki/Multiplicative_order
-pub fn solve_0026() -> u64 {
-    let primes = Primes::primes_inclusive(LIMIT as u64);
+pub fn solve_0026() -> usize {
+    let primes = Primes::primes_inclusive(LIMIT);
+    let prime_list = primes.get_primes_list();
 
     let mut best_cycle_length = 0;
     let mut best_cycle_length_prime = None;
 
-    for &prime in primes.primes_list.iter().rev() {
+    for &prime in prime_list.iter().rev() {
         if prime < best_cycle_length {
             break;
         }
@@ -30,7 +31,7 @@ pub fn solve_0026() -> u64 {
     best_cycle_length_prime.expect("There should be a prime with positive cycle length.")
 }
 
-fn multiplicative_order_10(p: u64, primes: &Primes) -> u64 {
+fn multiplicative_order_10(p: usize, primes: &Primes) -> usize {
     let phi = p - 1;
 
     let mut order = phi;

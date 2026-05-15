@@ -1,6 +1,6 @@
 use crate::libs::primes::Primes;
 
-const POW10: [u64; 10] = [
+const POW10: [usize; 10] = [
     1,
     10,
     100,
@@ -16,13 +16,12 @@ const POW10: [u64; 10] = [
 type PosArray = [usize; 7]; // pos[0] = len, pos[1..] = positions
 
 
-pub fn solve_0051() -> u64 {
+pub fn solve_0051() -> usize {
     let primes = Primes::primes_inclusive(999_999);
-    let primes_list = &primes.primes_list;
 
     let mut positions: [PosArray; 3] = [[0; 7]; 3];
 
-    for &prime in primes_list {
+    for prime in primes.single_iterator() {
         if prime < 100_000 {
             continue;
         }
@@ -39,7 +38,7 @@ pub fn solve_0051() -> u64 {
                     for k in j + 1..len {
                         let mask =
                             POW10[pos_arr[i + 1]] + POW10[pos_arr[j + 1]] + POW10[pos_arr[k + 1]];
-                        let base = prime - digit as u64 * mask;
+                        let base = prime - digit * mask;
 
                         let mut count = 0;
                         let mut remaining = 10;
@@ -73,7 +72,7 @@ pub fn solve_0051() -> u64 {
     unreachable!()
 }
 
-fn fill_relevant_digit_positions(mut n: u64, positions: &mut [PosArray; 3]) {
+fn fill_relevant_digit_positions(mut n: usize, positions: &mut [PosArray; 3]) {
     positions[0][0] = 0;
     positions[1][0] = 0;
     positions[2][0] = 0;
@@ -82,7 +81,7 @@ fn fill_relevant_digit_positions(mut n: u64, positions: &mut [PosArray; 3]) {
     n /= 10;
 
     while n > 0 {
-        let digit = (n % 10) as usize;
+        let digit = n % 10;
         if digit < 3 {
             let len = positions[digit][0];
             if len < 6 {

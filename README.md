@@ -47,14 +47,14 @@ cargo run --release
 
 ## Performance
 
-Benchmarks were run on a **MacBook Air M3** using Rust `--release` mode with 10 warmup iterations and 10 measured
+Benchmarks were run on a **MacBook Air M3** using Rust `--release` mode with 100 warmup iterations and 100 measured
 iterations per problem.
 
 ### Runtime Highlights
 
-- **Problems 0–50:** `~11ms`
-- **Problems 51–100:** `~185ms`
-- **Total runtime (all 101 problems):** `~197ms`
+- **Problems 0–50:** `~12ms`
+- **Problems 51–100:** `~130ms`
+- **Total runtime (all 101 problems):** `~142ms`
 
 ---
 
@@ -74,28 +74,28 @@ Several problems complete in effectively constant time (`~0–50ns`), including:
 
 | Problem | Avg Runtime |
 |---------|------------:|
-| 0060    |  `65.241ms` |
-| 0070    |  `46.691ms` |
-| 0095    |  `17.814ms` |
-| 0073    |  `16.750ms` |
-| 0058    |   `5.471ms` |
-| 0078    |   `4.750ms` |
-| 0055    |   `2.948ms` |
-| 0069    |   `2.857ms` |
-| 0072    |   `2.336ms` |
-| 0074    |   `2.308ms` |
+| 0070    |  `41.991ms` |
+| 0095    |  `18.163ms` |
+| 0073    | ` 16.893ms` |
+| 0060    |  `13.896ms` |
+| 0058    |   `5.630ms` |
+| 0078    |   `4.578ms` |
+| 0055    |   `3.112ms` |
+| 0069    |   `2.879ms` |
+| 0027    |   `2.719ms` |
+| 0014    |   `2.637ms` |
 
 ---
 
 ### Notes
 
-- The entire first half of the problems executes in `~11ms`.
+- The entire first half of the problems executes in `~12ms`.
 - Most runtime-heavy problems involve:
     - prime sieving
     - combinatorial search
     - graph/path exploration
     - dynamic programming
-- Even the slowest solution completes in `~65ms`.
+- Even the slowest solution completes in `~42ms`.
 
 ---
 

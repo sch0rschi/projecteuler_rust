@@ -1,17 +1,18 @@
 use crate::libs::permutations::prev_permutation;
-use crate::libs::primes_u32::is_prime;
+use crate::libs::primes::Primes;
 
-pub fn solve_0041() -> u32 {
-    let mut digits = [7u32, 6, 5, 4, 3, 2, 1];
+pub fn solve_0041() -> usize {
+    let primes = Primes::primes_inclusive(10_000_000);
+    let mut digits = [7usize, 6, 5, 4, 3, 2, 1];
     let mut done = false;
 
     std::iter::from_fn(move || {
         if done { return None; }
-        let n = digits.iter().fold(0u32, |acc, &d| acc * 10 + d);
+        let n = digits.iter().fold(0usize, |acc, &d| acc * 10 + d);
         if !prev_permutation(&mut digits) { done = true; }
         Some(n)
     })
-        .find(|&n| is_prime(n))
+        .find(|&n| primes.is_prime(n))
         .unwrap()
 }
 

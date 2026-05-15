@@ -2,27 +2,21 @@ use crate::libs::primes::Primes;
 use itertools::Itertools;
 
 // Those two constants are "educated" guesses
-const MAX_PRIME_SEARCH: u64 = 10_000;
-const MAX_FAST_PRIME_CHECK: u64 = 10_000_000;
+const MAX_PRIME_SEARCH: usize = 10_000;
+const MAX_FAST_PRIME_CHECK: usize = 100_000_000;
 
-pub fn solve_0060() -> u64 {
+pub fn solve_0060() -> usize {
     let primes = Primes::primes_inclusive(MAX_FAST_PRIME_CHECK);
-    let mut best: u64 = u64::MAX;
+    let mut best: usize = usize::MAX;
 
-    let primes_list_shortened: Vec<u64> = primes
-        .primes_list
-        .iter()
-        .cloned()
+    let primes_list_shortened: Vec<usize> = primes.single_iterator()
         .take_while(|&p| p <= MAX_PRIME_SEARCH)
         .filter(|&p| p == 3 || p != 2 && p != 5 && p % 3 == 1)
         .collect_vec();
 
     prepare_then_search(&primes, &primes_list_shortened, &mut best);
 
-    let primes_list_shortened: Vec<u64> = primes
-        .primes_list
-        .iter()
-        .cloned()
+    let primes_list_shortened: Vec<usize> = primes.single_iterator()
         .take_while(|&p| p <= MAX_PRIME_SEARCH)
         .filter(|&p| p == 3 || p != 2 && p != 5 && p % 3 == 2)
         .collect_vec();
@@ -32,12 +26,12 @@ pub fn solve_0060() -> u64 {
     best
 }
 
-fn prepare_then_search(primes: &Primes, primes_list_shortened: &[u64], best: &mut u64) {
-    let factors: Vec<u64> = primes_list_shortened
+fn prepare_then_search(primes: &Primes, primes_list_shortened: &[usize], best: &mut usize) {
+    let factors: Vec<usize> = primes_list_shortened
         .iter()
         .map(|&p| {
             let mut x = p;
-            let mut factor = 10u64;
+            let mut factor = 10usize;
 
             while x >= 10 {
                 x /= 10;
@@ -62,17 +56,17 @@ fn prepare_then_search(primes: &Primes, primes_list_shortened: &[u64], best: &mu
 
 #[inline(always)]
 fn search(
-    best: &mut u64,
+    best: &mut usize,
     primes: &Primes,
     cache: &mut [Option<bool>],
-    primes_list_shortened: &[u64],
-    factors: &[u64],
+    primes_list_shortened: &[usize],
+    factors: &[usize],
 ) {
     #[derive(Clone, Copy)]
     struct Frame {
         next: usize,
         depth: usize,
-        current_sum: u64,
+        current_sum: usize,
         current_prime_indices: [usize; 5],
     }
 
@@ -99,7 +93,7 @@ fn search(
 
             let p = primes_list_shortened[prime_1_index];
 
-            if frame.current_sum + (remaining as u64) * p >= *best {
+            if frame.current_sum + remaining * p >= *best {
                 break;
             }
 
@@ -161,7 +155,7 @@ fn triangular_index(i: usize, j: usize) -> usize {
 }
 
 #[inline(always)]
-fn both_concat_prime(a: u64, b: u64, factor_a: u64, factor_b: u64, primes: &Primes) -> bool {
+fn both_concat_prime(a: usize, b: usize, factor_a: usize, factor_b: usize, primes: &Primes) -> bool {
     primes.is_prime(a * factor_b + b) && primes.is_prime(b * factor_a + a)
 }
 

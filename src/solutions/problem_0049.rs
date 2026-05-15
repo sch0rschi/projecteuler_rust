@@ -4,10 +4,9 @@ pub fn solve_0049() -> String {
     let primes = Primes::primes_inclusive(9999);
 
     let mut candidates: Vec<(u32, u32)> = primes
-        .primes_list
-        .iter()
-        .filter(|&&p| p >= 1000)
-        .map(|&p| (digit_fingerprint(p as u32), p as u32))
+        .single_iterator()
+        .filter(|&p| p >= 1000)
+        .map(|p| (digit_fingerprint(p as u32), p as u32))
         .collect();
 
     candidates.sort_unstable();

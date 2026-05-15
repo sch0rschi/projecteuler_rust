@@ -1,11 +1,10 @@
 use crate::libs::primes::Primes;
 
-pub fn solve_0050() -> u64 {
+pub fn solve_0050() -> usize {
     let primes = Primes::primes_inclusive(999_999);
-    let primes_list = &primes.primes_list;
 
-    let mut prefix_sums = vec![0u64];
-    for &p in primes_list {
+    let mut prefix_sums = vec![0usize];
+    for p in primes.single_iterator() {
         let next = prefix_sums.last().unwrap() + p;
         prefix_sums.push(next);
         if next >= 1_000_000 { break; }

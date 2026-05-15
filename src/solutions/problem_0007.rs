@@ -1,11 +1,7 @@
-use crate::libs::primes::Primes;
+const LIMIT: usize = 10001;
 
-const LIMIT: u64 = 10001;
-
-pub fn solve_0007() -> u64 {
-    let estimate = LIMIT * ((LIMIT as f64).ln().ceil() * 1.1) as u64;
-    let primes = Primes::primes_inclusive(estimate);
-    *primes.primes_list.get(LIMIT as usize - 1).unwrap()
+pub fn solve_0007() -> usize {
+    primal::StreamingSieve::nth_prime(LIMIT)
 }
 
 #[cfg(test)]

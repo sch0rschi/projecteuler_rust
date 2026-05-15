@@ -1,11 +1,11 @@
 use crate::libs::exponentiation::mod_pow;
 
-const EXPONENT: u64 = 7_830_457;
-const FACTOR: u64 = 28_433;
-const MOD: u64 = 10_000_000_000;
+const EXPONENT: usize = 7_830_457;
+const FACTOR: usize = 28_433;
+const MOD: usize = 10_000_000_000;
 
 
-pub fn solve_0097() -> u64 {
+pub fn solve_0097() -> usize {
     (FACTOR * mod_pow(2, EXPONENT, MOD) + 1) % MOD
 }
 

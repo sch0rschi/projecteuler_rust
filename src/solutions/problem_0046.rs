@@ -1,16 +1,15 @@
 use crate::libs::primes::Primes;
 
 
-pub fn solve_0046() -> u64 {
+pub fn solve_0046() -> usize {
     let mut upper = 1024;
 
     loop {
         upper *= 2;
 
         let primes = Primes::primes_inclusive(upper);
-        let primes_list = &primes.primes_list;
 
-        for window in primes_list.windows(2) {
+        for window in primes.get_primes_list().windows(2) {
             for composite in ((window[0] + 2)..window[1]).step_by(2) {
                 let check = check_composite(composite, &primes);
                 if !check {
@@ -21,7 +20,7 @@ pub fn solve_0046() -> u64 {
     }
 }
 
-fn check_composite(composite: u64, primes: &Primes) -> bool {
+fn check_composite(composite: usize, primes: &Primes) -> bool {
     let mut n = 1;
     while 2 * n * n < composite {
         let remainder = composite - 2 * n * n;

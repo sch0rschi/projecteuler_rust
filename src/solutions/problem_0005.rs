@@ -1,14 +1,14 @@
 use crate::libs::primes::Primes;
 
-const LIMIT: u64 = 20;
+const LIMIT: usize = 20;
 
-pub fn solve_0005() -> u64 {
-    let mut result = 1u64;
+pub fn solve_0005() -> usize {
+    let mut result = 1;
     let primes = Primes::primes_inclusive(LIMIT);
 
-    for p in primes.primes_list {
-        let exp = (LIMIT as f64).log(p as f64).floor() as u32;
-        result *= p.pow(exp);
+    for p in primes.single_iterator() {
+        let exp = (LIMIT as f64).log(p as f64).floor() as usize;
+        result *= p.pow(exp as u32);
     }
 
     result

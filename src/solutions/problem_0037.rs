@@ -1,22 +1,20 @@
-use crate::libs::primes_u32::is_prime;
 use smallvec::SmallVec;
 
-const FIRST_DIGITS: [u32; 4] = [2, 3, 5, 7];
+const FIRST_DIGITS: [usize; 4] = [2, 3, 5, 7];
 
-
-pub fn solve_0037() -> u32 {
-    let mut sum = 0u32;
-    let mut count = 0u32;
-    let mut current: SmallVec<[u32; 32]> = SmallVec::from_slice(&FIRST_DIGITS);
-    let mut next: SmallVec<[u32; 32]> = SmallVec::with_capacity(32);
+pub fn solve_0037() -> usize {
+    let mut sum = 0usize;
+    let mut count = 0usize;
+    let mut current: SmallVec<[usize; 32]> = SmallVec::from_slice(&FIRST_DIGITS);
+    let mut next: SmallVec<[usize; 32]> = SmallVec::with_capacity(32);
 
     while count < 11 {
         next.clear();
         for &n in &current {
-            let pow10 = 10u32.pow(n.ilog10() + 1);
+            let pow10 = 10usize.pow(n.ilog10() + 1);
             for d in [3, 7] {
                 let candidate = n * 10 + d;
-                if is_prime(candidate) {
+                if primal::is_prime(candidate as u64) {
                     next.push(candidate);
                     if is_left_truncatable(candidate, pow10) {
                         sum += candidate;
@@ -26,7 +24,7 @@ pub fn solve_0037() -> u32 {
             }
             for d in [1, 9] {
                 let candidate = n * 10 + d;
-                if is_prime(candidate) {
+                if primal::is_prime(candidate as u64) {
                     next.push(candidate);
                 }
             }
@@ -37,11 +35,11 @@ pub fn solve_0037() -> u32 {
     sum
 }
 
-fn is_left_truncatable(n: u32, mut pow10: u32) -> bool {
+fn is_left_truncatable(n: usize, mut pow10: usize) -> bool {
     while pow10 > 1 {
         let div = n / pow10;
         let truncated = n - div * pow10;
-        if !is_prime(truncated) {
+        if !primal::is_prime(truncated as u64) {
             return false;
         }
         pow10 /= 10;

@@ -11,8 +11,8 @@ struct ProblemResult {
 }
 
 fn main() {
-    const WARMUP: usize = 10;
-    const ITERATIONS: usize = 10;
+    const WARMUP: usize = 100;
+    const ITERATIONS: usize = 100;
 
     let total_tasks = SOLUTIONS.len();
     let mut results: Vec<ProblemResult> = Vec::new();

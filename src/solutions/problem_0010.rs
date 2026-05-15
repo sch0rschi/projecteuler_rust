@@ -1,10 +1,10 @@
 use crate::libs::primes::Primes;
 
-const LIMIT: u64 = 2_000_000;
+const LIMIT: usize = 2_000_000;
 
-pub fn solve_0010() -> u64 {
+pub fn solve_0010() -> usize {
     let primes = Primes::primes_inclusive(LIMIT);
-    primes.primes_list.iter().sum::<u64>()
+    primes.single_iterator().sum()
 }
 
 #[cfg(test)]
