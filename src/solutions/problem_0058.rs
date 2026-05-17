@@ -1,10 +1,4 @@
-use crate::libs::primes::Primes;
-
-
-pub fn solve_0058() -> i32 {
-    let primes = Primes::primes_inclusive(100_000);
-    let primes_list = primes.get_primes_list();
-
+pub fn solve_0058() -> u32 {
     let mut result = 0;
     let mut diagonal_prime_count = 0;
     let mut diagonal_elements_count = 1;
@@ -19,9 +13,9 @@ pub fn solve_0058() -> i32 {
         bottom_left += 6 + adding;
         adding += 8;
         diagonal_elements_count += 4;
-        diagonal_prime_count += check_prime(top_left, primes_list.as_slice()) as usize
-            + check_prime(top_right, primes_list.as_slice()) as usize
-            + check_prime(bottom_left, primes_list.as_slice()) as usize;
+        diagonal_prime_count += primal::is_prime(top_left) as usize
+            + primal::is_prime(top_right) as usize
+            + primal::is_prime(bottom_left) as usize;
 
         if 10 * diagonal_prime_count < diagonal_elements_count {
             result = i;
@@ -30,18 +24,6 @@ pub fn solve_0058() -> i32 {
     }
 
     result
-}
-
-fn check_prime(n: usize, primes_list: &[usize]) -> bool {
-    let sqrt = (n as f64).sqrt() as usize + 1;
-    for &prime in primes_list {
-        if prime > sqrt {
-            return true;
-        } else if n.is_multiple_of(prime) {
-            return false;
-        }
-    }
-    unreachable!()
 }
 
 #[cfg(test)]
