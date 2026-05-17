@@ -1,25 +1,35 @@
 use crate::libs::digits::get_digit_count_encoding_15_max;
-use crate::libs::totients::get_totient_sieve;
+use crate::libs::primes::Primes;
+use itertools::Itertools;
 use num_integer::Roots;
 
-pub fn solve_0070() -> u64 {
-    let limit = 10_000_000usize;
-    let totient_sieve = get_totient_sieve(limit);
+const LIMIT: usize = 10_000_000;
 
-    let mut best_n = u64::MAX.sqrt();
-    let mut best_ph = 1u64;
+// This constant is an "educated" guesses
+const FACTOR_LOWER_LIMIT: usize = 2_000;
+const FACTOR_UPPER_LIMIT: usize = LIMIT / FACTOR_LOWER_LIMIT;
 
-    for (n, &phi) in totient_sieve.iter().enumerate().skip(2) {
-        let ph = phi as u64;
-        let n64 = n as u64;
+pub fn solve_0070() -> usize {
+    let primes = Primes::primes_inclusive(FACTOR_UPPER_LIMIT);
+    let relevant_primes = primes
+        .single_iterator()
+        .filter(|&p| p > FACTOR_LOWER_LIMIT && p < FACTOR_UPPER_LIMIT)
+        .collect_vec();
 
-        if ph == 0 || ph == n64 {
-            continue;
-        }
+    let mut best_n = usize::MAX.sqrt();
+    let mut best_phi = 1;
 
-        if n64 * best_ph < best_n * ph && is_permutation(n64, ph) {
-            best_n = n64;
-            best_ph = ph;
+    for (i1, &p1) in relevant_primes.iter().enumerate() {
+        for &p2 in relevant_primes.iter().skip(i1) {
+            let n = p1 * p2;
+            if n > LIMIT - 1 {
+                break;
+            }
+            let phi = n - p1 - p2 + 1;
+            if n * best_phi < best_n * phi && is_permutation(n as u64, phi as u64) {
+                best_n = n;
+                best_phi = phi;
+            }
         }
     }
 
