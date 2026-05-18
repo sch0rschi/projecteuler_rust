@@ -13,56 +13,47 @@ const POW10: [usize; 10] = [
     1_000_000_000,
 ];
 
-type PosArray = [usize; 7]; // pos[0] = len, pos[1..] = positions
+const LIMIT: usize = 999_999;
 
+#[derive(Clone, Copy, Default)]
+struct DigitPositions {
+    len: usize,
+    pos: [usize; 6],
+}
+
+impl DigitPositions {
+    fn push(&mut self, p: usize) {
+        if self.len < 6 {
+            self.pos[self.len] = p;
+            self.len += 1;
+        }
+    }
+}
 
 pub fn solve_0051() -> usize {
-    let primes = Primes::primes_inclusive(999_999);
-
-    let mut positions: [PosArray; 3] = [[0; 7]; 3];
+    let primes = Primes::primes_inclusive(LIMIT);
+    let mut digit_pos: [DigitPositions; 3] = [DigitPositions::default(); 3];
 
     for prime in primes.single_iterator() {
         if prime < 100_000 {
             continue;
         }
-        fill_relevant_digit_positions(prime, &mut positions);
 
-        for (digit, pos_arr) in positions.iter().enumerate() {
-            let len = pos_arr[0];
-            if len < 3 {
+        fill_digit_positions(prime, &mut digit_pos);
+
+        for (d, dp) in digit_pos.iter().enumerate() {
+            if dp.len < 3 {
                 continue;
             }
 
-            for i in 0..len - 2 {
-                for j in i + 1..len - 1 {
-                    for k in j + 1..len {
-                        let mask =
-                            POW10[pos_arr[i + 1]] + POW10[pos_arr[j + 1]] + POW10[pos_arr[k + 1]];
-                        let base = prime - digit * mask;
+            for i in 0..dp.len - 2 {
+                for j in i + 1..dp.len - 1 {
+                    for k in j + 1..dp.len {
+                        let mask = POW10[dp.pos[i]] + POW10[dp.pos[j]] + POW10[dp.pos[k]];
+                        let base = prime - d * mask;
 
-                        let mut count = 0;
-                        let mut remaining = 10;
-
-                        for replacement_digit in 0..=9 {
-                            remaining -= 1;
-                            let candidate = base + replacement_digit * mask;
-
-                            if candidate > 100_000 && primes.is_prime(candidate) {
-                                count += 1;
-                            }
-
-                            if count + remaining < 8 {
-                                break;
-                            }
-                        }
-
-                        if count >= 8 {
-                            for d in 0..=9 {
-                                let candidate = base + d * mask;
-                                if primes.is_prime(candidate) {
-                                    return candidate;
-                                }
-                            }
+                        if let Some(smallest) = find_family_start(base, mask, &primes) {
+                            return smallest;
                         }
                     }
                 }
@@ -72,26 +63,47 @@ pub fn solve_0051() -> usize {
     unreachable!()
 }
 
-fn fill_relevant_digit_positions(mut n: usize, positions: &mut [PosArray; 3]) {
-    positions[0][0] = 0;
-    positions[1][0] = 0;
-    positions[2][0] = 0;
+fn find_family_start(
+    base: usize,
+    mask: usize,
+    primes: &Primes,
+) -> Option<usize> {
+    let mut count = 0;
+    let mut first = None;
 
-    let mut pos = 1;
+    for r in 0usize..=9 {
+        if r == 0 && base < mask {
+            continue;
+        }
+        let candidate = base + r * mask;
+        if candidate >= 100_000 && primes.is_prime(candidate) {
+            count += 1;
+            if first.is_none() {
+                first = Some(candidate);
+            }
+        }
+
+        let remaining_after = 9 - r;
+        if count + remaining_after < 8 {
+            break;
+        }
+    }
+
+    if count >= 8 { first } else { None }
+}
+
+fn fill_digit_positions(mut n: usize, out: &mut [DigitPositions; 3]) {
+    *out = [DigitPositions::default(); 3];
+    let mut exp = 1;
     n /= 10;
 
     while n > 0 {
         let digit = n % 10;
         if digit < 3 {
-            let len = positions[digit][0];
-            if len < 6 {
-                // maximum 6 positions
-                positions[digit][len + 1] = pos;
-                positions[digit][0] = len + 1;
-            }
+            out[digit].push(exp);
         }
         n /= 10;
-        pos += 1;
+        exp += 1;
     }
 }
 
