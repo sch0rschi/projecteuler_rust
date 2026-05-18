@@ -1,250 +1,238 @@
-use bitvec::bitvec;
-use bitvec::prelude::BitVec;
-use itertools::Itertools;
-use regex::Regex;
-use std::fs;
+const INPUT: &str = include_str!("../../resources/0096_sudoku.txt");
 
+type Mask = u16;
 
-pub fn solve_0096() -> u32 {
-    let text = fs::read_to_string("resources/0096_sudoku.txt").expect("Failed to read file");
+const ALL: Mask = 0x1FF;
 
-    let re = Regex::new(r"Grid \d+\n").unwrap();
-
-    re.split(&text)
-        .skip(1)
-        .map(SudokuGrid::new)
-        .map(|grid| {
-            let solved_grid = grid.solve();
-            100 * solved_grid.closed[0][0] as u32
-                + 10 * solved_grid.closed[0][1] as u32
-                + solved_grid.closed[0][2] as u32
-        })
-        .sum()
+#[inline(always)]
+const fn bit(d: u8) -> Mask {
+    1 << (d - 1)
 }
 
-#[derive(Clone)]
-pub struct SudokuGrid {
-    fixed_count: u64,
-    closed: [[u8; 9]; 9],
-    open: [[BitVec; 9]; 9],
+#[inline(always)]
+const fn singleton_to_digit(mask: Mask) -> u8 {
+    mask.trailing_zeros() as u8 + 1
 }
 
-impl SudokuGrid {
-    pub fn new(input: &str) -> SudokuGrid {
-        let lines = input.lines().collect_vec();
-        let mut closed = [[0u8; 9]; 9];
-        for (line_index, &line) in lines.iter().enumerate() {
-            closed[line_index] = line
-                .chars()
-                .map(|c| c.to_digit(10).unwrap() as u8)
-                .collect_vec()
-                .try_into()
-                .unwrap();
-        }
-        let open =
-            std::array::from_fn(|_row| std::array::from_fn(|_column| bitvec!(0b111_111_111; 9)));
+const fn build_peers() -> [[usize; 20]; 81] {
+    let mut peers = [[0usize; 20]; 81];
 
-        let fixed_count = closed.iter().flatten().filter(|&&x| x != 0).count() as u64;
+    let mut cell = 0;
 
-        SudokuGrid {
-            fixed_count,
-            closed,
-            open,
-        }
-    }
+    while cell < 81 {
+        let r = cell / 9;
+        let c = cell % 9;
 
-    pub fn print(&self) {
-        for (i, row) in self.closed.iter().enumerate() {
-            if i % 3 == 0 && i != 0 {
-                println!("------+-------+------");
+        let mut used = [false; 81];
+        used[cell] = true;
+
+        let mut n = 0;
+
+        let mut i = 0;
+        while i < 9 {
+            let x = r * 9 + i;
+            if !used[x] {
+                used[x] = true;
+                peers[cell][n] = x;
+                n += 1;
             }
 
-            for (j, cell) in row.iter().enumerate() {
-                if j % 3 == 0 && j != 0 {
-                    print!("| ");
-                }
-
-                if *cell == 0 {
-                    print!(". ");
-                } else {
-                    print!("{} ", cell);
-                }
+            let x = i * 9 + c;
+            if !used[x] {
+                used[x] = true;
+                peers[cell][n] = x;
+                n += 1;
             }
 
-            println!();
-        }
-    }
-
-    pub fn solve(self) -> SudokuGrid {
-        if let Some(sudoku_grid) = self.backtrack() {
-            return sudoku_grid;
-        }
-        panic!();
-    }
-
-    pub fn backtrack(mut self) -> Option<SudokuGrid> {
-        self.solve_trivial();
-        if self.fixed_count == 81 {
-            return Some(self);
-        }
-        let (row_index, column_index) = self.find_undecided();
-        for fix_value in self.open[row_index][column_index].iter_ones() {
-            let mut new_self = self.clone();
-            new_self.place(row_index, column_index, fix_value as u8 + 1);
-            if let Some(sudoku_grid) = new_self.backtrack() {
-                return Some(sudoku_grid);
-            }
-        }
-        None
-    }
-
-    pub fn solve_trivial(&mut self) {
-        self.apply_conflicts();
-        while self.set_trivial() {
-            self.apply_conflicts()
-        }
-    }
-
-    pub fn apply_conflicts(&mut self) {
-        for row in 0..9 {
-            for column in 0..9 {
-                let cell_value = self.closed[row][column];
-                if cell_value != 0 {
-                    for index in 0..9 {
-                        self.open[row][index].set(cell_value as usize - 1, false);
-                        self.open[index][column].set(cell_value as usize - 1, false);
-                    }
-                    let block_row_start = (row / 3) * 3;
-                    let block_column_start = (column / 3) * 3;
-                    for block_row in block_row_start..block_row_start + 3 {
-                        for block_column in block_column_start..block_column_start + 3 {
-                            self.open[block_row][block_column].set(cell_value as usize - 1, false);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    pub fn set_trivial(&mut self) -> bool {
-        let mut change = false;
-
-        for r in 0..9 {
-            for c in 0..9 {
-                if self.closed[r][c] != 0 {
-                    continue;
-                }
-
-                if self.open[r][c].count_ones() == 1 {
-                    let v = self.open[r][c].first_one().unwrap() as u8 + 1;
-                    self.place(r, c, v);
-                    change = true;
-                }
-            }
-        }
-
-        for digit in 0..9 {
-            for r in 0..9 {
-                let mut cells = [(0usize, 0usize); 9];
-                for (c, cell) in cells.iter_mut().enumerate() {
-                    *cell = (r, c);
-                }
-
-                if let Some((r, c)) = self.scan_unit(&cells, digit) {
-                    self.place(r, c, (digit as u8) + 1);
-                    change = true;
-                }
-            }
-
-            for c in 0..9 {
-                let mut cells = [(0usize, 0usize); 9];
-                for (r, cell) in cells.iter_mut().enumerate() {
-                    *cell = (r, c);
-                }
-
-                if let Some((r, c)) = self.scan_unit(&cells, digit) {
-                    self.place(r, c, (digit as u8) + 1);
-                    change = true;
-                }
-            }
-
-            for br in 0..3 {
-                for bc in 0..3 {
-                    let mut cells = [(0usize, 0usize); 9];
-                    let mut i = 0;
-
-                    for r in 0..3 {
-                        for c in 0..3 {
-                            cells[i] = (br * 3 + r, bc * 3 + c);
-                            i += 1;
-                        }
-                    }
-
-                    if let Some((r, c)) = self.scan_unit(&cells, digit) {
-                        self.place(r, c, (digit as u8) + 1);
-                        change = true;
-                    }
-                }
-            }
-        }
-
-        change
-    }
-
-    fn scan_unit(
-        self: &SudokuGrid,
-        cells: &[(usize, usize)],
-        digit: usize,
-    ) -> Option<(usize, usize)> {
-        let mut count = 0;
-        let mut pos = None;
-
-        for &(r, c) in cells {
-            if self.closed[r][c] == 0 && self.open[r][c][digit] {
-                count += 1;
-                pos = Some((r, c));
-                if count > 1 {
-                    return None;
-                }
-            }
-        }
-
-        if count == 1 { pos } else { None }
-    }
-
-    fn place(self: &mut SudokuGrid, r: usize, c: usize, val: u8) {
-        self.closed[r][c] = val;
-        self.fixed_count += 1;
-
-        let idx = (val - 1) as usize;
-
-        self.open[r][c].fill(false);
-
-        for i in 0..9 {
-            self.open[r][i].set(idx, false);
-            self.open[i][c].set(idx, false);
+            i += 1;
         }
 
         let br = (r / 3) * 3;
         let bc = (c / 3) * 3;
 
-        for rr in br..br + 3 {
-            for cc in bc..bc + 3 {
-                self.open[rr][cc].set(idx, false);
+        let mut rr = 0;
+        while rr < 3 {
+            let mut cc = 0;
+            while cc < 3 {
+                let x = (br + rr) * 9 + (bc + cc);
+
+                if !used[x] {
+                    used[x] = true;
+                    peers[cell][n] = x;
+                    n += 1;
+                }
+
+                cc += 1;
             }
+
+            rr += 1;
         }
+
+        cell += 1;
     }
 
-    fn find_undecided(&self) -> (usize, usize) {
-        for (row_index, row) in self.closed.iter().enumerate() {
-            for (column_index, &cell_value) in row.iter().enumerate() {
-                if cell_value == 0u8 {
-                    return (row_index, column_index);
+    peers
+}
+
+const PEERS: [[usize; 20]; 81] = build_peers();
+
+#[derive(Clone)]
+struct Sudoku {
+    grid: [u8; 81],
+    cand: [Mask; 81],
+}
+
+impl Sudoku {
+    fn new(block: &str) -> Self {
+        let mut s = Sudoku {
+            grid: [0; 81],
+            cand: [ALL; 81],
+        };
+
+        let mut idx = 0;
+
+        for line in block.lines() {
+            for &b in line.as_bytes() {
+                let d = b - b'0';
+
+                if d != 0 && !s.assign(idx, d) {
+                    panic!("invalid sudoku");
+                }
+
+                idx += 1;
+            }
+        }
+
+        s
+    }
+
+    #[inline(always)]
+    fn assign(&mut self, idx: usize, digit: u8) -> bool {
+        let mask = bit(digit);
+
+        self.grid[idx] = digit;
+        self.cand[idx] = mask;
+
+        let mut stack = [0usize; 81];
+        let mut top = 0;
+
+        stack[top] = idx;
+        top += 1;
+
+        while top > 0 {
+            top -= 1;
+
+            let cell = stack[top];
+
+            let value = self.cand[cell];
+
+            for &peer in &PEERS[cell] {
+                let old = self.cand[peer];
+
+                if old & value == 0 {
+                    continue;
+                }
+
+                let new = old & !value;
+
+                if new == 0 {
+                    return false;
+                }
+
+                if new != old {
+                    self.cand[peer] = new;
+
+                    if new.count_ones() == 1 && self.grid[peer] == 0 {
+                        self.grid[peer] = singleton_to_digit(new);
+
+                        stack[top] = peer;
+                        top += 1;
+                    }
                 }
             }
         }
-        panic!()
+
+        true
     }
+
+    #[inline(always)]
+    fn find_best(&self) -> Option<usize> {
+        let mut best = None;
+        let mut best_count = 10;
+
+        let mut i = 0;
+
+        while i < 81 {
+            if self.grid[i] == 0 {
+                let c = self.cand[i].count_ones();
+
+                if c < best_count {
+                    best_count = c;
+                    best = Some(i);
+
+                    if c == 2 {
+                        break;
+                    }
+                }
+            }
+
+            i += 1;
+        }
+
+        best
+    }
+
+    fn solve(&mut self) -> bool {
+        let Some(idx) = self.find_best() else {
+            return true;
+        };
+
+        let mask = self.cand[idx];
+
+        let snapshot = self.clone();
+
+        let mut bits = mask;
+
+        while bits != 0 {
+            let lsb = bits & (!bits + 1);
+
+            let digit = singleton_to_digit(lsb);
+
+            let mut next = snapshot.clone();
+
+            if next.assign(idx, digit) && next.solve() {
+                *self = next;
+                return true;
+            }
+
+            bits ^= lsb;
+        }
+
+        false
+    }
+}
+
+pub fn solve_0096() -> u32 {
+    let mut total = 0;
+
+    let mut lines = INPUT.lines();
+
+    while lines.next().is_some() {
+        let mut block = String::with_capacity(90);
+
+        for _ in 0..9 {
+            block.push_str(lines.next().unwrap());
+            block.push('\n');
+        }
+
+        let mut sudoku = Sudoku::new(&block);
+
+        assert!(sudoku.solve());
+
+        total += 100 * sudoku.grid[0] as u32 + 10 * sudoku.grid[1] as u32 + sudoku.grid[2] as u32;
+    }
+
+    total
 }
 
 #[cfg(test)]
