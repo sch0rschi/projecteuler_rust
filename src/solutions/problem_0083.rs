@@ -1,61 +1,55 @@
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
-use std::fs;
 
+const INPUT: &str = include_str!("../../resources/0083_matrix.txt");
 
 pub fn solve_0083() -> u32 {
-    let weights: Vec<Vec<u32>> = fs::read_to_string("resources/0083_matrix.txt")
-        .expect("Failed to read file")
+    let mut cols = 0usize;
+    let weights: Vec<u32> = INPUT
         .lines()
-        .map(|line| {
-            line.split(',')
+        .filter(|l| !l.is_empty())
+        .flat_map(|line| {
+            let row: Vec<u32> = line
+                .split(',')
                 .map(|x| x.trim().parse::<u32>().expect("Failed to parse integer"))
-                .collect()
+                .collect();
+            cols = row.len();
+            row
         })
         .collect();
 
-    let rows = weights.len();
-    let cols = weights[0].len();
-    let target = (rows - 1, cols - 1);
+    let rows = weights.len() / cols;
+    let target = rows * cols - 1;
 
-    let mut dist = vec![vec![u32::MAX; cols]; rows];
+    let mut dist = vec![u32::MAX; rows * cols];
     let mut heap = BinaryHeap::new();
 
-    dist[0][0] = weights[0][0];
-    heap.push(Reverse((weights[0][0], (0usize, 0usize))));
+    dist[0] = weights[0];
+    heap.push(Reverse((weights[0], 0usize)));
 
-    let directions = [(-1isize, 0isize), (1, 0), (0, -1), (0, 1)];
-
-    while let Some(Reverse((cost, (row, column)))) = heap.pop() {
-        if cost > dist[row][column] {
+    while let Some(Reverse((cost, idx))) = heap.pop() {
+        if cost > dist[idx] {
             continue;
         }
-
-        if (row, column) == target {
+        if idx == target {
             return cost;
         }
 
-        for (delta_row, delta_column) in directions {
-            let new_row = row as isize + delta_row;
-            let new_column = column as isize + delta_column;
+        let row = idx / cols;
+        let col = idx % cols;
 
-            if new_row < 0
-                || new_column < 0
-                || new_row >= rows as isize
-                || new_column >= cols as isize
-            {
-                continue;
-            }
+        let neighbours = [
+            (row > 0).then(|| idx - cols),
+            (row + 1 < rows).then(|| idx + cols),
+            (col > 0).then(|| idx - 1),
+            (col + 1 < cols).then(|| idx + 1),
+        ];
 
-            let new_row = new_row as usize;
-            let new_column = new_column as usize;
-
-            let new_cost = cost + weights[new_row][new_column];
-            let cost_ref: &mut u32 = &mut dist[new_row][new_column];
-
-            if new_cost < *cost_ref {
-                *cost_ref = new_cost;
-                heap.push(Reverse((new_cost, (new_row, new_column))));
+        for next_idx in neighbours.into_iter().flatten() {
+            let new_cost = cost + weights[next_idx];
+            if new_cost < dist[next_idx] {
+                dist[next_idx] = new_cost;
+                heap.push(Reverse((new_cost, next_idx)));
             }
         }
     }
