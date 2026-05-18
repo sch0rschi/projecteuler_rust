@@ -16,3 +16,13 @@ pub fn get_digit_occurrence_mask(n: u64, length: usize) -> u16 {
     }
     mask
 }
+
+#[inline(always)]
+pub fn reverse(mut n: u64) -> u64 {
+    let mut r = 0u64;
+    while n > 0 {
+        r = r * 10 + n % 10;
+        n /= 10;
+    }
+    r
+}
