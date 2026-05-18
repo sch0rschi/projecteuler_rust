@@ -1,10 +1,8 @@
 use std::collections::HashMap;
-use std::fs;
-
+const INPUT: &str = include_str!("../../resources/0098_words.txt");
 
 pub fn solve_0098() -> u64 {
-    let words: HashMap<String, Vec<String>> = fs::read_to_string("resources/0098_words.txt")
-        .unwrap()
+    let words: HashMap<String, Vec<String>> = INPUT
         .split(',')
         .map(|w| w.trim_matches('"').to_string())
         .fold(
