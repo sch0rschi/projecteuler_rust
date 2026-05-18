@@ -1,74 +1,66 @@
-use itertools::Itertools;
-use std::fs;
-
-const VALID_CHARS: [bool; 256] = make_valid_chars();
-
+const VALID_MASK: u128 = make_valid_mask();
+const CIPHER: &[u8] = &parse_cipher(include_str!("../../resources/0059_cipher.txt"));
 
 pub fn solve_0059() -> u32 {
-    let u8_ascii_text = fs::read_to_string("resources/0059_cipher.txt")
-        .expect("Failed to read file")
-        .split(",")
-        .map(|x| x.parse::<u8>().expect("Failed to parse hex integer"))
-        .collect_vec();
 
-    let key: [u8; 3] = std::array::from_fn(|i| get_key(&u8_ascii_text, i));
+    let key: [u8; 3] = std::array::from_fn(|i| find_key_byte(CIPHER, i));
 
-    let sum: u32 = u8_ascii_text
+    CIPHER
         .iter()
         .zip(key.iter().cycle())
-        .map(|(x, y)| (x ^ y) as u32)
-        .sum();
-
-    sum
+        .map(|(c, k)| (c ^ k) as u32)
+        .sum()
 }
 
-fn get_key(text: &[u8], offset: usize) -> u8 {
-    for potential_key in b'a'..=b'z' {
-        if check_each_third_text_position(text, offset, potential_key) {
-            return potential_key;
-        }
-    }
-    unreachable!()
+fn find_key_byte(cipher: &[u8], offset: usize) -> u8 {
+    (b'a'..=b'z')
+        .find(|&k| {
+            cipher
+                .iter()
+                .skip(offset)
+                .step_by(3)
+                .all(|&c| is_valid(c ^ k))
+        })
+        .expect("no valid key byte found")
 }
 
-fn check_each_third_text_position(content: &[u8], offset: usize, key: u8) -> bool {
-    for character_in_text in content.iter().dropping(offset).step_by(3) {
-        let xored = character_in_text ^ key;
-        if !is_valid_xored_value(xored) {
-            return false;
-        }
-    }
-    true
+#[inline(always)]
+fn is_valid(c: u8) -> bool {
+    c < 128 && (VALID_MASK >> c) & 1 == 1
 }
 
-fn is_valid_xored_value(xored: u8) -> bool {
-    VALID_CHARS[xored as usize]
-}
-
-const fn make_valid_chars() -> [bool; 256] {
-    let mut arr = [false; 256];
+const fn make_valid_mask() -> u128 {
+    let mut mask = 0u128;
     let mut i = b'a';
-    while i <= b'z' {
-        arr[i as usize] = true;
-        i += 1;
-    }
+    while i <= b'z' { mask |= 1u128 << i; i += 1; }
     let mut i = b'A';
-    while i <= b'Z' {
-        arr[i as usize] = true;
-        i += 1;
-    }
+    while i <= b'Z' { mask |= 1u128 << i; i += 1; }
     let mut i = b'0';
-    while i <= b'9' {
-        arr[i as usize] = true;
+    while i <= b'9' { mask |= 1u128 << i; i += 1; }
+    let p = b" ,.'\":;()[]+/-!?";
+    let mut j = 0;
+    while j < p.len() { mask |= 1u128 << p[j]; j += 1; }
+    mask
+}
+
+const fn parse_cipher(s: &str) -> [u8; 1455] {
+    let mut result = [0u8; 1455];
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    let mut out = 0;
+    let mut val = 0u8;
+
+    while i <= bytes.len() {
+        if i == bytes.len() || bytes[i] == b',' {
+            result[out] = val;
+            out += 1;
+            val = 0;
+        } else if bytes[i] >= b'0' && bytes[i] <= b'9' {
+            val = val * 10 + (bytes[i] - b'0');
+        }
         i += 1;
     }
-    let punctuation = b" ,.'\":;()[]+/";
-    let mut j = 0;
-    while j < punctuation.len() {
-        arr[punctuation[j] as usize] = true;
-        j += 1;
-    }
-    arr
+    result
 }
 
 #[cfg(test)]
