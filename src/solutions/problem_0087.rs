@@ -1,49 +1,31 @@
 use crate::libs::primes::Primes;
-use bitvec::bitvec;
-use itertools::Itertools;
 use num_integer::Roots;
 
 const LIMIT: usize = 50_000_000;
-
 
 pub fn solve_0087() -> usize {
     let primes = Primes::primes_inclusive(LIMIT.sqrt());
     let primes_list = primes.get_primes_list();
 
-    // Precompute fourth powers below LIMIT
-    let fourth_powers = primes_list
-        .iter()
-        .map(|&p| {
-            let sq = p * p;
-            sq * sq
-        })
-        .take_while(|&f| f < LIMIT)
-        .collect_vec();
+    let squares: Vec<usize> = primes_list.iter().map(|&p| p * p).take_while(|&x| x < LIMIT).collect();
+    let cubes:   Vec<usize> = primes_list.iter().map(|&p| p * p * p).take_while(|&x| x < LIMIT).collect();
+    let fourths: Vec<usize> = primes_list.iter().map(|&p| { let sq = p*p; sq*sq }).take_while(|&x| x < LIMIT).collect();
 
-    let mut seen = bitvec![0; LIMIT];
+    let mut seen = vec![0u64; LIMIT.div_ceil(64)];
 
-    for &p1 in primes_list.iter() {
-        let square = p1 * p1;
-
-        for &p2 in primes_list.iter() {
-            let cube = p2 * p2 * p2;
-            let square_cube_sum = square + cube;
-            if square_cube_sum >= LIMIT {
-                break;
-            }
-
-            let remaining = LIMIT - square_cube_sum - 1;
-
-            let valid_count = fourth_powers.partition_point(|&f| f <= remaining);
-
-            for &fourth in &fourth_powers[..valid_count] {
-                let total = square_cube_sum + fourth;
-                seen.set(total, true);
+    for &f in &fourths {
+        for &c in &cubes {
+            let fc = f + c;
+            if fc >= LIMIT { break; }
+            for &s in &squares {
+                let total = fc + s;
+                if total >= LIMIT { break; }
+                seen[total >> 6] |= 1u64 << (total & 63);
             }
         }
     }
 
-    seen.count_ones()
+    seen.iter().map(|w| w.count_ones() as usize).sum()
 }
 
 #[cfg(test)]
