@@ -1,25 +1,21 @@
-use itertools::Itertools;
-use std::fs;
-
+const INPUT: &str = include_str!("../../resources/0067_triangle.txt");
 
 pub fn solve_0067() -> u64 {
-    let mut triangle = fs::read_to_string("resources/0067_triangle.txt")
-        .expect("Failed to read file")
+    let mut flat: Vec<u64> = INPUT
         .lines()
-        .map(|line| {
-            line.split(" ")
-                .map(|s| s.parse::<u64>().unwrap())
-                .collect::<Vec<u64>>()
-        })
-        .collect_vec();
+        .flat_map(|line| line.split(' ').map(|s| s.parse::<u64>().unwrap()))
+        .collect();
 
-    for row in (0..triangle.len() - 1).rev() {
-        for i in 0..triangle[row].len() {
-            triangle[row][i] += triangle[row + 1][i].max(triangle[row + 1][i + 1]);
+    let rows = INPUT.lines().count();
+    for row in (0..rows - 1).rev() {
+        let curr = row * (row + 1) / 2;
+        let next = (row + 1) * (row + 2) / 2;
+        for i in 0..=row {
+            flat[curr + i] += flat[next + i].max(flat[next + i + 1]);
         }
     }
 
-    triangle[0][0]
+    flat[0]
 }
 
 #[cfg(test)]
