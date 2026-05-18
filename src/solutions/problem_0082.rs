@@ -1,63 +1,39 @@
 use itertools::Itertools;
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
-use std::fs;
 
+const INPUT: &str = include_str!("../../resources/0082_matrix.txt");
 
 pub fn solve_0082() -> u32 {
-    let weights = fs::read_to_string("resources/0082_matrix.txt")
-        .expect("Failed to read file")
-        .split("\n")
+    let weights = INPUT
+        .lines()
         .filter(|x| !x.is_empty())
         .map(|x| {
-            x.split(",")
-                .map(|x| {
-                    x.trim()
-                        .parse::<u32>()
-                        .expect("Failed to parse hex integer")
-                })
+            x.split(',')
+                .map(|x| x.trim().parse::<u32>().expect("Failed to parse integer"))
                 .collect_vec()
         })
         .collect_vec();
 
-    let bottom_right = (weights.len() - 1, weights[0].len() - 1);
+    let rows = weights.len();
+    let cols = weights[0].len();
 
-    let mut closed_list = vec![vec![false; bottom_right.1 + 1]; bottom_right.0 + 1];
-    let mut heap = BinaryHeap::new();
+    let mut dp: Vec<u32> = (0..rows).map(|r| weights[r][0]).collect();
 
-    for (row_index, row) in weights.iter().enumerate() {
-        heap.push(Reverse((row[0], (row_index, 0))));
+    #[allow(clippy::needless_range_loop)]
+    for column in 1..cols {
+        let mut next: Vec<u32> = (0..rows).map(|r| dp[r] + weights[r][column]).collect();
+
+        for row in 1..rows {
+            next[row] = next[row].min(next[row - 1] + weights[row][column]);
+        }
+
+        for row in (0..rows - 1).rev() {
+            next[row] = next[row].min(next[row + 1] + weights[row][column]);
+        }
+
+        dp = next;
     }
 
-    while let Some(Reverse((weight, (row, column)))) = heap.pop() {
-        if closed_list[row][column] {
-            continue;
-        }
-        if column == bottom_right.1 {
-            return weight;
-        }
-        closed_list[row][column] = true;
-        if row > 0 && !closed_list[row - 1][column] {
-            heap.push(Reverse((
-                weight + weights[row - 1][column],
-                (row - 1, column),
-            )));
-        }
-        if row < bottom_right.0 && !closed_list[row + 1][column] {
-            heap.push(Reverse((
-                weight + weights[row + 1][column],
-                (row + 1, column),
-            )));
-        }
-        if column < bottom_right.1 && !closed_list[row][column + 1] {
-            heap.push(Reverse((
-                weight + weights[row][column + 1],
-                (row, column + 1),
-            )));
-        }
-    }
-
-    panic!("Failed to find target");
+    *dp.iter().min().unwrap()
 }
 
 #[cfg(test)]
