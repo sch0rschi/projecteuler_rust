@@ -1,10 +1,13 @@
-use crate::libs::totients::get_totient_sieve;
-
 pub fn solve_0069() -> usize {
-    let phi = get_totient_sieve(1_000_000);
-
-    (2..=1_000_000)
-        .max_by_key(|&n| n as u64 * 1_000_000u64 / phi[n] as u64)
+    [2usize, 3, 5, 7, 11, 13, 17, 19]
+        .iter()
+        .scan(1usize, |acc, &prime| {
+            (*acc * prime <= 1_000_000).then(|| {
+                *acc *= prime;
+                *acc
+            })
+        })
+        .last()
         .unwrap()
 }
 
