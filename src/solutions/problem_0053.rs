@@ -1,28 +1,19 @@
-pub fn solve_0053() -> i32 {
-    let mut count = 0;
+const THRESHOLD: u64 = 1_000_000;
+const CAP: u64 = THRESHOLD + 1;
 
-    let row_0 = vec![1];
-    let mut row_above = row_0;
+pub fn solve_0053() -> u32 {
 
-    for row_index in 1..=100 {
-        let mut index = 1;
-        let mut row = Vec::with_capacity(row_above.len() + 1);
-        row.push(1);
-        for w in row_above.windows(2) {
-            let [left, right] = w else { unreachable!() };
+    let mut count = 0u32;
 
-            let mut sum = left + right;
-            if sum > 1_000_000 {
-                sum = 1_000_000;
-                row.push(sum);
-                count += row_index - 2 * index + 1;
+    for n in 1u64..=100 {
+        let mut c = 1u64;
+        for k in 1..=n {
+            c = (c * (n - k + 1) / k).min(CAP);
+            if c > THRESHOLD {
+                count += (n + 1 - 2 * k) as u32;
                 break;
             }
-            index += 1;
-            row.push(sum);
         }
-        row.push(1);
-        row_above = row;
     }
 
     count
