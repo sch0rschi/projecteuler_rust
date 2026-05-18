@@ -1,4 +1,4 @@
-pub fn prev_permutation(arr: &mut [usize]) -> bool {
+pub fn prev_permutation(arr: &mut [u64]) -> bool {
     let n = arr.len();
     let mut i = n - 1;
     while i > 0 && arr[i - 1] <= arr[i] {
