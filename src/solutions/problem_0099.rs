@@ -1,9 +1,7 @@
-use std::fs;
-
+const INPUT: &str = include_str!("../../resources/0099_base_exp.txt");
 
 pub fn solve_0099() -> usize {
-    fs::read_to_string("resources/0099_base_exp.txt")
-        .expect("Failed to read file")
+    INPUT
         .lines()
         .enumerate()
         .map(|(line, x)| {
