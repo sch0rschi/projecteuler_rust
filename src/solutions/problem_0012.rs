@@ -1,26 +1,22 @@
-use std::collections::HashMap;
-
 pub fn solve_0012() -> u32 {
-    let mut cache: HashMap<u32, u32> = HashMap::new();
+    let mut d_prev = count_divisors(1u32);
 
-    (1..)
-        .find_map(|i: u32| {
-            let (a, b) = if i.is_multiple_of(2) {
-                (i / 2, i + 1)
-            } else {
-                (i, i.div_ceil(2))
-            };
+    for i in 1u32.. {
+        let (d, d_next) = if i % 2 == 0 {
+            let d_next = count_divisors(i + 1);
+            (d_prev * d_next, count_divisors((i + 2) / 2))
+        } else {
+            let d_i = count_divisors(i);
+            (d_i * d_prev, d_i)
+        };
 
-            let da = *cache.entry(a).or_insert_with(|| count_divisors(a));
-            let db = *cache.entry(b).or_insert_with(|| count_divisors(b));
+        if d > 500 {
+            return i * (i + 1) / 2;
+        }
 
-            if da * db > 500 {
-                Some(i * (i + 1) / 2)
-            } else {
-                None
-            }
-        })
-        .unwrap()
+        d_prev = d_next;
+    }
+    unreachable!()
 }
 
 fn count_divisors(mut n: u32) -> u32 {
@@ -35,7 +31,7 @@ fn count_divisors(mut n: u32) -> u32 {
         total *= count + 1;
     }
 
-    let mut p = 3;
+    let mut p = 3u32;
     while p * p <= n {
         if n.is_multiple_of(p) {
             count = 0;
