@@ -1,40 +1,42 @@
 pub fn solve_0056() -> u32 {
-    let mut max_sum = 0;
+    let mut max_sum = 0u32;
 
-    for a in 1u32..100 {
-        let mut digits = vec![1u8];
-        let mut best_for_a = 0;
+    for a in 2u32..100 {
+        let mut digits = [0u8; 200];
+        let mut len = 1usize;
+        digits[0] = 1;
 
         for _ in 1..100 {
-            multiply_in_place(&mut digits, a);
-
-            let sum: u32 = digits.iter().map(|&d| d as u32).sum();
-            if sum > best_for_a {
-                best_for_a = sum;
+            let sum = multiply_and_sum(&mut digits, &mut len, a);
+            if sum > max_sum {
+                max_sum = sum;
             }
-        }
-
-        if best_for_a > max_sum {
-            max_sum = best_for_a;
         }
     }
 
     max_sum
 }
 
-fn multiply_in_place(digits: &mut Vec<u8>, mul: u32) {
+#[inline(always)]
+fn multiply_and_sum(digits: &mut [u8; 200], len: &mut usize, mul: u32) -> u32 {
     let mut carry = 0u32;
+    let mut sum = 0u32;
 
-    for d in digits.iter_mut() {
+    for d in digits[..*len].iter_mut() {
         let prod = (*d as u32) * mul + carry;
         *d = (prod % 10) as u8;
         carry = prod / 10;
+        sum += *d as u32;
     }
 
     while carry > 0 {
-        digits.push((carry % 10) as u8);
+        digits[*len] = (carry % 10) as u8;
+        sum += digits[*len] as u32;
+        *len += 1;
         carry /= 10;
     }
+
+    sum
 }
 
 #[cfg(test)]
