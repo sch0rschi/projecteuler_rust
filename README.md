@@ -54,7 +54,7 @@ iterations per problem.
 
 - **Problems 0–50:** `~9ms`
 - **Problems 51–100:** `~44ms`
-- **Total runtime (all 101 problems):** `~54ms`
+- **Total runtime (all 101 problems):** `~53ms`
 
 ---
 

@@ -1,27 +1,26 @@
-use std::collections::HashMap;
+use ahash::AHashMap;
+
 const INPUT: &str = include_str!("../../resources/0098_words.txt");
 
 pub fn solve_0098() -> u64 {
-    let words: HashMap<String, Vec<String>> = INPUT
-        .split(',')
-        .map(|w| w.trim_matches('"').to_string())
-        .fold(
-            HashMap::new(),
-            |mut acc: HashMap<String, Vec<String>>, word| {
-                acc.entry(sorted_characters(&word)).or_default().push(word);
-                acc
-            },
-        )
-        .into_iter()
-        .filter(|(_, g)| g.len() > 1)
-        .collect();
+    let mut groups: AHashMap<[u8; 26], Vec<&'static str>> = AHashMap::default();
 
-    let mut words_by_len: HashMap<usize, Vec<&Vec<String>>> = HashMap::new();
-    for g in words.values() {
-        words_by_len.entry(g[0].len()).or_default().push(g);
+    for word in INPUT.split(',') {
+        let w = word.trim_matches('"');
+        groups.entry(signature(w)).or_default().push(w);
     }
 
-    let max_len = words.keys().map(|k| k.len()).max().unwrap();
+    // keep only anagram groups, grouped by length
+    let mut words_by_len: AHashMap<usize, Vec<Vec<&'static str>>> = AHashMap::default();
+
+    for g in groups.into_values() {
+        if g.len() > 1 {
+            let len = g[0].len();
+            words_by_len.entry(len).or_default().push(g);
+        }
+    }
+
+    let max_len = words_by_len.keys().copied().max().unwrap();
     let max_square = 10u64.pow(max_len as u32) - 1;
     let max_root = (max_square as f64).sqrt() as u64;
 
@@ -36,14 +35,14 @@ pub fn solve_0098() -> u64 {
         };
 
         for group in groups {
-            for w in *group {
+            for &w in group {
                 map.fill(-1);
 
                 if !set_character_to_digit_mapping(sq, w, &mut map) {
                     continue;
                 }
 
-                for other in *group {
+                for &other in group {
                     if other == w {
                         continue;
                     }
@@ -59,6 +58,15 @@ pub fn solve_0098() -> u64 {
     }
 
     unreachable!()
+}
+
+#[inline]
+fn signature(s: &str) -> [u8; 26] {
+    let mut freq = [0u8; 26];
+    for &b in s.as_bytes() {
+        freq[(b - b'A') as usize] += 1;
+    }
+    freq
 }
 
 #[inline]
@@ -126,14 +134,8 @@ fn apply_mapping(word: &str, mapping: &[i8; 26]) -> Option<u64> {
         }
         n = n * 10 + d as u64;
     }
-    Some(n)
-}
 
-#[inline]
-fn sorted_characters(s: &str) -> String {
-    let mut b = s.as_bytes().to_vec();
-    b.sort_unstable();
-    unsafe { String::from_utf8_unchecked(b) }
+    Some(n)
 }
 
 #[cfg(test)]

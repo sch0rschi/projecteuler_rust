@@ -1,11 +1,11 @@
 use crate::libs::digits::get_digit_count_encoding_15_max;
-use rustc_hash::FxHashMap as HashMap;
+use ahash::AHashMap;
 
 
 pub fn solve_0062() -> u64 {
     let mut cube_lower: u64 = 10;
 
-    let mut digits_map: HashMap<u64, (u8, u64)> = HashMap::default();
+    let mut digits_map: AHashMap<u64, (u8, u64)> = AHashMap::default();
     digits_map.reserve(1_000);
 
     loop {
