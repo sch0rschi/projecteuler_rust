@@ -2,6 +2,7 @@ const LIMIT: usize = 12_000;
 
 pub fn solve_0073() -> u32 {
     let smallest_prime_factor_list = get_smalles_prime_factor_list();
+    let mut factors = Vec::new();
 
     (2..=LIMIT)
         .filter_map(|d| {
@@ -10,7 +11,7 @@ pub fn solve_0073() -> u32 {
             if lo > hi {
                 return None;
             }
-            let factors = prime_factors(d, &smallest_prime_factor_list);
+            prime_factors(d, &smallest_prime_factor_list, &mut factors);
             Some(count_coprime(lo, hi, &factors))
         })
         .sum::<u32>()
@@ -32,8 +33,8 @@ fn get_smalles_prime_factor_list() -> Vec<u32> {
     smallest_prime_factors
 }
 
-fn prime_factors(mut n: usize, smallest_prime_factors: &[u32]) -> Vec<usize> {
-    let mut factors = Vec::with_capacity(6);
+fn prime_factors(mut n: usize, smallest_prime_factors: &[u32], factors: &mut Vec<usize>) {
+    factors.clear();
     while n > 1 {
         let p = smallest_prime_factors[n] as usize;
         factors.push(p);
@@ -41,7 +42,6 @@ fn prime_factors(mut n: usize, smallest_prime_factors: &[u32]) -> Vec<usize> {
             n /= p;
         }
     }
-    factors
 }
 
 fn count_coprime(lo: usize, hi: usize, factors: &[usize]) -> u32 {
