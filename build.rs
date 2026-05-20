@@ -3,32 +3,7 @@ use std::io::Write;
 use std::path::Path;
 
 fn main() {
-    download_hand_ranks();
     scan_for_solutions();
-}
-
-fn download_hand_ranks() {
-    let url = "https://raw.githubusercontent.com/christophschmalhofer/poker/master/XPokerEval/XPokerEval.TwoPlusTwo/HandRanks.dat";
-    let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    let path = Path::new(&manifest_dir).join("resources/HandRanks.dat");
-
-    if path.exists() {
-        return;
-    }
-
-    println!("HandRanks.dat not found, downloading...");
-
-    fs::create_dir_all(path.parent().unwrap()).unwrap();
-
-    let response = ureq::get(url).call().expect("download failed");
-
-    let mut file = fs::File::create(path).expect("create file failed");
-    let mut binding = response.into_body();
-    let mut reader = binding.as_reader();
-
-    std::io::copy(&mut reader, &mut file).expect("write failed");
-
-    println!("download complete");
 }
 
 fn scan_for_solutions() {

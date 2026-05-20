@@ -19,7 +19,7 @@ src/
     └── ...
 ```
 
-Modules and the benchmark registry are auto-generated via `build.rs`, which also downloads `HandRanks.dat` if missing.
+Modules and the benchmark registry are auto-generated via `build.rs`.
 
 ---
 
