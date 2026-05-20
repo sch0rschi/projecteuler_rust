@@ -1,15 +1,13 @@
 use bitvec::bitvec;
-use std::fs;
 
+const INPUT: &str = include_str!("../../resources/0079_keylog.txt");
 
 pub fn solve_0079() -> u64 {
-    let input = fs::read_to_string("resources/0079_keylog.txt").expect("Failed to read file");
-
     let mut adj: [Vec<u8>; 10] = std::array::from_fn(|_| Vec::new());
     let mut indegree = [0i8; 10];
     let mut to_be_used = bitvec![0; 10];
 
-    for line in input.lines().filter(|l| !l.is_empty()) {
+    for line in INPUT.lines().filter(|l| !l.is_empty()) {
         let digits = line.as_bytes();
         let digit_1 = (digits[0] - b'0') as usize;
         let digit_2 = (digits[1] - b'0') as usize;
