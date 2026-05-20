@@ -2,66 +2,73 @@ use crate::libs::divisors::ProperDivisorSums;
 
 const LIMIT: usize = 1_000_000;
 
-
 pub fn solve_0095() -> u32 {
     let proper_divisor_sums = ProperDivisorSums::new(LIMIT);
 
-    let mut seen = vec![false; LIMIT + 1];
-    let mut min_element = 0;
-    let mut longest_chain_length = 0;
-    let mut recently_seen = Vec::with_capacity(64);
+    // None = unvisited
+    // Some(true) = visiting
+    // Some(false) = processed
+    let mut state: Vec<Option<bool>> = vec![None; LIMIT + 1];
 
-    for n in 1..=LIMIT {
-        if let Some((chain_length, min_chain_element)) = get_min_element_longest_chain(
-            n as u32,
-            &mut seen,
-            longest_chain_length,
-            &proper_divisor_sums,
-            &mut recently_seen,
-        ) {
-            longest_chain_length = chain_length;
-            min_element = min_chain_element;
+    let mut best_len = 0;
+    let mut best_min = 0;
+
+    let mut path = Vec::with_capacity(1024);
+
+    for start in 1..=LIMIT {
+        if state[start].is_some() {
+            continue;
+        }
+
+        let mut cur = start as u32;
+        path.clear();
+
+        while (cur as usize) <= LIMIT {
+            match state[cur as usize] {
+                None => {
+                    state[cur as usize] = Some(true);
+                    path.push(cur);
+                    cur = proper_divisor_sums.get(cur);
+                }
+                Some(true) => {
+                    let cycle_start = cur;
+
+                    let mut idx = path.len();
+                    while idx > 0 {
+                        idx -= 1;
+                        if path[idx] == cycle_start {
+                            break;
+                        }
+                    }
+
+                    let cycle = &path[idx..];
+
+                    let len = cycle.len();
+                    let min_val = *cycle.iter().min().unwrap();
+
+                    if len > best_len {
+                        best_len = len;
+                        best_min = min_val;
+                    }
+
+                    for &v in cycle {
+                        state[v as usize] = Some(false);
+                    }
+
+                    break;
+                }
+                Some(false) => {
+                    break;
+                }
+            }
+        }
+
+        for &v in &path {
+            state[v as usize] = Some(false);
         }
     }
-    min_element
-}
 
-fn get_min_element_longest_chain(
-    mut n: u32,
-    seen: &mut [bool],
-    longest_chain_length: usize,
-    proper_divisor_sums: &ProperDivisorSums,
-    recently_seen: &mut Vec<u32>,
-) -> Option<(usize, u32)> {
-    recently_seen.clear();
-    let mut element_counter = 0;
-    while n <= LIMIT as u32 && !recently_seen.contains(&n) {
-        if seen[n as usize] {
-            return None;
-        }
-        seen[n as usize] = true;
-        recently_seen.push(n);
-        element_counter += 1;
-        n = proper_divisor_sums.get(n);
-    }
-    if n as usize > LIMIT || longest_chain_length > element_counter {
-        return None;
-    }
-
-    let mut min_chain_element = n;
-    let mut chain_length = 0;
-    recently_seen.clear();
-    while !recently_seen.contains(&n) {
-        recently_seen.push(n);
-        n = proper_divisor_sums.get(n);
-        min_chain_element = min_chain_element.min(n);
-        chain_length += 1;
-    }
-
-    if chain_length > longest_chain_length {
-        return Some((chain_length, min_chain_element));
-    }
-    None
+    best_min
 }
 
 #[cfg(test)]
