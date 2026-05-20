@@ -5,12 +5,9 @@ pub mod divisors;
 pub mod evaluation_helper;
 pub mod exponentiation;
 pub mod integer_pythagorean_triplets;
-pub mod multiset_combinations;
-pub mod multiset_partitions;
 pub mod pells_equation;
 pub mod pentagonal_numbers;
 pub mod permutations;
-
 pub mod primes;
 pub mod totients;
 pub mod triplet;
