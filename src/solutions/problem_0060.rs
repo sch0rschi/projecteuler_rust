@@ -25,7 +25,7 @@ fn prepare_then_search(primes: &Primes, best: &mut usize, congruent: usize) {
     let primes_list: Vec<usize> = primes
         .single_iterator()
         .take_while(|&p| p <= MAX_PRIME_SEARCH)
-        .filter(|&p| p == 3 || (p != 2 && p != 5 && p % 3 == congruent))
+        .filter(|&p| p == 3 || p % 3 == congruent)
         .collect_vec();
 
     let n = primes_list.len();
